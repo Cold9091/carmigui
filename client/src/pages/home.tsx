@@ -20,49 +20,141 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center text-white">
-        <div className="absolute inset-0 hero-gradient z-10"></div>
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')",
-          }}
-        ></div>
+      <section className="relative bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white">
+        <div className="max-w-7xl mx-auto container-padding py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                Encontre seu imóvel em um único lugar
+              </h1>
+              <p className="text-lg md:text-xl mb-8 text-gray-200">
+                São milhares de casas e apartamentos com toda a facilidade e a assessoria de corretores especializados.
+              </p>
+            </div>
+            <div className="relative">
+              <img
+                src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
+                alt="Apartamento moderno"
+                className="w-full h-auto rounded-lg shadow-2xl"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <div className="relative z-20 text-center max-w-4xl mx-auto container-padding">
-          <h1 className="text-5xl md:text-6xl font-roboto font-bold mb-6">
-            Seu Lar dos Sonhos em Angola
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 font-opensans">
-            Especialistas em imobiliário e construção de qualidade superior
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/imoveis">
-              <Button
-                size="lg"
-                className="bg-angola-secondary hover:bg-angola-secondary/90 text-white px-8 py-4 text-lg"
-                data-testid="btn-view-properties"
-              >
-                <Home className="mr-2" size={20} />
-                Ver Imóveis
-              </Button>
+      {/* Property Types Section */}
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto container-padding">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+            <Link href="/imoveis?type=apartment" className="group">
+              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
+                  alt="Apartamento"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">Apartamento</span>
+                </div>
+              </div>
             </Link>
-            <Link href="/construcao">
-              <Button
-                size="lg"
-                className="bg-angola-primary hover:bg-angola-primary/90 text-white px-8 py-4 text-lg"
-                data-testid="btn-view-projects"
-              >
-                <Hammer className="mr-2" size={20} />
-                Nossos Projetos
-              </Button>
+            
+            <Link href="/imoveis?type=kitnet" className="group">
+              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
+                  alt="Kitnet"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">Kitnet</span>
+                </div>
+              </div>
+            </Link>
+            
+            <Link href="/imoveis?type=loft" className="group">
+              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
+                  alt="Loft"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">Loft</span>
+                </div>
+              </div>
+            </Link>
+            
+            <Link href="/imoveis?type=house" className="group">
+              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
+                  alt="Casa"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">Casa</span>
+                </div>
+              </div>
+            </Link>
+            
+            <Link href="/imoveis?type=fazenda" className="group">
+              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
+                  alt="Fazenda"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">Fazenda</span>
+                </div>
+              </div>
+            </Link>
+            
+            <Link href="/imoveis?type=building" className="group">
+              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
+                  alt="Prédio"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">Prédio</span>
+                </div>
+              </div>
+            </Link>
+            
+            <Link href="/imoveis?type=office" className="group">
+              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
+                  alt="Comercial"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">Comercial</span>
+                </div>
+              </div>
+            </Link>
+            
+            <Link href="/imoveis?type=coworking" className="group">
+              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
+                  alt="Coworking"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">Coworking</span>
+                </div>
+              </div>
             </Link>
           </div>
         </div>
       </section>
 
       {/* Services Overview */}
-      <section className="section-spacing bg-angola-accent">
+      <section className="section-spacing bg-white">
         <div className="max-w-7xl mx-auto container-padding">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-roboto font-bold text-angola-primary mb-4">
@@ -75,96 +167,42 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-2 gap-12">
             {/* Real Estate Section */}
-            <Card className="card-hover bg-white shadow-lg">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400"
-                  alt="Apartamento de luxo"
-                  className="w-full h-64 object-cover rounded-t-lg"
-                />
+            <div className="text-center">
+              <div className="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Home className="text-purple-600" size={40} />
               </div>
-              <CardContent className="p-8">
-                <div className="flex items-center mb-4">
-                  <Home className="text-3xl text-angola-primary mr-4" size={32} />
-                  <h3 className="text-2xl font-roboto font-bold text-angola-primary">
-                    Área Imobiliária
-                  </h3>
-                </div>
-                <p className="text-angola-text mb-6">
-                  Encontre o imóvel perfeito com nossa vasta seleção de propriedades em toda Angola.
-                  Casas, apartamentos, escritórios e terrenos das melhores localizações.
-                </p>
-                <ul className="text-angola-text space-y-2 mb-6">
-                  <li className="flex items-center">
-                    <span className="text-angola-secondary mr-2">✓</span>
-                    Apartamentos de luxo
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-angola-secondary mr-2">✓</span>
-                    Casas unifamiliares
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-angola-secondary mr-2">✓</span>
-                    Espaços comerciais
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-angola-secondary mr-2">✓</span>
-                    Terrenos para investimento
-                  </li>
-                </ul>
-                <Link href="/imoveis">
-                  <Button className="btn-primary w-full" data-testid="btn-explore-properties">
-                    Explorar Imóveis
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+              <h3 className="text-2xl font-roboto font-bold text-angola-primary mb-4">
+                Área Imobiliária
+              </h3>
+              <p className="text-angola-text mb-6">
+                Encontre o imóvel perfeito com nossa vasta seleção de propriedades em toda Angola.
+                Casas, apartamentos, escritórios e terrenos das melhores localizações.
+              </p>
+              <Link href="/imoveis">
+                <Button className="btn-primary" data-testid="btn-explore-properties">
+                  Explorar Imóveis
+                </Button>
+              </Link>
+            </div>
 
             {/* Construction Section */}
-            <Card className="card-hover bg-white shadow-lg">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1541976590-713941681591?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400"
-                  alt="Projeto de construção"
-                  className="w-full h-64 object-cover rounded-t-lg"
-                />
+            <div className="text-center">
+              <div className="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Hammer className="text-purple-600" size={40} />
               </div>
-              <CardContent className="p-8">
-                <div className="flex items-center mb-4">
-                  <Hammer className="text-3xl text-angola-primary mr-4" size={32} />
-                  <h3 className="text-2xl font-roboto font-bold text-angola-primary">
-                    Área de Construção
-                  </h3>
-                </div>
-                <p className="text-angola-text mb-6">
-                  Transformamos sonhos em realidade com projetos de construção de alta qualidade.
-                  Da concepção à conclusão, garantimos excelência em cada detalhe.
-                </p>
-                <ul className="text-angola-text space-y-2 mb-6">
-                  <li className="flex items-center">
-                    <span className="text-angola-secondary mr-2">✓</span>
-                    Construção residencial
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-angola-secondary mr-2">✓</span>
-                    Projetos comerciais
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-angola-secondary mr-2">✓</span>
-                    Renovações completas
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-angola-secondary mr-2">✓</span>
-                    Design personalizado
-                  </li>
-                </ul>
-                <Link href="/construcao">
-                  <Button className="btn-primary w-full" data-testid="btn-view-construction">
-                    Ver Projetos
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+              <h3 className="text-2xl font-roboto font-bold text-angola-primary mb-4">
+                Área de Construção
+              </h3>
+              <p className="text-angola-text mb-6">
+                Transformamos sonhos em realidade com projetos de construção de alta qualidade.
+                Da concepção à conclusão, garantimos excelência em cada detalhe.
+              </p>
+              <Link href="/construcao">
+                <Button className="btn-primary" data-testid="btn-view-construction">
+                  Ver Projetos
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

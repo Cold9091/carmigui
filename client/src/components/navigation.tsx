@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Building, Home, Hammer, Phone, Settings, Menu, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Building, Home, Hammer, Phone, Settings, Menu, X, Search } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -9,11 +10,9 @@ export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { href: "/", label: "Início", icon: Home },
-    { href: "/imoveis", label: "Imóveis", icon: Building },
-    { href: "/construcao", label: "Construção", icon: Hammer },
-    { href: "/contacto", label: "Contacto", icon: Phone },
-    { href: "/admin", label: "Admin", icon: Settings },
+    { href: "/imoveis?type=compra", label: "Compra" },
+    { href: "/imoveis?type=aluguel", label: "Aluguel" },
+    { href: "/imoveis?featured=true", label: "Melhores ofertas" },
   ];
 
   const isActive = (href: string) => {
@@ -23,37 +22,49 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
+    <nav className="bg-black text-white sticky top-0 z-50">
       <div className="max-w-7xl mx-auto container-padding">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center" data-testid="logo-link">
-            <div className="text-2xl font-roboto font-bold text-angola-primary">
-              <Building className="inline mr-2" size={28} />
+            <div className="text-xl font-roboto font-bold text-white flex items-center">
+              <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center mr-2">
+                <Building className="text-white" size={20} />
+              </div>
               AngolaCasa
             </div>
           </Link>
 
+          {/* Search Bar */}
+          <div className="hidden md:flex flex-1 max-w-md mx-8">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Input 
+                placeholder="Comece sua busca"
+                className="pl-10 bg-white/10 border-gray-600 text-white placeholder-gray-400 focus:bg-white/20"
+                data-testid="search-input"
+              />
+            </div>
+          </div>
+
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center px-3 py-2 font-medium transition-colors ${
-                    isActive(item.href)
-                      ? "text-angola-primary"
-                      : "text-angola-text hover:text-angola-primary"
-                  }`}
-                  data-testid={`nav-${item.label.toLowerCase()}`}
-                >
-                  <Icon size={18} className="mr-1" />
-                  {item.label}
-                </Link>
-              );
-            })}
+          <div className="hidden md:flex items-center space-x-6">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-white hover:text-purple-300 font-medium transition-colors"
+                data-testid={`nav-${item.label.toLowerCase()}`}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <Button
+              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium"
+              data-testid="btn-login"
+            >
+              Entrar
+            </Button>
           </div>
 
           {/* Mobile Menu */}
@@ -63,33 +74,40 @@ export default function Navigation() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-angola-primary"
+                  className="text-white"
                   data-testid="mobile-menu-trigger"
                 >
                   <Menu size={24} />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-64">
+              <SheetContent side="right" className="w-64 bg-black text-white">
                 <div className="flex flex-col space-y-4 mt-8">
-                  {navItems.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className={`flex items-center px-4 py-3 rounded-lg font-medium transition-colors ${
-                          isActive(item.href)
-                            ? "bg-angola-accent text-angola-primary"
-                            : "text-angola-text hover:bg-angola-accent hover:text-angola-primary"
-                        }`}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        data-testid={`mobile-nav-${item.label.toLowerCase()}`}
-                      >
-                        <Icon size={18} className="mr-2" />
-                        {item.label}
-                      </Link>
-                    );
-                  })}
+                  <div className="mb-4">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                      <Input 
+                        placeholder="Comece sua busca"
+                        className="pl-10 bg-white/10 border-gray-600 text-white placeholder-gray-400"
+                      />
+                    </div>
+                  </div>
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="text-white hover:text-purple-300 px-4 py-2 rounded-lg font-medium transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      data-testid={`mobile-nav-${item.label.toLowerCase()}`}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                  <Button
+                    className="bg-purple-600 hover:bg-purple-700 text-white mx-4 mt-4"
+                    data-testid="btn-mobile-login"
+                  >
+                    Entrar
+                  </Button>
                 </div>
               </SheetContent>
             </Sheet>
