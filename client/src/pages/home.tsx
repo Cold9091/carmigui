@@ -229,7 +229,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">1.000.000.00 AKZ</p>
+                    <p className="text-lg font-bold text-gray-800">1.000.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 2 modalidades</p>
                   </div>
                   <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
@@ -272,7 +272,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">250.000.00 AKZ</p>
+                    <p className="text-lg font-bold text-gray-800">250.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 5 modalidades</p>
                   </div>
                   <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
@@ -315,7 +315,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">100.000.00 AKZ</p>
+                    <p className="text-lg font-bold text-gray-800">100.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 6 modalidades</p>
                   </div>
                   <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
@@ -358,7 +358,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">195.000.00 AKZ</p>
+                    <p className="text-lg font-bold text-gray-800">195.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 8 modalidades</p>
                   </div>
                   <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
@@ -515,7 +515,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">410.000.00 AKZ</p>
+                    <p className="text-lg font-bold text-gray-800">410.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 3 imobiliárias</p>
                   </div>
                   <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
@@ -558,7 +558,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">410.000.00 AKZ</p>
+                    <p className="text-lg font-bold text-gray-800">410.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 3 imobiliárias</p>
                   </div>
                   <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
@@ -601,7 +601,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">410.000.00 AKZ</p>
+                    <p className="text-lg font-bold text-gray-800">410.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 3 imobiliárias</p>
                   </div>
                   <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
@@ -644,7 +644,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">410.000.00 AKZ</p>
+                    <p className="text-lg font-bold text-gray-800">410.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 3 imobiliárias</p>
                   </div>
                   <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
