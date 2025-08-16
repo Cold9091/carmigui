@@ -24,7 +24,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto container-padding py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
                 Encontre seu imóvel em um único lugar
               </h1>
               <p className="text-lg md:text-xl mb-8 text-gray-200">
