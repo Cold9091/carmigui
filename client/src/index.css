@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(0, 0%, 20%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(0, 0%, 20%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(0, 0%, 20%);
+  --primary: hsl(123, 33%, 25%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(43, 74%, 53%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --muted: hsl(0, 0%, 96%);
+  --muted-foreground: hsl(0, 0%, 40%);
+  --accent: hsl(123, 50%, 95%);
+  --accent-foreground: hsl(123, 33%, 25%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(0, 0%, 89%);
+  --input: hsl(0, 0%, 89%);
+  --ring: hsl(123, 33%, 25%);
+  --chart-1: hsl(123, 33%, 25%);
+  --chart-2: hsl(43, 74%, 53%);
+  --chart-3: hsl(0, 84%, 60%);
+  --chart-4: hsl(120, 100%, 25%);
+  --chart-5: hsl(300, 100%, 25%);
+  --sidebar: hsl(0, 0%, 98%);
+  --sidebar-foreground: hsl(0, 0%, 20%);
+  --sidebar-primary: hsl(123, 33%, 25%);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: hsl(123, 50%, 95%);
+  --sidebar-accent-foreground: hsl(123, 33%, 25%);
+  --sidebar-border: hsl(0, 0%, 89%);
+  --sidebar-ring: hsl(123, 33%, 25%);
+  --font-sans: 'Open Sans', sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: 'Roboto Mono', monospace;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: hsl(0, 0%, 5%);
+  --foreground: hsl(0, 0%, 90%);
+  --card: hsl(0, 0%, 8%);
+  --card-foreground: hsl(0, 0%, 90%);
+  --popover: hsl(0, 0%, 5%);
+  --popover-foreground: hsl(0, 0%, 90%);
+  --primary: hsl(123, 33%, 25%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(43, 74%, 53%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --muted: hsl(0, 0%, 10%);
+  --muted-foreground: hsl(0, 0%, 60%);
+  --accent: hsl(123, 20%, 10%);
+  --accent-foreground: hsl(123, 33%, 60%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(0, 0%, 15%);
+  --input: hsl(0, 0%, 15%);
+  --ring: hsl(123, 33%, 25%);
+  --sidebar: hsl(0, 0%, 8%);
+  --sidebar-foreground: hsl(0, 0%, 90%);
+  --sidebar-primary: hsl(123, 33%, 25%);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: hsl(123, 20%, 10%);
+  --sidebar-accent-foreground: hsl(123, 33%, 60%);
+  --sidebar-border: hsl(0, 0%, 15%);
+  --sidebar-ring: hsl(123, 33%, 25%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  .font-roboto {
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .font-opensans {
+    font-family: 'Open Sans', sans-serif;
+  }
+}
+
+/* Custom Angola-specific professional styles */
+.hero-gradient {
+  background: linear-gradient(135deg, rgba(44, 85, 48, 0.9) 0%, rgba(212, 175, 55, 0.8) 100%);
+}
+
+.glass-effect {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.section-spacing {
+  @apply py-20;
+}
+
+.container-padding {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+.btn-primary {
+  @apply bg-primary text-primary-foreground hover:opacity-90 px-6 py-3 rounded-lg font-semibold transition-all;
+}
+
+.btn-secondary {
+  @apply bg-secondary text-secondary-foreground hover:opacity-90 px-6 py-3 rounded-lg font-semibold transition-all;
+}
+
+.text-angola-primary {
+  color: #2C5530;
+}
+
+.text-angola-secondary {
+  color: #D4AF37;
+}
+
+.bg-angola-primary {
+  background-color: #2C5530;
+}
+
+.bg-angola-secondary {
+  background-color: #D4AF37;
+}
+
+.bg-angola-accent {
+  background-color: #E8F5E8;
+}
