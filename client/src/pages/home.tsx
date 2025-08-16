@@ -212,19 +212,30 @@ export default function HomePage() {
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-gray-800 mb-1">Casa de Vidro</h3>
-                <p className="text-sm text-gray-600 mb-3">📍 Rua Marte, Júpiter - SP</p>
+                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
+                  <MapPin size={14} className="text-gray-400" />
+                  <span>Rua Marte, Júpiter - SP</span>
+                </div>
                 <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <span>📐 812 m²</span>
-                  <span>🛏️ 5 quartos</span>
+                  <div className="flex items-center gap-1">
+                    <Square size={14} className="text-gray-400" />
+                    <span>812 m²</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Bed size={14} className="text-gray-400" />
+                    <span>5 quartos</span>
+                  </div>
                 </div>
-                <div className="mb-3">
-                  <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                  <p className="text-lg font-bold text-gray-800">R$ 2.020.000</p>
-                  <p className="text-xs text-gray-500">em 2 modalidades</p>
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                    <p className="text-lg font-bold text-gray-800">R$2.020.000</p>
+                    <p className="text-xs text-gray-500">em 2 modalidades</p>
+                  </div>
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                    Ver preços
+                  </Button>
                 </div>
-                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
-                  Ver preços
-                </Button>
               </div>
             </div>
 
@@ -244,19 +255,30 @@ export default function HomePage() {
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-gray-800 mb-1">Sobrado Minimalista</h3>
-                <p className="text-sm text-gray-600 mb-3">📍 Rua Marte, Saturno - SP</p>
+                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
+                  <MapPin size={14} className="text-gray-400" />
+                  <span>Rua Marte, Saturno - SP</span>
+                </div>
                 <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <span>📐 230 m²</span>
-                  <span>🛏️ 3 quartos</span>
+                  <div className="flex items-center gap-1">
+                    <Square size={14} className="text-gray-400" />
+                    <span>230 m²</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Bed size={14} className="text-gray-400" />
+                    <span>3 quartos</span>
+                  </div>
                 </div>
-                <div className="mb-3">
-                  <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                  <p className="text-lg font-bold text-gray-800">R$ 500.000</p>
-                  <p className="text-xs text-gray-500">em 5 modalidades</p>
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                    <p className="text-lg font-bold text-gray-800">R$500.000</p>
+                    <p className="text-xs text-gray-500">em 5 modalidades</p>
+                  </div>
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                    Ver preços
+                  </Button>
                 </div>
-                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
-                  Ver preços
-                </Button>
               </div>
             </div>
 
@@ -276,19 +298,30 @@ export default function HomePage() {
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-gray-800 mb-1">Casa de campo</h3>
-                <p className="text-sm text-gray-600 mb-3">📍 Rua Marte, Saturno - SP</p>
+                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
+                  <MapPin size={14} className="text-gray-400" />
+                  <span>Rua Marte, Saturno - SP</span>
+                </div>
                 <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <span>📐 100 m²</span>
-                  <span>🛏️ 2 quartos</span>
+                  <div className="flex items-center gap-1">
+                    <Square size={14} className="text-gray-400" />
+                    <span>100 m²</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Bed size={14} className="text-gray-400" />
+                    <span>2 quartos</span>
+                  </div>
                 </div>
-                <div className="mb-3">
-                  <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                  <p className="text-lg font-bold text-gray-800">R$ 200.000</p>
-                  <p className="text-xs text-gray-500">em 6 modalidades</p>
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                    <p className="text-lg font-bold text-gray-800">R$200.000</p>
+                    <p className="text-xs text-gray-500">em 6 modalidades</p>
+                  </div>
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                    Ver preços
+                  </Button>
                 </div>
-                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
-                  Ver preços
-                </Button>
               </div>
             </div>
 
@@ -308,19 +341,30 @@ export default function HomePage() {
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-gray-800 mb-1">Apartamento</h3>
-                <p className="text-sm text-gray-600 mb-3">📍 Rua Marte, Saturno - SP</p>
+                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
+                  <MapPin size={14} className="text-gray-400" />
+                  <span>Rua Marte, Saturno - SP</span>
+                </div>
                 <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <span>📐 68 m²</span>
-                  <span>🛏️ 2 quartos</span>
+                  <div className="flex items-center gap-1">
+                    <Square size={14} className="text-gray-400" />
+                    <span>68 m²</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Bed size={14} className="text-gray-400" />
+                    <span>2 quartos</span>
+                  </div>
                 </div>
-                <div className="mb-3">
-                  <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                  <p className="text-lg font-bold text-gray-800">R$ 390.000</p>
-                  <p className="text-xs text-gray-500">em 8 modalidades</p>
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                    <p className="text-lg font-bold text-gray-800">R$390.000</p>
+                    <p className="text-xs text-gray-500">em 8 modalidades</p>
+                  </div>
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                    Ver preços
+                  </Button>
                 </div>
-                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
-                  Ver preços
-                </Button>
               </div>
             </div>
           </div>
