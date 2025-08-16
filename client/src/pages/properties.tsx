@@ -3,23 +3,28 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Building } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { Search, Building, MapPin, Bed, Bath, Square, Heart } from "lucide-react";
 import PropertyCard from "@/components/property-card";
 import type { Property } from "@shared/schema";
 
 export default function PropertiesPage() {
   const [filters, setFilters] = useState({
-    type: "",
+    type: "Venda",
+    bedrooms: "",
     location: "",
-    minPrice: "",
-    maxPrice: "",
+    priceRange: [50, 980000],
+    style: "TODOS",
   });
+
+  const [selectedProperties, setSelectedProperties] = useState<Set<string>>(new Set());
 
   const queryParams = new URLSearchParams();
   if (filters.type) queryParams.append("type", filters.type);
   if (filters.location) queryParams.append("location", filters.location);
-  if (filters.minPrice) queryParams.append("minPrice", filters.minPrice);
-  if (filters.maxPrice) queryParams.append("maxPrice", filters.maxPrice);
+  if (filters.bedrooms) queryParams.append("bedrooms", filters.bedrooms);
+  if (filters.priceRange[0] > 50) queryParams.append("minPrice", filters.priceRange[0].toString());
+  if (filters.priceRange[1] < 980000) queryParams.append("maxPrice", filters.priceRange[1].toString());
 
   const queryString = queryParams.toString();
   const queryKey = queryString ? ["/api/properties", queryString] : ["/api/properties"];
@@ -28,131 +33,280 @@ export default function PropertiesPage() {
     queryKey,
   });
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value: string | number[]) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
-  const clearFilters = () => {
-    setFilters({
-      type: "",
-      location: "",
-      minPrice: "",
-      maxPrice: "",
+  const toggleFavorite = (propertyId: string) => {
+    setSelectedProperties(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(propertyId)) {
+        newSet.delete(propertyId);
+      } else {
+        newSet.add(propertyId);
+      }
+      return newSet;
     });
   };
 
+  // Sample properties data similar to the image
+  const sampleProperties = [
+    {
+      id: "1",
+      title: "Casa de Vidro",
+      location: "Rua 1, Barueri - SP",
+      area: 812,
+      bedrooms: 5,
+      price: "2020000",
+      images: ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
+      modalidades: "em 2 modalidades"
+    },
+    {
+      id: "2", 
+      title: "Sobrado Minimalista",
+      location: "Rua 2, Barueri - SP",
+      area: 230,
+      bedrooms: 3,
+      price: "500000",
+      images: ["https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
+      modalidades: "em 5 imobiliárias"
+    },
+    {
+      id: "3",
+      title: "Casa de campo",
+      location: "Rua 3, Barueri - SP", 
+      area: 100,
+      bedrooms: 2,
+      price: "200000",
+      images: ["https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
+      modalidades: "em 6 imobiliárias"
+    },
+    {
+      id: "4",
+      title: "Apartamento",
+      location: "Rua 4, Barueri - SP",
+      area: 68,
+      bedrooms: 2,
+      price: "390000",
+      images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
+      modalidades: "em 3 imobiliárias"
+    },
+    {
+      id: "5",
+      title: "Casa de campo com piscina",
+      location: "Rua 5, Barueri - SP",
+      area: 400,
+      bedrooms: 3,
+      price: "1000000",
+      images: ["https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
+      modalidades: "em 3 imobiliárias"
+    },
+    {
+      id: "6",
+      title: "Apartamento no centro",
+      location: "Rua 6, Barueri - SP",
+      area: 400,
+      bedrooms: 3,
+      price: "820000",
+      images: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
+      modalidades: "em 3 imobiliárias"
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-white">
-      <div className="bg-angola-accent section-spacing">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header Section */}
+      <div className="bg-white section-spacing">
         <div className="max-w-7xl mx-auto container-padding">
           <div className="text-center mb-16">
-            <h1 className="text-4xl font-roboto font-bold text-angola-primary mb-4">
-              Nossos Imóveis
+            <h1 className="text-4xl font-bold text-gray-800 mb-4">
+              Procure uma oferta
             </h1>
-            <p className="text-xl text-angola-text">
-              Encontre a propriedade perfeita para si em Angola
+            <p className="text-xl text-gray-600">
+              Escolha entre as ofertas mais vantajosas
             </p>
           </div>
 
-          {/* Filters */}
-          <div className="bg-white rounded-lg p-6 shadow-lg">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          {/* Filters Section */}
+          <div className="mb-8">
+            <div className="flex items-center justify-center mb-8">
+              <div className="flex items-center gap-4">
+                <div className="h-px bg-gray-300 w-32"></div>
+                <span className="text-gray-600 font-medium">Configurações de filtro</span>
+                <div className="h-px bg-gray-300 w-32"></div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
               <Select
                 value={filters.type}
                 onValueChange={(value) => handleFilterChange("type", value)}
               >
-                <SelectTrigger data-testid="filter-type">
-                  <SelectValue placeholder="Tipo de Imóvel" />
+                <SelectTrigger data-testid="filter-type" className="bg-white">
+                  <SelectValue placeholder="Venda" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos os Tipos</SelectItem>
-                  <SelectItem value="apartment">Apartamento</SelectItem>
-                  <SelectItem value="house">Casa</SelectItem>
-                  <SelectItem value="office">Escritório</SelectItem>
-                  <SelectItem value="land">Terreno</SelectItem>
+                  <SelectItem value="Venda">Venda</SelectItem>
+                  <SelectItem value="Aluguel">Aluguel</SelectItem>
                 </SelectContent>
               </Select>
 
-              <Input
-                placeholder="Localização"
-                value={filters.location}
-                onChange={(e) => handleFilterChange("location", e.target.value)}
-                data-testid="filter-location"
-              />
-
-              <Input
-                placeholder="Preço Mínimo"
-                type="number"
-                value={filters.minPrice}
-                onChange={(e) => handleFilterChange("minPrice", e.target.value)}
-                data-testid="filter-min-price"
-              />
-
-              <Input
-                placeholder="Preço Máximo"
-                type="number"
-                value={filters.maxPrice}
-                onChange={(e) => handleFilterChange("maxPrice", e.target.value)}
-                data-testid="filter-max-price"
-              />
-
-              <Button
-                onClick={clearFilters}
-                variant="outline"
-                className="border-angola-primary text-angola-primary hover:bg-angola-primary hover:text-white"
-                data-testid="btn-clear-filters"
+              <Select
+                value={filters.bedrooms}
+                onValueChange={(value) => handleFilterChange("bedrooms", value)}
               >
-                Limpar Filtros
-              </Button>
+                <SelectTrigger data-testid="filter-bedrooms" className="bg-white">
+                  <SelectValue placeholder="Selecione os quartos" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Todos</SelectItem>
+                  <SelectItem value="1">1 quarto</SelectItem>
+                  <SelectItem value="2">2 quartos</SelectItem>
+                  <SelectItem value="3">3 quartos</SelectItem>
+                  <SelectItem value="4">4 quartos</SelectItem>
+                  <SelectItem value="5">5+ quartos</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={filters.location}
+                onValueChange={(value) => handleFilterChange("location", value)}
+              >
+                <SelectTrigger data-testid="filter-location" className="bg-white">
+                  <SelectValue placeholder="Selecione a localização" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Todas as localizações</SelectItem>
+                  <SelectItem value="Barueri">Barueri - SP</SelectItem>
+                  <SelectItem value="Luanda">Luanda</SelectItem>
+                  <SelectItem value="Benguela">Benguela</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select>
+                <SelectTrigger className="bg-white">
+                  <SelectValue placeholder="Mais caro" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="price-asc">Menor preço</SelectItem>
+                  <SelectItem value="price-desc">Maior preço</SelectItem>
+                  <SelectItem value="newest">Mais recentes</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Price Range Slider */}
+            <div className="max-w-md mx-auto mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm text-gray-600">R${filters.priceRange[0]}</span>
+                <span className="text-sm text-gray-600">R${filters.priceRange[1].toLocaleString()}</span>
+              </div>
+              <Slider
+                value={filters.priceRange}
+                onValueChange={(value) => handleFilterChange("priceRange", value)}
+                max={980000}
+                min={50}
+                step={1000}
+                className="w-full"
+              />
+            </div>
+
+            {/* Style Selection */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-6">
+                <span className="text-gray-700">Estilo que talvez você goste</span>
+                <div className="flex gap-2">
+                  <button className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                    ←
+                  </button>
+                  <button className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center">
+                    →
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex gap-4 justify-center">
+                {["TODOS", "ARQUITETÔNICO", "RÚSTICO", "CLÁSSICO", "AMERICANO", "COLONIAL"].map((style) => (
+                  <button
+                    key={style}
+                    onClick={() => handleFilterChange("style", style)}
+                    className={`px-6 py-3 border rounded-lg font-medium ${
+                      filters.style === style
+                        ? "bg-purple-600 text-white border-purple-600"
+                        : "bg-white text-gray-700 border-gray-300 hover:border-purple-600"
+                    }`}
+                  >
+                    {style}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Properties Grid */}
-      <div className="section-spacing">
-        <div className="max-w-7xl mx-auto container-padding">
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="bg-gray-200 h-48 rounded-t-lg"></div>
-                  <div className="bg-white p-6 rounded-b-lg shadow">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                    <div className="h-8 bg-gray-200 rounded"></div>
+      <div className="max-w-7xl mx-auto container-padding section-spacing">
+        <h2 className="text-2xl font-bold text-gray-800 mb-8">
+          200 Imóveis à venda em Barueri - SP
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {sampleProperties.map((property) => (
+            <div key={property.id} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+              <div className="relative">
+                <img
+                  src={property.images[0]}
+                  alt={property.title}
+                  className="w-full h-48 object-cover"
+                />
+                <button 
+                  onClick={() => toggleFavorite(property.id)}
+                  className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50"
+                >
+                  <Heart 
+                    size={16}
+                    className={selectedProperties.has(property.id) ? "text-red-500 fill-current" : "text-gray-600"}
+                  />
+                </button>
+              </div>
+              
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-800 mb-1">{property.title}</h3>
+                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
+                  <MapPin size={14} className="text-gray-400" />
+                  <span>{property.location}</span>
+                </div>
+                
+                <div className="flex gap-4 text-sm text-gray-600 mb-4">
+                  <div className="flex items-center gap-1">
+                    <Square size={14} className="text-gray-400" />
+                    <span>{property.area} m²</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Bed size={14} className="text-gray-400" />
+                    <span>{property.bedrooms} quartos</span>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : properties.length === 0 ? (
-            <div className="text-center py-12">
-              <Building className="mx-auto text-gray-400 mb-4" size={64} />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                Nenhum imóvel encontrado
-              </h3>
-              <p className="text-gray-500 mb-6">
-                Não encontrámos imóveis que correspondam aos seus critérios de pesquisa.
-                Tente ajustar os filtros ou limpe-os para ver todos os imóveis disponíveis.
-              </p>
-              <Button onClick={clearFilters} className="btn-primary" data-testid="btn-show-all">
-                Ver Todos os Imóveis
-              </Button>
-            </div>
-          ) : (
-            <>
-              <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl font-roboto font-bold text-angola-primary">
-                  {properties.length} {properties.length === 1 ? "Imóvel Encontrado" : "Imóveis Encontrados"}
-                </h2>
+                
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                    <p className="text-lg font-bold text-gray-800">
+                      R${parseInt(property.price).toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500">{property.modalidades}</p>
+                  </div>
+                  <Button 
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium"
+                    data-testid={`btn-ver-precos-${property.id}`}
+                  >
+                    Ver preços
+                  </Button>
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {properties.map((property) => (
-                  <PropertyCard key={property.id} property={property} />
-                ))}
-              </div>
-            </>
-          )}
+            </div>
+          ))}
         </div>
       </div>
     </div>
