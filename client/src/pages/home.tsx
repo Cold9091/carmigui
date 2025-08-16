@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowLeft, Search, CheckCircle, Key } from "lucide-react";
+import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowLeft, Search, CheckCircle, Key, Square } from "lucide-react";
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
 import type { Property, Project } from "@shared/schema";
@@ -454,19 +454,30 @@ export default function HomePage() {
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-gray-800 mb-1">Casa de campo com piscina</h3>
-                <p className="text-sm text-gray-600 mb-3">📍 Rua Marte, Barueri - SP</p>
+                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
+                  <MapPin size={14} className="text-gray-400" />
+                  <span>Rua Marte, Barueri - SP</span>
+                </div>
                 <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <span>📐 400 m²</span>
-                  <span>🛏️ 3 quartos</span>
+                  <div className="flex items-center gap-1">
+                    <Square size={14} className="text-gray-400" />
+                    <span>400 m²</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Bed size={14} className="text-gray-400" />
+                    <span>3 quartos</span>
+                  </div>
                 </div>
-                <div className="mb-3">
-                  <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                  <p className="text-lg font-bold text-gray-800">R$ 820.000</p>
-                  <p className="text-xs text-gray-500">em 3 imobiliárias</p>
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                    <p className="text-lg font-bold text-gray-800">R$820.000</p>
+                    <p className="text-xs text-gray-500">em 3 imobiliárias</p>
+                  </div>
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                    Ver preços
+                  </Button>
                 </div>
-                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
-                  Ver preços
-                </Button>
               </div>
             </div>
 
@@ -486,19 +497,30 @@ export default function HomePage() {
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-gray-800 mb-1">Casa de campo com piscina</h3>
-                <p className="text-sm text-gray-600 mb-3">📍 Rua Marte, Barueri - SP</p>
+                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
+                  <MapPin size={14} className="text-gray-400" />
+                  <span>Rua Marte, Barueri - SP</span>
+                </div>
                 <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <span>📐 400 m²</span>
-                  <span>🛏️ 3 quartos</span>
+                  <div className="flex items-center gap-1">
+                    <Square size={14} className="text-gray-400" />
+                    <span>400 m²</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Bed size={14} className="text-gray-400" />
+                    <span>3 quartos</span>
+                  </div>
                 </div>
-                <div className="mb-3">
-                  <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                  <p className="text-lg font-bold text-gray-800">R$ 820.000</p>
-                  <p className="text-xs text-gray-500">em 3 imobiliárias</p>
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                    <p className="text-lg font-bold text-gray-800">R$820.000</p>
+                    <p className="text-xs text-gray-500">em 3 imobiliárias</p>
+                  </div>
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                    Ver preços
+                  </Button>
                 </div>
-                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
-                  Ver preços
-                </Button>
               </div>
             </div>
 
@@ -518,19 +540,30 @@ export default function HomePage() {
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-gray-800 mb-1">Casa de campo com piscina</h3>
-                <p className="text-sm text-gray-600 mb-3">📍 Rua Marte, Barueri - SP</p>
+                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
+                  <MapPin size={14} className="text-gray-400" />
+                  <span>Rua Marte, Barueri - SP</span>
+                </div>
                 <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <span>📐 400 m²</span>
-                  <span>🛏️ 3 quartos</span>
+                  <div className="flex items-center gap-1">
+                    <Square size={14} className="text-gray-400" />
+                    <span>400 m²</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Bed size={14} className="text-gray-400" />
+                    <span>3 quartos</span>
+                  </div>
                 </div>
-                <div className="mb-3">
-                  <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                  <p className="text-lg font-bold text-gray-800">R$ 820.000</p>
-                  <p className="text-xs text-gray-500">em 3 imobiliárias</p>
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                    <p className="text-lg font-bold text-gray-800">R$820.000</p>
+                    <p className="text-xs text-gray-500">em 3 imobiliárias</p>
+                  </div>
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                    Ver preços
+                  </Button>
                 </div>
-                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
-                  Ver preços
-                </Button>
               </div>
             </div>
 
@@ -550,19 +583,30 @@ export default function HomePage() {
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-gray-800 mb-1">Casa de campo</h3>
-                <p className="text-sm text-gray-600 mb-3">📍 Rua Marte, Barueri - SP</p>
+                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
+                  <MapPin size={14} className="text-gray-400" />
+                  <span>Rua Marte, Barueri - SP</span>
+                </div>
                 <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <span>📐 400 m²</span>
-                  <span>🛏️ 3 quartos</span>
+                  <div className="flex items-center gap-1">
+                    <Square size={14} className="text-gray-400" />
+                    <span>400 m²</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Bed size={14} className="text-gray-400" />
+                    <span>3 quartos</span>
+                  </div>
                 </div>
-                <div className="mb-3">
-                  <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                  <p className="text-lg font-bold text-gray-800">R$ 820.000</p>
-                  <p className="text-xs text-gray-500">em 3 imobiliárias</p>
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                    <p className="text-lg font-bold text-gray-800">R$820.000</p>
+                    <p className="text-xs text-gray-500">em 3 imobiliárias</p>
+                  </div>
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                    Ver preços
+                  </Button>
                 </div>
-                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
-                  Ver preços
-                </Button>
               </div>
             </div>
           </div>
