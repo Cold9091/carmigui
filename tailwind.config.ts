@@ -68,9 +68,10 @@ export default {
         'angola-text': '#333333',
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "Open Sans", "sans-serif"],
+        sans: ["var(--font-sans)", "Poppins", "sans-serif"],
         serif: ["var(--font-serif)", "Georgia", "serif"],
         mono: ["var(--font-mono)", "Roboto Mono", "monospace"],
+        poppins: ["Poppins", "sans-serif"],
         roboto: ["Roboto", "sans-serif"],
         opensans: ["Open Sans", "sans-serif"],
       },

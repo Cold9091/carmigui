@@ -673,7 +673,7 @@ export default function HomePage() {
       <section className="section-spacing bg-gray-50">
         <div className="max-w-7xl mx-auto container-padding">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-roboto font-bold text-angola-primary mb-4">
+            <h2 className="text-4xl font-poppins font-bold text-angola-primary mb-4">
               Projetos em Destaque
             </h2>
             <p className="text-xl text-angola-text">
@@ -737,7 +737,7 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="section-spacing bg-angola-primary text-white">
         <div className="max-w-7xl mx-auto container-padding text-center">
-          <h2 className="text-4xl font-roboto font-bold mb-4">
+          <h2 className="text-4xl font-poppins font-bold mb-4">
             Pronto para Encontrar Seu Imóvel Ideal?
           </h2>
           <p className="text-xl opacity-90 mb-8 max-w-3xl mx-auto">
