@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowLeft } from "lucide-react";
+import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowLeft, Search, CheckCircle, Key } from "lucide-react";
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
 import type { Property, Project } from "@shared/schema";
@@ -322,6 +322,76 @@ export default function HomePage() {
                   Ver preços
                 </Button>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How Busca Casa Works */}
+      <section className="section-spacing bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <svg className="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="100" height="100" fill="url(#grid)" />
+          </svg>
+        </div>
+        
+        <div className="max-w-7xl mx-auto container-padding relative">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Entenda como o<br />Busca Casa funciona
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Busca Inteligente */}
+            <div className="bg-white text-gray-800 rounded-2xl p-8 shadow-xl">
+              <div className="flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-6">
+                <Search className="text-purple-600" size={32} />
+              </div>
+              <h3 className="text-xl font-bold mb-4 text-purple-900">
+                Busca Inteligente
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Busca Casa é uma ferramenta de busca vertical. Nosso objetivo é 
+                tornar mais fácil a sua busca por um novo lar.
+              </p>
+            </div>
+
+            {/* Imobiliárias confiáveis */}
+            <div className="bg-white text-gray-800 rounded-2xl p-8 shadow-xl">
+              <div className="flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-6">
+                <CheckCircle className="text-purple-600" size={32} />
+              </div>
+              <h3 className="text-xl font-bold mb-4 text-purple-900">
+                Imobiliárias confiáveis
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                No Busca Casa você pode pesquisar tranquilo. A gente 
+                faz uma análise rigorosa e estuda o histórico de cada 
+                casa, uma a uma, antes de te indicar.
+              </p>
+            </div>
+
+            {/* A casa certa pra você */}
+            <div className="bg-white text-gray-800 rounded-2xl p-8 shadow-xl">
+              <div className="flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-6">
+                <Key className="text-purple-600" size={32} />
+              </div>
+              <h3 className="text-xl font-bold mb-4 text-purple-900">
+                A casa certa pra você
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Com tantas opções, às vezes fica difícil escolher, 
+                né? Não no Busca Casa. Aqui você encontra 
+                informações suficientes e nossos especialistas estão 
+                sempre a postos para te ajudar.
+              </p>
             </div>
           </div>
         </div>
