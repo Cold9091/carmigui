@@ -12,6 +12,7 @@ export default function Navigation() {
   const navItems = [
     { href: "/imoveis?type=compra", label: "Compra" },
     { href: "/imoveis?type=aluguel", label: "Aluguel" },
+    { href: "/imoveis?type=condominio", label: "Condomínio" },
     { href: "/construcao", label: "Construção" },
   ];
 
