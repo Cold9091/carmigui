@@ -159,7 +159,7 @@ export default function PropertiesPage() {
                   <SelectValue placeholder="Selecione os quartos" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
+                  <SelectItem value="all">Todos</SelectItem>
                   <SelectItem value="1">1 quarto</SelectItem>
                   <SelectItem value="2">2 quartos</SelectItem>
                   <SelectItem value="3">3 quartos</SelectItem>
@@ -176,7 +176,7 @@ export default function PropertiesPage() {
                   <SelectValue placeholder="Selecione a localização" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas as localizações</SelectItem>
+                  <SelectItem value="all">Todas as localizações</SelectItem>
                   <SelectItem value="Barueri">Barueri - SP</SelectItem>
                   <SelectItem value="Luanda">Luanda</SelectItem>
                   <SelectItem value="Benguela">Benguela</SelectItem>
