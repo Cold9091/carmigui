@@ -12,7 +12,7 @@ export default function Navigation() {
   const navItems = [
     { href: "/imoveis?type=compra", label: "Compra" },
     { href: "/imoveis?type=aluguel", label: "Aluguel" },
-    { href: "/imoveis?featured=true", label: "Melhores ofertas" },
+    { href: "/construcao", label: "Construção" },
   ];
 
   const isActive = (href: string) => {
