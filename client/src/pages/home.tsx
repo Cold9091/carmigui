@@ -758,13 +758,13 @@ export default function HomePage() {
       </section>
 
       {/* Featured Projects */}
-      <section className="section-spacing bg-gray-50">
+      <section className="section-spacing bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white">
         <div className="max-w-7xl mx-auto container-padding">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-poppins font-bold text-angola-primary mb-4">
+            <h2 className="text-4xl font-poppins font-bold text-white mb-4">
               Projetos em Destaque
             </h2>
-            <p className="text-xl text-angola-text">
+            <p className="text-xl text-gray-200">
               Conheça alguns dos nossos projetos de construção realizados
             </p>
           </div>
@@ -786,10 +786,10 @@ export default function HomePage() {
           ) : featuredProjects.length === 0 ? (
             <div className="text-center py-12">
               <Hammer className="mx-auto text-gray-400 mb-4" size={64} />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+              <h3 className="text-xl font-semibold text-gray-200 mb-2">
                 Nenhum projeto em destaque encontrado
               </h3>
-              <p className="text-gray-500 mb-6">
+              <p className="text-gray-300 mb-6">
                 Ainda não há projetos em destaque. Consulte todo o nosso portfólio de construção.
               </p>
               <Link href="/construcao">
@@ -823,19 +823,19 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="section-spacing bg-angola-primary text-white">
+      <section className="section-spacing bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white">
         <div className="max-w-7xl mx-auto container-padding text-center">
           <h2 className="text-4xl font-poppins font-bold mb-4">
             Pronto para Encontrar Seu Imóvel Ideal?
           </h2>
-          <p className="text-xl opacity-90 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
             Entre em contacto connosco hoje mesmo e deixe-nos ajudá-lo a encontrar a propriedade perfeita
             ou realizar o projeto de construção dos seus sonhos.
           </p>
           <Link href="/contacto">
             <Button
               size="lg"
-              className="bg-angola-secondary hover:bg-angola-secondary/90 text-white px-8 py-4 text-lg"
+              className="bg-yellow-500 hover:bg-yellow-600 text-black px-8 py-4 text-lg font-semibold"
               data-testid="btn-contact-us"
             >
               Entrar em Contacto
