@@ -153,59 +153,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Services Overview */}
-      <section className="section-spacing bg-white">
-        <div className="max-w-7xl mx-auto container-padding">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-roboto font-bold text-angola-primary mb-4">
-              Nossos Serviços
-            </h2>
-            <p className="text-xl text-angola-text max-w-3xl mx-auto">
-              Oferecemos soluções completas em imobiliário e construção para atender todas as suas necessidades
-            </p>
-          </div>
 
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Real Estate Section */}
-            <div className="text-center">
-              <div className="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Home className="text-purple-600" size={40} />
-              </div>
-              <h3 className="text-2xl font-roboto font-bold text-angola-primary mb-4">
-                Área Imobiliária
-              </h3>
-              <p className="text-angola-text mb-6">
-                Encontre o imóvel perfeito com nossa vasta seleção de propriedades em toda Angola.
-                Casas, apartamentos, escritórios e terrenos das melhores localizações.
-              </p>
-              <Link href="/imoveis">
-                <Button className="btn-primary" data-testid="btn-explore-properties">
-                  Explorar Imóveis
-                </Button>
-              </Link>
-            </div>
-
-            {/* Construction Section */}
-            <div className="text-center">
-              <div className="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Hammer className="text-purple-600" size={40} />
-              </div>
-              <h3 className="text-2xl font-roboto font-bold text-angola-primary mb-4">
-                Área de Construção
-              </h3>
-              <p className="text-angola-text mb-6">
-                Transformamos sonhos em realidade com projetos de construção de alta qualidade.
-                Da concepção à conclusão, garantimos excelência em cada detalhe.
-              </p>
-              <Link href="/construcao">
-                <Button className="btn-primary" data-testid="btn-view-construction">
-                  Ver Projetos
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Os mais desejados do momento */}
       <section className="section-spacing bg-white">
