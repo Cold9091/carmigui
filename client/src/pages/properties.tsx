@@ -13,7 +13,7 @@ export default function PropertiesPage() {
     type: "Venda",
     bedrooms: "",
     location: "",
-    priceRange: [50, 980000],
+    priceRange: [25000, 490000000],
     style: "TODOS",
   });
 
@@ -23,8 +23,8 @@ export default function PropertiesPage() {
   if (filters.type) queryParams.append("type", filters.type);
   if (filters.location) queryParams.append("location", filters.location);
   if (filters.bedrooms) queryParams.append("bedrooms", filters.bedrooms);
-  if (filters.priceRange[0] > 50) queryParams.append("minPrice", filters.priceRange[0].toString());
-  if (filters.priceRange[1] < 980000) queryParams.append("maxPrice", filters.priceRange[1].toString());
+  if (filters.priceRange[0] > 25000) queryParams.append("minPrice", filters.priceRange[0].toString());
+  if (filters.priceRange[1] < 490000000) queryParams.append("maxPrice", filters.priceRange[1].toString());
 
   const queryString = queryParams.toString();
   const queryKey = queryString ? ["/api/properties", queryString] : ["/api/properties"];
@@ -54,60 +54,60 @@ export default function PropertiesPage() {
     {
       id: "1",
       title: "Casa de Vidro",
-      location: "Rua 1, Barueri - SP",
+      location: "Rua 1, Luanda - Angola",
       area: 812,
       bedrooms: 5,
-      price: "2020000",
+      price: "1010000000",
       images: ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
       modalidades: "em 2 modalidades"
     },
     {
       id: "2", 
       title: "Sobrado Minimalista",
-      location: "Rua 2, Barueri - SP",
+      location: "Rua 2, Benguela - Angola",
       area: 230,
       bedrooms: 3,
-      price: "500000",
+      price: "250000000",
       images: ["https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
       modalidades: "em 5 imobiliárias"
     },
     {
       id: "3",
       title: "Casa de campo",
-      location: "Rua 3, Barueri - SP", 
+      location: "Rua 3, Huambo - Angola", 
       area: 100,
       bedrooms: 2,
-      price: "200000",
+      price: "100000000",
       images: ["https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
       modalidades: "em 6 imobiliárias"
     },
     {
       id: "4",
       title: "Apartamento",
-      location: "Rua 4, Barueri - SP",
+      location: "Rua 4, Lobito - Angola",
       area: 68,
       bedrooms: 2,
-      price: "390000",
+      price: "195000000",
       images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
       modalidades: "em 3 imobiliárias"
     },
     {
       id: "5",
       title: "Casa de campo com piscina",
-      location: "Rua 5, Barueri - SP",
+      location: "Rua 5, Malanje - Angola",
       area: 400,
       bedrooms: 3,
-      price: "1000000",
+      price: "500000000",
       images: ["https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
       modalidades: "em 3 imobiliárias"
     },
     {
       id: "6",
       title: "Apartamento no centro",
-      location: "Rua 6, Barueri - SP",
+      location: "Rua 6, Cabinda - Angola",
       area: 400,
       bedrooms: 3,
-      price: "820000",
+      price: "410000000",
       images: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
       modalidades: "em 3 imobiliárias"
     }
@@ -177,9 +177,12 @@ export default function PropertiesPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas as localizações</SelectItem>
-                  <SelectItem value="Barueri">Barueri - SP</SelectItem>
                   <SelectItem value="Luanda">Luanda</SelectItem>
                   <SelectItem value="Benguela">Benguela</SelectItem>
+                  <SelectItem value="Huambo">Huambo</SelectItem>
+                  <SelectItem value="Lobito">Lobito</SelectItem>
+                  <SelectItem value="Malanje">Malanje</SelectItem>
+                  <SelectItem value="Cabinda">Cabinda</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -198,15 +201,15 @@ export default function PropertiesPage() {
             {/* Price Range Slider */}
             <div className="max-w-md mx-auto mb-8">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-sm text-gray-600">R${filters.priceRange[0]}</span>
-                <span className="text-sm text-gray-600">R${filters.priceRange[1].toLocaleString()}</span>
+                <span className="text-sm text-gray-600">Kz{filters.priceRange[0].toLocaleString()}</span>
+                <span className="text-sm text-gray-600">Kz{filters.priceRange[1].toLocaleString()}</span>
               </div>
               <Slider
                 value={filters.priceRange}
                 onValueChange={(value) => handleFilterChange("priceRange", value)}
-                max={980000}
-                min={50}
-                step={1000}
+                max={490000000}
+                min={25000}
+                step={5000000}
                 className="w-full"
               />
             </div>
@@ -248,7 +251,7 @@ export default function PropertiesPage() {
       {/* Properties Grid */}
       <div className="max-w-7xl mx-auto container-padding section-spacing">
         <h2 className="text-2xl font-bold text-gray-800 mb-8">
-          200 Imóveis à venda em Barueri - SP
+          200 Imóveis à venda em Angola
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -293,7 +296,7 @@ export default function PropertiesPage() {
                   <div>
                     <p className="text-xs text-gray-500 mb-1">A partir de</p>
                     <p className="text-lg font-bold text-gray-800">
-                      R${parseInt(property.price).toLocaleString()}
+                      Kz{parseInt(property.price).toLocaleString()}
                     </p>
                     <p className="text-xs text-gray-500">{property.modalidades}</p>
                   </div>
