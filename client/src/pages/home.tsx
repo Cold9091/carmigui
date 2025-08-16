@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight } from "lucide-react";
+import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowLeft } from "lucide-react";
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
 import type { Property, Project } from "@shared/schema";
@@ -207,67 +207,175 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Properties */}
+      {/* Os mais desejados do momento */}
       <section className="section-spacing bg-white">
         <div className="max-w-7xl mx-auto container-padding">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-roboto font-bold text-angola-primary mb-4">
-              Imóveis em Destaque
-            </h2>
-            <p className="text-xl text-angola-text">
-              Descubra as melhores propriedades disponíveis em Angola
-            </p>
+          <div className="flex justify-between items-start mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                Os mais desejados do momento
+              </h2>
+              <p className="text-gray-600">
+                Nosso algoritmo mostra as características dos imóveis mais desejados na sua região
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                data-testid="btn-ver-mais"
+              >
+                Ver mais
+              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full w-10 h-10 border-gray-300"
+                  data-testid="btn-prev"
+                >
+                  <ArrowLeft size={16} />
+                </Button>
+                <Button
+                  size="icon"
+                  className="rounded-full w-10 h-10 bg-purple-600 hover:bg-purple-700 text-white"
+                  data-testid="btn-next"
+                >
+                  <ArrowRight size={16} />
+                </Button>
+              </div>
+            </div>
           </div>
 
-          {propertiesLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="bg-gray-200 h-48 rounded-t-lg"></div>
-                  <div className="bg-white p-6 rounded-b-lg shadow">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                    <div className="h-8 bg-gray-200 rounded"></div>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Casa de Vidro */}
+            <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+              <div className="relative">
+                <img
+                  src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
+                  alt="Casa de Vidro"
+                  className="w-full h-48 object-cover"
+                />
+                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
+                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </button>
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-800 mb-1">Casa de Vidro</h3>
+                <p className="text-sm text-gray-600 mb-3">📍 Rua Marte, Júpiter - SP</p>
+                <div className="flex gap-4 text-sm text-gray-600 mb-4">
+                  <span>📐 812 m²</span>
+                  <span>🛏️ 5 quartos</span>
                 </div>
-              ))}
-            </div>
-          ) : featuredProperties.length === 0 ? (
-            <div className="text-center py-12">
-              <Building className="mx-auto text-gray-400 mb-4" size={64} />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                Nenhum imóvel em destaque encontrado
-              </h3>
-              <p className="text-gray-500 mb-6">
-                Ainda não há propriedades em destaque. Consulte todos os nossos imóveis disponíveis.
-              </p>
-              <Link href="/imoveis">
-                <Button className="btn-primary" data-testid="btn-view-all-properties">
-                  Ver Todos os Imóveis
+                <div className="mb-3">
+                  <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                  <p className="text-lg font-bold text-gray-800">R$ 2.020.000</p>
+                  <p className="text-xs text-gray-500">em 2 modalidades</p>
+                </div>
+                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
+                  Ver preços
                 </Button>
-              </Link>
+              </div>
             </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {featuredProperties.slice(0, 3).map((property) => (
-                  <PropertyCard key={property.id} property={property} />
-                ))}
+
+            {/* Sobrado Minimalista */}
+            <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+              <div className="relative">
+                <img
+                  src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
+                  alt="Sobrado Minimalista"
+                  className="w-full h-48 object-cover"
+                />
+                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
+                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </button>
               </div>
-              <div className="text-center mt-12">
-                <Link href="/imoveis">
-                  <Button
-                    size="lg"
-                    className="btn-secondary"
-                    data-testid="btn-view-all-properties"
-                  >
-                    Ver Todos os Imóveis
-                    <ArrowRight className="ml-2" size={20} />
-                  </Button>
-                </Link>
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-800 mb-1">Sobrado Minimalista</h3>
+                <p className="text-sm text-gray-600 mb-3">📍 Rua Marte, Saturno - SP</p>
+                <div className="flex gap-4 text-sm text-gray-600 mb-4">
+                  <span>📐 230 m²</span>
+                  <span>🛏️ 3 quartos</span>
+                </div>
+                <div className="mb-3">
+                  <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                  <p className="text-lg font-bold text-gray-800">R$ 500.000</p>
+                  <p className="text-xs text-gray-500">em 5 modalidades</p>
+                </div>
+                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
+                  Ver preços
+                </Button>
               </div>
-            </>
-          )}
+            </div>
+
+            {/* Casa de campo */}
+            <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+              <div className="relative">
+                <img
+                  src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
+                  alt="Casa de campo"
+                  className="w-full h-48 object-cover"
+                />
+                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
+                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </button>
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-800 mb-1">Casa de campo</h3>
+                <p className="text-sm text-gray-600 mb-3">📍 Rua Marte, Saturno - SP</p>
+                <div className="flex gap-4 text-sm text-gray-600 mb-4">
+                  <span>📐 100 m²</span>
+                  <span>🛏️ 2 quartos</span>
+                </div>
+                <div className="mb-3">
+                  <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                  <p className="text-lg font-bold text-gray-800">R$ 200.000</p>
+                  <p className="text-xs text-gray-500">em 6 modalidades</p>
+                </div>
+                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
+                  Ver preços
+                </Button>
+              </div>
+            </div>
+
+            {/* Apartamento */}
+            <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+              <div className="relative">
+                <img
+                  src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
+                  alt="Apartamento"
+                  className="w-full h-48 object-cover"
+                />
+                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
+                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </button>
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-800 mb-1">Apartamento</h3>
+                <p className="text-sm text-gray-600 mb-3">📍 Rua Marte, Saturno - SP</p>
+                <div className="flex gap-4 text-sm text-gray-600 mb-4">
+                  <span>📐 68 m²</span>
+                  <span>🛏️ 2 quartos</span>
+                </div>
+                <div className="mb-3">
+                  <p className="text-xs text-gray-500 mb-1">A partir de</p>
+                  <p className="text-lg font-bold text-gray-800">R$ 390.000</p>
+                  <p className="text-xs text-gray-500">em 8 modalidades</p>
+                </div>
+                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
+                  Ver preços
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
