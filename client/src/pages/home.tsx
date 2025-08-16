@@ -569,6 +569,106 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* O melhor de cada cidade */}
+      <section className="section-spacing bg-white">
+        <div className="max-w-7xl mx-auto container-padding">
+          <div className="flex justify-between items-start mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                O melhor de cada cidade
+              </h2>
+              <p className="text-gray-600">
+                O Busca Casa simplifica a busca do seu imóvel nessas cidades:
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                data-testid="btn-ver-mais-cidades"
+              >
+                Ver mais
+              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full w-10 h-10 border-gray-300"
+                  data-testid="btn-prev-cidades"
+                >
+                  <ArrowLeft size={16} />
+                </Button>
+                <Button
+                  size="icon"
+                  className="rounded-full w-10 h-10 bg-purple-600 hover:bg-purple-700 text-white"
+                  data-testid="btn-next-cidades"
+                >
+                  <ArrowRight size={16} />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* São Paulo */}
+            <Link href="/imoveis?city=sao-paulo" className="group">
+              <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1493729463353-a98e5c23a95b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+                  alt="São Paulo"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
+                  <span className="text-white font-bold text-xl">São Paulo</span>
+                </div>
+              </div>
+            </Link>
+
+            {/* Rio de Janeiro */}
+            <Link href="/imoveis?city=rio-de-janeiro" className="group">
+              <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1544737151821-6e4b99de3738?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+                  alt="Rio de Janeiro"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
+                  <span className="text-white font-bold text-xl">Rio de Janeiro</span>
+                </div>
+              </div>
+            </Link>
+
+            {/* Minas Gerais */}
+            <Link href="/imoveis?city=minas-gerais" className="group">
+              <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+                  alt="Minas Gerais"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
+                  <span className="text-white font-bold text-xl">Minas Gerais</span>
+                </div>
+              </div>
+            </Link>
+
+            {/* Salvador */}
+            <Link href="/imoveis?city=salvador" className="group">
+              <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+                  alt="Salvador"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
+                  <span className="text-white font-bold text-xl">Salvador</span>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Featured Projects */}
       <section className="section-spacing bg-gray-50">
         <div className="max-w-7xl mx-auto container-padding">
