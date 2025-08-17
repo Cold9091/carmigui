@@ -12,7 +12,7 @@ export default function Navigation() {
   const navItems = [
     { href: "/imoveis?type=venda", label: "Compra" },
     { href: "/imoveis?type=aluguel", label: "Aluguel" },
-    { href: "#", label: "Condomínio", disabled: true },
+    { href: "/condominios", label: "Condomínio" },
     { href: "/construcao", label: "Construção" },
   ];
 
@@ -51,24 +51,14 @@ export default function Navigation() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
-              item.disabled ? (
-                <span
-                  key={item.label}
-                  className="text-gray-500 font-medium cursor-not-allowed"
-                  data-testid={`nav-${item.label.toLowerCase()}`}
-                >
-                  {item.label}
-                </span>
-              ) : (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="text-white hover:text-purple-300 font-medium transition-colors"
-                  data-testid={`nav-${item.label.toLowerCase()}`}
-                >
-                  {item.label}
-                </Link>
-              )
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-white hover:text-purple-300 font-medium transition-colors"
+                data-testid={`nav-${item.label.toLowerCase()}`}
+              >
+                {item.label}
+              </Link>
             ))}
             <Button
               className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium"
@@ -103,25 +93,15 @@ export default function Navigation() {
                     </div>
                   </div>
                   {navItems.map((item) => (
-                    item.disabled ? (
-                      <span
-                        key={item.label}
-                        className="text-gray-500 px-4 py-2 rounded-lg font-medium cursor-not-allowed"
-                        data-testid={`mobile-nav-${item.label.toLowerCase()}`}
-                      >
-                        {item.label}
-                      </span>
-                    ) : (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="text-white hover:text-purple-300 px-4 py-2 rounded-lg font-medium transition-colors"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        data-testid={`mobile-nav-${item.label.toLowerCase()}`}
-                      >
-                        {item.label}
-                      </Link>
-                    )
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="text-white hover:text-purple-300 px-4 py-2 rounded-lg font-medium transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      data-testid={`mobile-nav-${item.label.toLowerCase()}`}
+                    >
+                      {item.label}
+                    </Link>
                   ))}
                   <Button
                     className="bg-purple-600 hover:bg-purple-700 text-white mx-4 mt-4"

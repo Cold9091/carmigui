@@ -1,4 +1,4 @@
-import { properties, projects, contacts, type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact } from "@shared/schema";
+import { properties, projects, contacts, condominiums, type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, ilike, or, sql } from "drizzle-orm";
 
@@ -21,6 +21,13 @@ export interface IStorage {
   getContacts(): Promise<Contact[]>;
   createContact(contact: InsertContact): Promise<Contact>;
   deleteContact(id: string): Promise<boolean>;
+
+  // Condominiums
+  getCondominiums(featured?: boolean): Promise<Condominium[]>;
+  getCondominium(id: string): Promise<Condominium | undefined>;
+  createCondominium(condominium: InsertCondominium): Promise<Condominium>;
+  updateCondominium(id: string, condominium: Partial<InsertCondominium>): Promise<Condominium | undefined>;
+  deleteCondominium(id: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -138,6 +145,44 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(contacts)
       .where(eq(contacts.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  // Condominiums
+  async getCondominiums(featured?: boolean): Promise<Condominium[]> {
+    if (featured !== undefined) {
+      return await db.select().from(condominiums).where(eq(condominiums.featured, featured)).orderBy(desc(condominiums.createdAt));
+    }
+    
+    return await db.select().from(condominiums).orderBy(desc(condominiums.createdAt));
+  }
+
+  async getCondominium(id: string): Promise<Condominium | undefined> {
+    const [condominium] = await db.select().from(condominiums).where(eq(condominiums.id, id));
+    return condominium;
+  }
+
+  async createCondominium(condominium: InsertCondominium): Promise<Condominium> {
+    const [newCondominium] = await db
+      .insert(condominiums)
+      .values(condominium)
+      .returning();
+    return newCondominium;
+  }
+
+  async updateCondominium(id: string, condominium: Partial<InsertCondominium>): Promise<Condominium | undefined> {
+    const [updatedCondominium] = await db
+      .update(condominiums)
+      .set({ ...condominium, updatedAt: new Date() })
+      .where(eq(condominiums.id, id))
+      .returning();
+    return updatedCondominium;
+  }
+
+  async deleteCondominium(id: string): Promise<boolean> {
+    const result = await db
+      .delete(condominiums)
+      .where(eq(condominiums.id, id));
     return (result.rowCount ?? 0) > 0;
   }
 }

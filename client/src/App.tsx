@@ -8,6 +8,8 @@ import Footer from "@/components/footer";
 import Home from "@/pages/home";
 import Properties from "@/pages/properties";
 import PropertyDetails from "@/pages/property-details";
+import Condominiums from "@/pages/condominiums";
+import CondominiumDetails from "@/pages/condominium-details";
 import Construction from "@/pages/construction";
 import ProjectDetails from "@/pages/project-details";
 import Admin from "@/pages/admin";
@@ -23,6 +25,8 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/imoveis" component={Properties} />
           <Route path="/imoveis/:id" component={PropertyDetails} />
+          <Route path="/condominios" component={Condominiums} />
+          <Route path="/condominios/:id" component={CondominiumDetails} />
           <Route path="/construcao" component={Construction} />
           <Route path="/projetos/:id" component={ProjectDetails} />
           <Route path="/admin" component={Admin} />

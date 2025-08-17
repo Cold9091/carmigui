@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertPropertySchema, insertProjectSchema, insertContactSchema } from "@shared/schema";
+import { insertPropertySchema, insertProjectSchema, insertContactSchema, insertCondominiumSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -185,6 +185,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting contact:", error);
       res.status(500).json({ message: "Failed to delete contact" });
+    }
+  });
+
+  // Condominiums routes
+  app.get("/api/condominiums", async (req, res) => {
+    try {
+      const featured = req.query.featured === "true" ? true : req.query.featured === "false" ? false : undefined;
+      const condominiums = await storage.getCondominiums(featured);
+      res.json(condominiums);
+    } catch (error) {
+      console.error("Error fetching condominiums:", error);
+      res.status(500).json({ message: "Failed to fetch condominiums" });
+    }
+  });
+
+  app.get("/api/condominiums/:id", async (req, res) => {
+    try {
+      const condominium = await storage.getCondominium(req.params.id);
+      if (!condominium) {
+        return res.status(404).json({ message: "Condominium not found" });
+      }
+      res.json(condominium);
+    } catch (error) {
+      console.error("Error fetching condominium:", error);
+      res.status(500).json({ message: "Failed to fetch condominium" });
+    }
+  });
+
+  app.post("/api/condominiums", async (req, res) => {
+    try {
+      const condominium = insertCondominiumSchema.parse(req.body);
+      const newCondominium = await storage.createCondominium(condominium);
+      res.status(201).json(newCondominium);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid condominium data", errors: error.errors });
+      }
+      console.error("Error creating condominium:", error);
+      res.status(500).json({ message: "Failed to create condominium" });
+    }
+  });
+
+  app.put("/api/condominiums/:id", async (req, res) => {
+    try {
+      const updates = insertCondominiumSchema.partial().parse(req.body);
+      const updatedCondominium = await storage.updateCondominium(req.params.id, updates);
+      if (!updatedCondominium) {
+        return res.status(404).json({ message: "Condominium not found" });
+      }
+      res.json(updatedCondominium);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid condominium data", errors: error.errors });
+      }
+      console.error("Error updating condominium:", error);
+      res.status(500).json({ message: "Failed to update condominium" });
+    }
+  });
+
+  app.delete("/api/condominiums/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteCondominium(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Condominium not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting condominium:", error);
+      res.status(500).json({ message: "Failed to delete condominium" });
     }
   });
 
