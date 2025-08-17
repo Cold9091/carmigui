@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,17 @@ export default function PropertiesPage() {
     priceRange: [25000, 490000000],
     style: "TODOS",
   });
+
+  // Read URL parameters to set initial filter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeFromUrl = urlParams.get('type');
+    if (typeFromUrl === 'aluguel') {
+      setFilters(prev => ({ ...prev, type: 'Aluguel' }));
+    } else if (typeFromUrl === 'venda') {
+      setFilters(prev => ({ ...prev, type: 'Venda' }));
+    }
+  }, []);
 
   const [selectedProperties, setSelectedProperties] = useState<Set<string>>(new Set());
 
