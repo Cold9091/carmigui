@@ -86,11 +86,11 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         </div>
         <Link href={`/imoveis/${property.id}`}>
           <Button 
-            className={`w-full ${property.status === "sold" ? "bg-gray-400 cursor-not-allowed" : "btn-primary"}`}
+            className={`w-full ${property.status === "sold" ? "bg-gray-400 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700 text-white"}`}
             disabled={property.status === "sold"}
             data-testid="btn-view-property-details"
           >
-            {property.status === "sold" ? "Vendido" : "Ver Detalhes"}
+            {property.status === "sold" ? "Vendido" : "Ver preços"}
           </Button>
         </Link>
       </CardContent>
