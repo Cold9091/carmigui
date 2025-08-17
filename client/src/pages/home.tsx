@@ -10,11 +10,11 @@ import type { Property, Project } from "@shared/schema";
 
 export default function HomePage() {
   const { data: featuredProperties = [], isLoading: propertiesLoading } = useQuery<Property[]>({
-    queryKey: ["/api/properties", "featured=true"],
+    queryKey: ["/api/properties", { featured: true }],
   });
 
   const { data: featuredProjects = [], isLoading: projectsLoading } = useQuery<Project[]>({
-    queryKey: ["/api/projects", "featured=true"],
+    queryKey: ["/api/projects", { featured: true }],
   });
 
   return (
