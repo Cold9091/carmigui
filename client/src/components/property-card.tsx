@@ -84,15 +84,24 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             {property.area} m²
           </div>
         </div>
-        <Link href={`/imoveis/${property.id}`}>
+        {property.status === "sold" ? (
           <Button 
-            className={`w-full ${property.status === "sold" ? "bg-gray-400 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700 text-white"}`}
-            disabled={property.status === "sold"}
+            className="w-full bg-gray-400 cursor-not-allowed text-white"
+            disabled={true}
             data-testid="btn-view-property-details"
           >
-            {property.status === "sold" ? "Vendido" : "Ver preços"}
+            Vendido
           </Button>
-        </Link>
+        ) : (
+          <Link href={`/imoveis/${property.id}`}>
+            <Button 
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+              data-testid="btn-view-property-details"
+            >
+              Ver preços
+            </Button>
+          </Link>
+        )}
       </CardContent>
     </Card>
   );
