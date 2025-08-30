@@ -1,161 +1,141 @@
-import { Building, Facebook, Instagram, Linkedin, Phone } from "lucide-react";
+import { Building, Facebook, Instagram, Linkedin } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white section-spacing">
-      <div className="max-w-7xl mx-auto container-padding">
+    <footer className="bg-gray-100 text-gray-600 py-12">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
-          <div>
-            <div className="text-2xl font-roboto font-bold mb-4">
-              <Building className="inline mr-2 text-angola-secondary" size={24} />
-              AngolaCasa
+          <div className="md:col-span-1">
+            <div className="flex items-center mb-4">
+              <Building className="mr-2 text-purple-600" size={24} />
+              <span className="text-xl text-gray-800">AngolaCasa</span>
             </div>
-            <p className="text-gray-200 mb-4">
-              Especialistas em imobiliário e construção de qualidade superior em Angola.
+            <p className="text-gray-600 text-sm leading-relaxed">
+              A AngolaCasa usa tecnologia e design para tornar a experiência de busca de 
+              imóvel mais simples e agradável.
             </p>
+          </div>
+
+          {/* AngolaCasa Links */}
+          <div>
+            <h3 className="text-gray-800 mb-4">AngolaCasa</h3>
+            <ul className="space-y-3 text-sm">
+              <li>
+                <Link
+                  href="/"
+                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  data-testid="footer-link-about"
+                >
+                  Sobre a AngolaCasa
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contacto"
+                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  data-testid="footer-link-contact"
+                >
+                  Contato
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/imoveis"
+                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  data-testid="footer-link-properties"
+                >
+                  Ferramentas
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal Links */}
+          <div>
+            <h3 className="text-gray-800 mb-4">Legal</h3>
+            <ul className="space-y-3 text-sm">
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  data-testid="footer-link-privacy"
+                >
+                  Política de privacidade
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  data-testid="footer-link-terms"
+                >
+                  Privacidade e Termos de Uso
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  data-testid="footer-link-cookies"
+                >
+                  Política de Cookies
+                </a>
+              </li>
+              <li>
+                <Link
+                  href="/faq"
+                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  data-testid="footer-link-faq"
+                >
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  data-testid="footer-link-partners"
+                >
+                  Nossos Parceiros
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Social Media */}
+          <div>
+            <h3 className="text-gray-800 mb-4">Siga-nos!</h3>
             <div className="flex space-x-4">
               <a
                 href="#"
-                className="text-gray-200 hover:text-yellow-400 transition-colors"
-                data-testid="social-facebook"
-              >
-                <Facebook size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-gray-200 hover:text-yellow-400 transition-colors"
+                className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-purple-600 hover:border-purple-600 transition-colors"
                 data-testid="social-instagram"
               >
                 <Instagram size={20} />
               </a>
               <a
                 href="#"
-                className="text-gray-200 hover:text-yellow-400 transition-colors"
+                className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-purple-600 hover:border-purple-600 transition-colors"
+                data-testid="social-facebook"
+              >
+                <Facebook size={20} />
+              </a>
+              <a
+                href="#"
+                className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-purple-600 hover:border-purple-600 transition-colors"
                 data-testid="social-linkedin"
               >
                 <Linkedin size={20} />
               </a>
-              <a
-                href="#"
-                className="text-gray-200 hover:text-yellow-400 transition-colors"
-                data-testid="social-whatsapp"
-              >
-                <Phone size={20} />
-              </a>
-            </div>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h3 className="text-lg font-roboto font-bold mb-4">Serviços</h3>
-            <ul className="space-y-2 text-gray-200">
-              <li>
-                <Link
-                  href="/imoveis"
-                  className="hover:text-yellow-400 transition-colors"
-                  data-testid="footer-link-properties"
-                >
-                  Venda de Imóveis
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/imoveis"
-                  className="hover:text-yellow-400 transition-colors"
-                  data-testid="footer-link-rental"
-                >
-                  Aluguel de Propriedades
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/construcao"
-                  className="hover:text-yellow-400 transition-colors"
-                  data-testid="footer-link-residential"
-                >
-                  Construção Residencial
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/construcao"
-                  className="hover:text-yellow-400 transition-colors"
-                  data-testid="footer-link-commercial"
-                >
-                  Projetos Comerciais
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Links */}
-          <div>
-            <h3 className="text-lg font-roboto font-bold mb-4">Links Úteis</h3>
-            <ul className="space-y-2 text-gray-200">
-              <li>
-                <Link
-                  href="/"
-                  className="hover:text-yellow-400 transition-colors"
-                  data-testid="footer-link-about"
-                >
-                  Sobre Nós
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-yellow-400 transition-colors"
-                  data-testid="footer-link-privacy"
-                >
-                  Política de Privacidade
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-yellow-400 transition-colors"
-                  data-testid="footer-link-terms"
-                >
-                  Termos de Serviço
-                </a>
-              </li>
-              <li>
-                <Link
-                  href="/contacto"
-                  className="hover:text-yellow-400 transition-colors"
-                  data-testid="footer-link-faq"
-                >
-                  FAQ
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h3 className="text-lg font-roboto font-bold mb-4">Contacto</h3>
-            <div className="space-y-2 text-gray-200">
-              <p className="flex items-center">
-                <span className="text-yellow-400 mr-2">📍</span>
-                Rua Comandante Che Guevara, 45<br />
-                Maianga, Luanda - Angola
-              </p>
-              <p className="flex items-center">
-                <span className="text-yellow-400 mr-2">📞</span>
-                +244 923 456 789
-              </p>
-              <p className="flex items-center">
-                <span className="text-yellow-400 mr-2">✉️</span>
-                info@angolacasa.ao
-              </p>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-500 mt-8 pt-8 text-center text-gray-200">
-          <p>&copy; 2024 AngolaCasa. Todos os direitos reservados.</p>
+        {/* Copyright */}
+        <div className="text-center mt-12 pt-8 border-t border-gray-200">
+          <p className="text-gray-500 text-sm">AngolaCasa® 2024</p>
         </div>
       </div>
     </footer>
