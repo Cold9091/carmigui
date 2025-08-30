@@ -28,10 +28,10 @@ export default function Navigation() {
           {/* Logo */}
           <Link href="/" className="flex items-center" data-testid="logo-link">
             <div className="text-xl font-roboto font-bold text-white flex items-center">
-              <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center mr-2">
-                <Building className="text-white" size={20} />
+              <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center mr-2 font-semibold">
+                CM
               </div>
-              AngolaCasa
+              CARMIGUI
             </div>
           </Link>
 
@@ -53,14 +53,14 @@ export default function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-white hover:text-purple-300 font-medium transition-colors"
+                className="text-white hover:text-yellow-300 font-medium transition-colors"
                 data-testid={`nav-${item.label.toLowerCase()}`}
               >
                 {item.label}
               </Link>
             ))}
             <Button
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium"
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium"
               data-testid="btn-login"
             >
               Entrar
@@ -95,7 +95,7 @@ export default function Navigation() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="text-white hover:text-purple-300 px-4 py-2 rounded-lg font-medium transition-colors"
+                      className="text-white hover:text-yellow-300 px-4 py-2 rounded-lg font-medium transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                       data-testid={`mobile-nav-${item.label.toLowerCase()}`}
                     >
@@ -103,7 +103,7 @@ export default function Navigation() {
                     </Link>
                   ))}
                   <Button
-                    className="bg-purple-600 hover:bg-purple-700 text-white mx-4 mt-4"
+                    className="bg-green-600 hover:bg-green-700 text-white mx-4 mt-4"
                     data-testid="btn-mobile-login"
                   >
                     Entrar

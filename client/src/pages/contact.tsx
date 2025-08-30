@@ -57,13 +57,13 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="bg-angola-accent section-spacing">
+      <div className="bg-carmigui-accent section-spacing">
         <div className="max-w-7xl mx-auto container-padding">
           <div className="text-center mb-16">
-            <h1 className="text-4xl font-roboto font-bold text-angola-primary mb-4">
+            <h1 className="text-4xl font-roboto font-bold text-carmigui-primary mb-4">
               Entre em Contacto
             </h1>
-            <p className="text-xl text-angola-text">
+            <p className="text-xl text-carmigui-text">
               Estamos aqui para ajudar a encontrar a solução perfeita para si
             </p>
           </div>
@@ -74,9 +74,9 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto container-padding">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <Card className="bg-angola-accent">
+            <Card className="bg-carmigui-accent">
               <CardContent className="p-8">
-                <h2 className="text-2xl font-roboto font-bold text-angola-primary mb-6">
+                <h2 className="text-2xl font-roboto font-bold text-carmigui-primary mb-6">
                   Envie-nos uma Mensagem
                 </h2>
                 
@@ -210,56 +210,54 @@ export default function ContactPage() {
             {/* Contact Information */}
             <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-roboto font-bold text-angola-primary mb-6">
+                <h2 className="text-2xl font-roboto font-bold text-carmigui-primary mb-6">
                   Informações de Contacto
                 </h2>
                 <div className="space-y-6">
                   <div className="flex items-start space-x-4">
-                    <div className="bg-angola-primary text-white p-3 rounded-lg">
+                    <div className="bg-carmigui-primary text-white p-3 rounded-lg">
                       <MapPin size={24} />
                     </div>
                     <div>
-                      <h3 className="font-bold text-angola-text mb-1">Endereço</h3>
-                      <p className="text-angola-text" data-testid="contact-address">
-                        Rua Comandante Che Guevara, 45<br />
-                        Maianga, Luanda - Angola
+                      <h3 className="font-bold text-carmigui-text mb-1">Endereço</h3>
+                      <p className="text-carmigui-text" data-testid="contact-address">
+                        Luanda, Angola
                       </p>
                     </div>
                   </div>
                   
                   <div className="flex items-start space-x-4">
-                    <div className="bg-angola-primary text-white p-3 rounded-lg">
+                    <div className="bg-carmigui-primary text-white p-3 rounded-lg">
                       <Phone size={24} />
                     </div>
                     <div>
-                      <h3 className="font-bold text-angola-text mb-1">Telefone</h3>
-                      <p className="text-angola-text" data-testid="contact-phone">
-                        +244 923 456 789<br />
-                        +244 912 345 678
+                      <h3 className="font-bold text-carmigui-text mb-1">Telefone</h3>
+                      <p className="text-carmigui-text" data-testid="contact-phone">
+                        945 806 968<br />
+                        957 970 662
                       </p>
                     </div>
                   </div>
                   
                   <div className="flex items-start space-x-4">
-                    <div className="bg-angola-primary text-white p-3 rounded-lg">
+                    <div className="bg-carmigui-primary text-white p-3 rounded-lg">
                       <Mail size={24} />
                     </div>
                     <div>
-                      <h3 className="font-bold text-angola-text mb-1">Email</h3>
-                      <p className="text-angola-text" data-testid="contact-email">
-                        info@angolacasa.ao<br />
-                        vendas@angolacasa.ao
+                      <h3 className="font-bold text-carmigui-text mb-1">Email</h3>
+                      <p className="text-carmigui-text" data-testid="contact-email">
+                        carmiguicomercialda@gmail.com
                       </p>
                     </div>
                   </div>
                   
                   <div className="flex items-start space-x-4">
-                    <div className="bg-angola-primary text-white p-3 rounded-lg">
+                    <div className="bg-carmigui-primary text-white p-3 rounded-lg">
                       <Clock size={24} />
                     </div>
                     <div>
-                      <h3 className="font-bold text-angola-text mb-1">Horário de Funcionamento</h3>
-                      <p className="text-angola-text" data-testid="contact-hours">
+                      <h3 className="font-bold text-carmigui-text mb-1">Horário de Funcionamento</h3>
+                      <p className="text-carmigui-text" data-testid="contact-hours">
                         Segunda a Sexta: 08:00 - 18:00<br />
                         Sábado: 09:00 - 14:00
                       </p>
@@ -270,32 +268,32 @@ export default function ContactPage() {
 
               {/* Social Media */}
               <div>
-                <h3 className="font-bold text-angola-text mb-4">Siga-nos nas Redes Sociais</h3>
+                <h3 className="font-bold text-carmigui-text mb-4">Siga-nos nas Redes Sociais</h3>
                 <div className="flex space-x-4">
                   <a
                     href="#"
-                    className="bg-angola-primary text-white p-3 rounded-lg hover:bg-angola-primary/90 transition-colors"
+                    className="bg-carmigui-primary text-white p-3 rounded-lg hover:bg-carmigui-primary/90 transition-colors"
                     data-testid="social-facebook"
                   >
                     <Facebook size={24} />
                   </a>
                   <a
                     href="#"
-                    className="bg-angola-primary text-white p-3 rounded-lg hover:bg-angola-primary/90 transition-colors"
+                    className="bg-carmigui-primary text-white p-3 rounded-lg hover:bg-carmigui-primary/90 transition-colors"
                     data-testid="social-instagram"
                   >
                     <Instagram size={24} />
                   </a>
                   <a
                     href="#"
-                    className="bg-angola-primary text-white p-3 rounded-lg hover:bg-angola-primary/90 transition-colors"
+                    className="bg-carmigui-primary text-white p-3 rounded-lg hover:bg-carmigui-primary/90 transition-colors"
                     data-testid="social-linkedin"
                   >
                     <Linkedin size={24} />
                   </a>
                   <a
                     href="#"
-                    className="bg-angola-primary text-white p-3 rounded-lg hover:bg-angola-primary/90 transition-colors"
+                    className="bg-carmigui-primary text-white p-3 rounded-lg hover:bg-carmigui-primary/90 transition-colors"
                     data-testid="social-whatsapp"
                   >
                     <Phone size={24} />
@@ -306,7 +304,7 @@ export default function ContactPage() {
               {/* Map placeholder */}
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="font-bold text-angola-text mb-4">Nossa Localização</h3>
+                  <h3 className="font-bold text-carmigui-text mb-4">Nossa Localização</h3>
                   <div className="bg-gray-200 h-64 rounded-lg flex items-center justify-center">
                     <p className="text-gray-500">Mapa interativo será adicionado aqui</p>
                   </div>

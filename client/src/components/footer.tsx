@@ -1,4 +1,4 @@
-import { Building, Facebook, Instagram, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Linkedin } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Footer() {
@@ -9,45 +9,56 @@ export default function Footer() {
           {/* Company Info */}
           <div className="md:col-span-1">
             <div className="flex items-center mb-4">
-              <Building className="mr-2 text-purple-600" size={24} />
-              <span className="text-xl text-gray-800">AngolaCasa</span>
+              <div className="w-8 h-8 bg-green-600 text-white rounded-lg flex items-center justify-center mr-2 font-semibold">
+                CM
+              </div>
+              <span className="text-xl text-gray-800">CARMIGUI</span>
             </div>
             <p className="text-gray-600 text-sm leading-relaxed">
-              A AngolaCasa usa tecnologia e design para tornar a experiência de busca de 
+              A CARMIGUI usa tecnologia e design para tornar a experiência de busca de 
               imóvel mais simples e agradável.
             </p>
           </div>
 
-          {/* AngolaCasa Links */}
+          {/* CARMIGUI Links */}
           <div>
-            <h3 className="text-gray-800 mb-4">AngolaCasa</h3>
+            <h3 className="text-gray-800 mb-4">CARMIGUI</h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link
                   href="/"
-                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  className="text-gray-600 hover:text-green-600 transition-colors"
                   data-testid="footer-link-about"
                 >
-                  Sobre a AngolaCasa
+                  Sobre a CARMIGUI
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/contacto"
-                  className="text-gray-600 hover:text-purple-600 transition-colors"
-                  data-testid="footer-link-contact"
+                <a
+                  href="tel:945806968"
+                  className="text-gray-600 hover:text-green-600 transition-colors"
+                  data-testid="footer-link-phone1"
                 >
-                  Contato
-                </Link>
+                  945 806 968
+                </a>
               </li>
               <li>
-                <Link
-                  href="/imoveis"
-                  className="text-gray-600 hover:text-purple-600 transition-colors"
-                  data-testid="footer-link-properties"
+                <a
+                  href="tel:957970662"
+                  className="text-gray-600 hover:text-green-600 transition-colors"
+                  data-testid="footer-link-phone2"
                 >
-                  Ferramentas
-                </Link>
+                  957 970 662
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:carmiguicomercialda@gmail.com"
+                  className="text-gray-600 hover:text-green-600 transition-colors"
+                  data-testid="footer-link-email"
+                >
+                  carmiguicomercialda@gmail.com
+                </a>
               </li>
             </ul>
           </div>
@@ -59,7 +70,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  className="text-gray-600 hover:text-green-600 transition-colors"
                   data-testid="footer-link-privacy"
                 >
                   Política de privacidade
@@ -68,7 +79,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  className="text-gray-600 hover:text-green-600 transition-colors"
                   data-testid="footer-link-terms"
                 >
                   Privacidade e Termos de Uso
@@ -77,7 +88,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  className="text-gray-600 hover:text-green-600 transition-colors"
                   data-testid="footer-link-cookies"
                 >
                   Política de Cookies
@@ -86,7 +97,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/faq"
-                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  className="text-gray-600 hover:text-green-600 transition-colors"
                   data-testid="footer-link-faq"
                 >
                   FAQ
@@ -95,7 +106,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-gray-600 hover:text-purple-600 transition-colors"
+                  className="text-gray-600 hover:text-green-600 transition-colors"
                   data-testid="footer-link-partners"
                 >
                   Nossos Parceiros
@@ -110,21 +121,21 @@ export default function Footer() {
             <div className="flex space-x-4">
               <a
                 href="#"
-                className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-purple-600 hover:border-purple-600 transition-colors"
+                className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-green-600 hover:border-green-600 transition-colors"
                 data-testid="social-instagram"
               >
                 <Instagram size={20} />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-purple-600 hover:border-purple-600 transition-colors"
+                className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-green-600 hover:border-green-600 transition-colors"
                 data-testid="social-facebook"
               >
                 <Facebook size={20} />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-purple-600 hover:border-purple-600 transition-colors"
+                className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-green-600 hover:border-green-600 transition-colors"
                 data-testid="social-linkedin"
               >
                 <Linkedin size={20} />
@@ -135,7 +146,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="text-center mt-12 pt-8 border-t border-gray-200">
-          <p className="text-gray-500 text-sm">AngolaCasa® 2024</p>
+          <p className="text-gray-500 text-sm">CARMIGUI® 2024</p>
         </div>
       </div>
     </footer>

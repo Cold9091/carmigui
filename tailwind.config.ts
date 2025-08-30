@@ -61,11 +61,11 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
-        // Angola specific colors
-        'angola-primary': '#2C5530',
-        'angola-secondary': '#D4AF37',
-        'angola-accent': '#E8F5E8',
-        'angola-text': '#333333',
+        // CARMIGUI specific colors
+        'carmigui-primary': '#2C5530',
+        'carmigui-secondary': '#D4AF37',
+        'carmigui-accent': '#E8F5E8',
+        'carmigui-text': '#333333',
       },
       fontFamily: {
         sans: ["var(--font-sans)", "Poppins", "sans-serif"],

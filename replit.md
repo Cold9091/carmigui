@@ -1,8 +1,13 @@
-# AngolaCasa Real Estate Platform
+# CARMIGUI Real Estate Platform
 
 ## Overview
 
-AngolaCasa is a full-stack real estate platform designed for the Angolan market, specializing in property listings and construction project showcases. The application provides a comprehensive solution for property management, construction portfolio display, and customer contact management. Built with modern web technologies, it features a responsive design with Portuguese language support and offers both public-facing pages and administrative functionality.
+CARMIGUI is a full-stack real estate platform designed for the Angolan market, specializing in property listings and construction project showcases. The application provides a comprehensive solution for property management, construction portfolio display, and customer contact management. Built with modern web technologies, it features a responsive design with Portuguese language support and offers both public-facing pages and administrative functionality.
+
+## Contact Information
+- **Phone**: 945 806 968 | 957 970 662
+- **Email**: carmiguicomercialda@gmail.com
+- **Brand Identity**: Green and yellow color scheme transmitting confidence, growth and accessibility
 
 ## User Preferences
 
@@ -11,7 +16,7 @@ Preferred communication style: Simple, everyday language.
 ## System Architecture
 
 ### Frontend Architecture
-The client-side application is built using **React 18** with **TypeScript** and follows a component-based architecture. The UI leverages **shadcn/ui** components built on top of **Radix UI primitives**, providing a consistent and accessible design system. **Tailwind CSS** handles styling with a custom theme supporting Angola-specific colors and branding.
+The client-side application is built using **React 18** with **TypeScript** and follows a component-based architecture. The UI leverages **shadcn/ui** components built on top of **Radix UI primitives**, providing a consistent and accessible design system. **Tailwind CSS** handles styling with a custom theme supporting CARMIGUI-specific colors and branding.
 
 **Key Frontend Decisions:**
 - **Wouter** for client-side routing instead of React Router, chosen for its lightweight footprint
@@ -75,7 +80,7 @@ The application uses a **design system approach** with:
 - **Tailwind CSS** for utility-first styling
 - **shadcn/ui** component library for consistent UI patterns
 - **Responsive design** with mobile-first approach
-- **Angola-specific color palette** reflecting local branding
+- **CARMIGUI-specific color palette** reflecting local branding with green and yellow tones
 - **Poppins font** as the single typography family across all text (headings, body, mono)
 
 ## External Dependencies
