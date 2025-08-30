@@ -20,7 +20,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white">
+      <section className="relative bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white">
         <div className="max-w-7xl mx-auto container-padding py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -186,7 +186,7 @@ export default function HomePage() {
                 </Button>
                 <Button
                   size="icon"
-                  className="rounded-full w-10 h-10 bg-purple-600 hover:bg-purple-700 text-white"
+                  className="rounded-full w-10 h-10 bg-green-600 hover:bg-green-700 text-white"
                   data-testid="btn-next"
                 >
                   <ArrowRight size={16} />
@@ -232,7 +232,7 @@ export default function HomePage() {
                     <p className="text-lg font-bold text-gray-800">1.000.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 2 modalidades</p>
                   </div>
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
                     Ver preços
                   </Button>
                 </div>
@@ -275,7 +275,7 @@ export default function HomePage() {
                     <p className="text-lg font-bold text-gray-800">250.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 5 modalidades</p>
                   </div>
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
                     Ver preços
                   </Button>
                 </div>
@@ -318,7 +318,7 @@ export default function HomePage() {
                     <p className="text-lg font-bold text-gray-800">100.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 6 modalidades</p>
                   </div>
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
                     Ver preços
                   </Button>
                 </div>
@@ -361,7 +361,7 @@ export default function HomePage() {
                     <p className="text-lg font-bold text-gray-800">195.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 8 modalidades</p>
                   </div>
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
                     Ver preços
                   </Button>
                 </div>
@@ -372,7 +372,7 @@ export default function HomePage() {
       </section>
 
       {/* How Busca Casa Works */}
-      <section className="section-spacing bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
+      <section className="section-spacing bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white relative overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
           <svg className="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -395,10 +395,10 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Busca Inteligente */}
             <div className="bg-white text-gray-800 rounded-2xl p-8 shadow-xl">
-              <div className="flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-6">
-                <Search className="text-purple-600" size={32} />
+              <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
+                <Search className="text-green-600" size={32} />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-purple-900">
+              <h3 className="text-xl font-bold mb-4 text-green-900">
                 Busca Inteligente
               </h3>
               <p className="text-gray-600 leading-relaxed">
@@ -409,10 +409,10 @@ export default function HomePage() {
 
             {/* Imobiliárias confiáveis */}
             <div className="bg-white text-gray-800 rounded-2xl p-8 shadow-xl">
-              <div className="flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-6">
-                <CheckCircle className="text-purple-600" size={32} />
+              <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
+                <CheckCircle className="text-green-600" size={32} />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-purple-900">
+              <h3 className="text-xl font-bold mb-4 text-green-900">
                 Imobiliárias confiáveis
               </h3>
               <p className="text-gray-600 leading-relaxed">
@@ -424,10 +424,10 @@ export default function HomePage() {
 
             {/* A casa certa pra você */}
             <div className="bg-white text-gray-800 rounded-2xl p-8 shadow-xl">
-              <div className="flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-6">
-                <Key className="text-purple-600" size={32} />
+              <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
+                <Key className="text-green-600" size={32} />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-purple-900">
+              <h3 className="text-xl font-bold mb-4 text-green-900">
                 A casa certa pra você
               </h3>
               <p className="text-gray-600 leading-relaxed">
@@ -472,7 +472,7 @@ export default function HomePage() {
                 </Button>
                 <Button
                   size="icon"
-                  className="rounded-full w-10 h-10 bg-purple-600 hover:bg-purple-700 text-white"
+                  className="rounded-full w-10 h-10 bg-green-600 hover:bg-green-700 text-white"
                   data-testid="btn-next-precos"
                 >
                   <ArrowRight size={16} />
@@ -518,7 +518,7 @@ export default function HomePage() {
                     <p className="text-lg font-bold text-gray-800">410.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 3 imobiliárias</p>
                   </div>
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
                     Ver preços
                   </Button>
                 </div>
@@ -561,7 +561,7 @@ export default function HomePage() {
                     <p className="text-lg font-bold text-gray-800">410.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 3 imobiliárias</p>
                   </div>
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
                     Ver preços
                   </Button>
                 </div>
@@ -604,7 +604,7 @@ export default function HomePage() {
                     <p className="text-lg font-bold text-gray-800">410.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 3 imobiliárias</p>
                   </div>
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
                     Ver preços
                   </Button>
                 </div>
@@ -647,7 +647,7 @@ export default function HomePage() {
                     <p className="text-lg font-bold text-gray-800">410.000 AKZ</p>
                     <p className="text-xs text-gray-500">em 3 imobiliárias</p>
                   </div>
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
                     Ver preços
                   </Button>
                 </div>
