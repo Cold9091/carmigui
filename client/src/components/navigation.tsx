@@ -10,8 +10,7 @@ export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { href: "/imoveis?type=venda", label: "Compra" },
-    { href: "/imoveis?type=aluguel", label: "Aluguel" },
+    { href: "/imoveis", label: "Imóveis" },
     { href: "/condominios", label: "Condomínio" },
     { href: "/construcao", label: "Construção" },
   ];

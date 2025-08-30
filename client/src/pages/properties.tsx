@@ -10,28 +10,15 @@ import type { Property } from "@shared/schema";
 
 export default function PropertiesPage() {
   const [filters, setFilters] = useState({
-    type: "Venda",
     bedrooms: "",
     location: "",
     priceRange: [25000, 490000000],
     style: "TODOS",
   });
 
-  // Read URL parameters to set initial filter
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const typeFromUrl = urlParams.get('type');
-    if (typeFromUrl === 'aluguel') {
-      setFilters(prev => ({ ...prev, type: 'Aluguel' }));
-    } else if (typeFromUrl === 'venda') {
-      setFilters(prev => ({ ...prev, type: 'Venda' }));
-    }
-  }, []);
-
   const [selectedProperties, setSelectedProperties] = useState<Set<string>>(new Set());
 
   const queryParams = new URLSearchParams();
-  if (filters.type) queryParams.append("type", filters.type);
   if (filters.location) queryParams.append("location", filters.location);
   if (filters.bedrooms) queryParams.append("bedrooms", filters.bedrooms);
   if (filters.priceRange[0] > 25000) queryParams.append("minPrice", filters.priceRange[0].toString());
@@ -148,19 +135,7 @@ export default function PropertiesPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-              <Select
-                value={filters.type}
-                onValueChange={(value) => handleFilterChange("type", value)}
-              >
-                <SelectTrigger data-testid="filter-type" className="bg-white">
-                  <SelectValue placeholder="Venda" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Venda">Venda</SelectItem>
-                  <SelectItem value="Aluguel">Aluguel</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
 
               <Select
                 value={filters.bedrooms}

@@ -25,7 +25,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
-                Encontre seu imóvel em um único lugar
+                Encontre seu imóvel ideal em Luanda
               </h1>
               <p className="text-lg md:text-xl mb-8 text-gray-200">
                 São milhares de casas e apartamentos com toda a facilidade e a assessoria de corretores especializados.
