@@ -37,8 +37,8 @@
   --sidebar-border: hsl(0, 0%, 89%);
   --sidebar-ring: hsl(123, 33%, 25%);
   --font-sans: 'Poppins', sans-serif;
-  --font-serif: Georgia, serif;
-  --font-mono: 'Roboto Mono', monospace;
+  --font-serif: 'Poppins', sans-serif;
+  --font-mono: 'Poppins', sans-serif;
   --radius: 0.5rem;
 }
 
@@ -82,11 +82,11 @@
   }
 
   .font-roboto {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Poppins', sans-serif;
   }
 
   .font-opensans {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
   }
 }
 

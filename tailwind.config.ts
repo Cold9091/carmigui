@@ -69,11 +69,11 @@ export default {
       },
       fontFamily: {
         sans: ["var(--font-sans)", "Poppins", "sans-serif"],
-        serif: ["var(--font-serif)", "Georgia", "serif"],
-        mono: ["var(--font-mono)", "Roboto Mono", "monospace"],
+        serif: ["var(--font-serif)", "Poppins", "sans-serif"],
+        mono: ["var(--font-mono)", "Poppins", "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
-        roboto: ["Roboto", "sans-serif"],
-        opensans: ["Open Sans", "sans-serif"],
+        roboto: ["Poppins", "sans-serif"],
+        opensans: ["Poppins", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

@@ -76,6 +76,7 @@ The application uses a **design system approach** with:
 - **shadcn/ui** component library for consistent UI patterns
 - **Responsive design** with mobile-first approach
 - **Angola-specific color palette** reflecting local branding
+- **Poppins font** as the single typography family across all text (headings, body, mono)
 
 ## External Dependencies
 
