@@ -688,7 +688,7 @@ export default function HomePage() {
                 </Button>
                 <Button
                   size="icon"
-                  className="rounded-full w-10 h-10 bg-purple-600 hover:bg-purple-700 text-white"
+                  className="rounded-full w-10 h-10 bg-green-600 hover:bg-green-700 text-white"
                   data-testid="btn-next-cidades"
                 >
                   <ArrowRight size={16} />
@@ -758,7 +758,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Projects */}
-      <section className="section-spacing bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white">
+      <section className="section-spacing bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white">
         <div className="max-w-7xl mx-auto container-padding">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-poppins font-bold text-white mb-4">
@@ -823,7 +823,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="section-spacing bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white">
+      <section className="section-spacing bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white">
         <div className="max-w-7xl mx-auto container-padding text-center">
           <h2 className="text-4xl font-poppins font-bold mb-4">
             Pronto para Encontrar Seu Imóvel Ideal?

@@ -103,7 +103,7 @@ export default function PropertyDetailsPage() {
       <div className="bg-white border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto container-padding py-4">
           <div className="flex items-center justify-between">
-            <Link href="/imoveis" className="inline-flex items-center text-purple-600 hover:text-purple-700 transition-colors">
+            <Link href="/imoveis" className="inline-flex items-center text-green-600 hover:text-green-700 transition-colors">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar aos Imóveis
             </Link>
@@ -261,11 +261,11 @@ export default function PropertyDetailsPage() {
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="text-sm text-gray-600">A partir de</p>
-                            <p className="text-lg font-bold text-purple-600">{formatPrice(prop.price)}</p>
+                            <p className="text-lg font-bold text-green-600">{formatPrice(prop.price)}</p>
                             <p className="text-xs text-gray-500">em 3 modalidades</p>
                           </div>
                           <Link href={`/imoveis/${prop.id}`}>
-                            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+                            <Button className="bg-green-600 hover:bg-green-700 text-white">
                               Ver preços
                             </Button>
                           </Link>
@@ -318,7 +318,7 @@ export default function PropertyDetailsPage() {
                   Quer saber mais? Acompanhe a variação de preços dos últimos 6 meses
                 </p>
                 
-                <Button variant="outline" className="w-full text-purple-600 border-purple-600 hover:bg-purple-50">
+                <Button variant="outline" className="w-full text-green-600 border-green-600 hover:bg-green-50">
                   Ver histórico completo
                 </Button>
               </CardContent>
@@ -334,7 +334,7 @@ export default function PropertyDetailsPage() {
                 <div className="space-y-3">
                   {[
                     { name: "Lopes", logo: "bg-red-500", price: property.price },
-                    { name: "OLX", logo: "bg-purple-500", price: property.price },
+                    { name: "OLX", logo: "bg-green-500", price: property.price },
                     { name: "5ª ANDAR", logo: "bg-blue-500", price: property.price },
                     { name: "ZAP", logo: "bg-teal-500", price: property.price },
                     { name: "VivaReal", logo: "bg-blue-600", price: property.price },
@@ -353,7 +353,7 @@ export default function PropertyDetailsPage() {
                           </p>
                         </div>
                       </div>
-                      <Button className="bg-purple-600 hover:bg-purple-700 text-white text-sm px-4">
+                      <Button className="bg-green-600 hover:bg-green-700 text-white text-sm px-4">
                         Ir à imobiliária
                       </Button>
                     </div>
@@ -392,7 +392,7 @@ export default function PropertyDetailsPage() {
                   <div className="absolute top-4 left-4 w-2 h-2 bg-red-500 rounded-full"></div>
                   <div className="absolute bottom-8 right-8 w-2 h-2 bg-blue-500 rounded-full"></div>
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="w-4 h-4 bg-purple-600 rounded-full border-2 border-white shadow-lg"></div>
+                    <div className="w-4 h-4 bg-green-600 rounded-full border-2 border-white shadow-lg"></div>
                   </div>
                 </div>
                 
@@ -410,7 +410,7 @@ export default function PropertyDetailsPage() {
                 </h3>
                 
                 <div className="space-y-3">
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
                     <Phone className="h-4 w-4 mr-2" />
                     Ligar para Imobiliária
                   </Button>

@@ -71,7 +71,7 @@ export default function CondominiumDetailsPage() {
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto container-padding py-4">
-          <Link href="/condominios" className="inline-flex items-center text-purple-600 hover:text-purple-700 transition-colors">
+          <Link href="/condominios" className="inline-flex items-center text-green-600 hover:text-green-700 transition-colors">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Voltar aos Condomínios
           </Link>
@@ -93,7 +93,7 @@ export default function CondominiumDetailsPage() {
                   {statusLabels[condominium.status as keyof typeof statusLabels]}
                 </Badge>
                 {condominium.featured && (
-                  <Badge className="bg-purple-600 text-white border-0">
+                  <Badge className="bg-green-600 text-white border-0">
                     Destaque
                   </Badge>
                 )}
@@ -126,8 +126,8 @@ export default function CondominiumDetailsPage() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Informações Principais</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex items-center">
-                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
-                      <Users className="h-6 w-6 text-purple-600" />
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                      <Users className="h-6 w-6 text-green-600" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Total de Unidades</p>
@@ -212,7 +212,7 @@ export default function CondominiumDetailsPage() {
             <Card>
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Faixa de Preço</h3>
-                <p className="text-2xl font-bold text-purple-600 mb-4">
+                <p className="text-2xl font-bold text-green-600 mb-4">
                   {condominium.priceRange}
                 </p>
                 <p className="text-sm text-gray-600 mb-6">
@@ -230,7 +230,7 @@ export default function CondominiumDetailsPage() {
                 </p>
                 
                 <div className="space-y-4">
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
                     <Phone className="h-4 w-4 mr-2" />
                     Ligar Agora
                   </Button>

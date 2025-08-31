@@ -208,7 +208,7 @@ export default function PropertiesPage() {
                   <button className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
                     ←
                   </button>
-                  <button className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center">
+                  <button className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center">
                     →
                   </button>
                 </div>
@@ -221,8 +221,8 @@ export default function PropertiesPage() {
                     onClick={() => handleFilterChange("style", style)}
                     className={`px-6 py-3 border rounded-lg font-medium ${
                       filters.style === style
-                        ? "bg-purple-600 text-white border-purple-600"
-                        : "bg-white text-gray-700 border-gray-300 hover:border-purple-600"
+                        ? "bg-green-600 text-white border-green-600"
+                        : "bg-white text-gray-700 border-gray-300 hover:border-green-600"
                     }`}
                   >
                     {style}
@@ -287,7 +287,7 @@ export default function PropertiesPage() {
                     <p className="text-xs text-gray-500">{property.modalidades}</p>
                   </div>
                   <Button 
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium"
                     data-testid={`btn-ver-precos-${property.id}`}
                   >
                     Ver preços

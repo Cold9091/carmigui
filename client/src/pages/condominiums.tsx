@@ -39,7 +39,7 @@ export default function CondominiumsPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white">
+      <section className="relative bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white">
         <div className="max-w-7xl mx-auto container-padding py-16">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
@@ -115,8 +115,8 @@ export default function CondominiumsPage() {
         <div className="max-w-7xl mx-auto container-padding">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Building2 className="h-8 w-8 text-purple-600" />
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Building2 className="h-8 w-8 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 Projetos Exclusivos
@@ -127,8 +127,8 @@ export default function CondominiumsPage() {
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-purple-600" />
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="h-8 w-8 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 Qualidade Garantida
@@ -139,8 +139,8 @@ export default function CondominiumsPage() {
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin className="h-8 w-8 text-purple-600" />
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MapPin className="h-8 w-8 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 Localizações Premium
@@ -184,7 +184,7 @@ function CondominiumCard({ condominium }: { condominium: Condominium }) {
         </div>
         {condominium.featured && (
           <div className="absolute top-4 right-4">
-            <Badge className="bg-purple-600 text-white border-0">
+            <Badge className="bg-green-600 text-white border-0">
               Destaque
             </Badge>
           </div>
@@ -192,7 +192,7 @@ function CondominiumCard({ condominium }: { condominium: Condominium }) {
       </div>
       
       <CardContent className="p-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
+        <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">
           {condominium.name}
         </h3>
         
@@ -222,7 +222,7 @@ function CondominiumCard({ condominium }: { condominium: Condominium }) {
         
         <div className="mb-4">
           <span className="text-sm text-gray-600">Faixa de preço:</span>
-          <p className="text-lg font-semibold text-purple-600">
+          <p className="text-lg font-semibold text-green-600">
             {condominium.priceRange}
           </p>
         </div>
@@ -245,7 +245,7 @@ function CondominiumCard({ condominium }: { condominium: Condominium }) {
         )}
         
         <Link href={`/condominios/${condominium.id}`}>
-          <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white group">
+          <Button className="w-full bg-green-600 hover:bg-green-700 text-white group">
             Ver Detalhes
             <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </Button>
