@@ -22,7 +22,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-black text-white sticky top-0 z-50">
+    <nav className="bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white sticky top-0 z-50">
       <div className="max-w-7xl mx-auto container-padding">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -80,7 +80,7 @@ export default function Navigation() {
                   <Menu size={24} />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-64 bg-black text-white">
+              <SheetContent side="right" className="w-64 bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white">
                 <div className="flex flex-col space-y-4 mt-8">
                   <div className="mb-4">
                     <div className="relative">

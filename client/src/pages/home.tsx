@@ -21,7 +21,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white">
-        <div className="max-w-7xl mx-auto container-padding py-20">
+        <div className="max-w-7xl mx-auto container-padding pt-8 pb-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
