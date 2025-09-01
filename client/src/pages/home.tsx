@@ -804,7 +804,13 @@ export default function HomePage() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className={`grid gap-8 ${
+                featuredCondominiums.length === 1 
+                  ? 'grid-cols-1 max-w-md mx-auto' 
+                  : featuredCondominiums.length === 2 
+                  ? 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto' 
+                  : 'grid-cols-1 md:grid-cols-3'
+              }`}>
                 {featuredCondominiums.slice(0, 3).map((condominium) => (
                   <FeaturedCondominiumCard key={condominium.id} condominium={condominium} />
                 ))}
