@@ -3,6 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Bed, Bath, Maximize } from "lucide-react";
 import { Link } from "wouter";
+import { VirtualTourBadge, VirtualTourViewer } from "@/components/virtual-tour-viewer";
+import { Eye } from "lucide-react";
 import type { Property } from "@shared/schema";
 
 interface PropertyCardProps {
@@ -44,11 +46,36 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           className="w-full h-48 object-cover"
           data-testid="property-image"
         />
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-4 right-4 flex flex-col gap-2">
           {property.featured && (
             <Badge className="bg-angola-secondary text-white">Destaque</Badge>
           )}
+          {property.virtualTourUrl && (
+            <VirtualTourBadge />
+          )}
         </div>
+        
+        {property.virtualTourUrl && (
+          <div className="absolute top-4 left-4">
+            <VirtualTourViewer
+              tourUrl={property.virtualTourUrl}
+              propertyTitle={property.title}
+              trigger={
+                <button
+                  className="w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-105"
+                  data-testid="btn-virtual-tour-icon"
+                  title="Tour Virtual 3D"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
+                  <Eye size={14} />
+                </button>
+              }
+            />
+          </div>
+        )}
         <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-lg">
           <span className="font-semibold" data-testid="property-price">
             {formatPrice(property.price)}

@@ -14,6 +14,7 @@ export const properties = pgTable("properties", {
   bathrooms: integer("bathrooms"),
   area: integer("area").notNull(), // in square meters
   images: text("images").array().default([]),
+  virtualTourUrl: text("virtual_tour_url"), // URL for 3D/virtual tour
   status: text("status").notNull().default("available"), // available, sold, rented
   featured: boolean("featured").default(false),
   createdAt: timestamp("created_at").defaultNow(),

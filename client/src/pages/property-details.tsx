@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, MapPin, Bed, Bath, Maximize, Phone, Mail, Calendar, ChevronLeft, ChevronRight, Heart, Share2, Building, Home, TrendingUp, Eye } from "lucide-react";
+import { VirtualTourViewer, VirtualTourBadge } from "@/components/virtual-tour-viewer";
 import { Link } from "wouter";
 import { useState } from "react";
 import type { Property } from "@shared/schema";
@@ -410,6 +411,19 @@ export default function PropertyDetailsPage() {
                 </h3>
                 
                 <div className="space-y-3">
+                  {property.virtualTourUrl && (
+                    <VirtualTourViewer
+                      tourUrl={property.virtualTourUrl}
+                      propertyTitle={property.title}
+                      trigger={
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                          <Eye className="h-4 w-4 mr-2" />
+                          Tour Virtual 3D
+                        </Button>
+                      }
+                    />
+                  )}
+                  
                   <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
                     <Phone className="h-4 w-4 mr-2" />
                     Ligar para Imobiliária
