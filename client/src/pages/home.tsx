@@ -3,10 +3,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowLeft, Search, CheckCircle, Key, Square } from "lucide-react";
+import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowLeft, Search, CheckCircle, Key, Square, Users } from "lucide-react";
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
-import type { Property, Project } from "@shared/schema";
+import type { Property, Project, Condominium } from "@shared/schema";
 
 export default function HomePage() {
   const { data: featuredProperties = [], isLoading: propertiesLoading } = useQuery<Property[]>({
@@ -15,6 +15,10 @@ export default function HomePage() {
 
   const { data: featuredProjects = [], isLoading: projectsLoading } = useQuery<Project[]>({
     queryKey: ["/api/projects", { featured: true }],
+  });
+
+  const { data: featuredCondominiums = [], isLoading: condominiumsLoading } = useQuery<Condominium[]>({
+    queryKey: ["/api/condominiums", { featured: true }],
   });
 
   return (
@@ -757,62 +761,61 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Projects */}
-      <section className="section-spacing bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white">
-        <div className="max-w-7xl mx-auto container-padding">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-poppins font-bold text-white mb-4">
-              Projetos em Destaque
+      {/* Featured Condominiums */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Condomínios em Destaque
             </h2>
-            <p className="text-xl text-gray-200">
-              Conheça alguns dos nossos projetos de construção realizados
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Conheça toda nossa carteira de empreendimentos residenciais, desde centralidades modernas até bairros consolidados de Luanda.
             </p>
           </div>
 
-          {projectsLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {[...Array(2)].map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="bg-gray-200 h-64 rounded-t-lg"></div>
-                  <div className="bg-white p-8 rounded-b-lg shadow">
-                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-full mb-6"></div>
+          {condominiumsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden animate-pulse">
+                  <div className="h-48 bg-gray-200"></div>
+                  <div className="p-4">
+                    <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
                     <div className="h-10 bg-gray-200 rounded"></div>
                   </div>
                 </div>
               ))}
             </div>
-          ) : featuredProjects.length === 0 ? (
+          ) : featuredCondominiums.length === 0 ? (
             <div className="text-center py-12">
-              <Hammer className="mx-auto text-gray-400 mb-4" size={64} />
-              <h3 className="text-xl font-semibold text-gray-200 mb-2">
-                Nenhum projeto em destaque encontrado
+              <Building className="mx-auto text-gray-400 mb-4" size={64} />
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                Nenhum condomínio em destaque encontrado
               </h3>
-              <p className="text-gray-300 mb-6">
-                Ainda não há projetos em destaque. Consulte todo o nosso portfólio de construção.
+              <p className="text-gray-500 mb-6">
+                Ainda não há condomínios em destaque. Consulte todos os nossos empreendimentos.
               </p>
-              <Link href="/construcao">
-                <Button className="btn-primary" data-testid="btn-view-all-projects">
-                  Ver Todos os Projetos
+              <Link href="/condominios">
+                <Button className="bg-green-600 hover:bg-green-700 text-white" data-testid="btn-view-all-condominiums">
+                  Ver Todos os Condomínios
                 </Button>
               </Link>
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {featuredProjects.slice(0, 2).map((project) => (
-                  <ProjectCard key={project.id} project={project} />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {featuredCondominiums.slice(0, 3).map((condominium) => (
+                  <FeaturedCondominiumCard key={condominium.id} condominium={condominium} />
                 ))}
               </div>
               <div className="text-center mt-12">
-                <Link href="/construcao">
+                <Link href="/condominios">
                   <Button
-                    size="lg"
-                    className="btn-secondary"
-                    data-testid="btn-view-all-projects"
+                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-medium"
+                    data-testid="btn-view-all-condominiums"
                   >
-                    Ver Todos os Projetos
+                    Ver Todos os Condomínios
                     <ArrowRight className="ml-2" size={20} />
                   </Button>
                 </Link>
@@ -844,6 +847,60 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
+    </div>
+  );
+}
+
+function FeaturedCondominiumCard({ condominium }: { condominium: Condominium }) {
+  return (
+    <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+      <div className="relative">
+        <img
+          src={(condominium.images && condominium.images[0]) || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"}
+          alt={condominium.name}
+          className="w-full h-48 object-cover"
+        />
+        <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
+          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
+      </div>
+      <div className="p-4">
+        <h3 className="font-semibold text-gray-800 mb-1">{condominium.name}</h3>
+        <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
+          <MapPin size={14} className="text-gray-400" />
+          <span>{condominium.centralityOrDistrict} • {condominium.location}</span>
+        </div>
+        <div className="flex gap-4 text-sm text-gray-600 mb-4">
+          <div className="flex items-center gap-1">
+            <Users size={14} className="text-gray-400" />
+            <span>{condominium.totalUnits} unidades</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Home size={14} className="text-gray-400" />
+            <span>{condominium.availableUnits} disponíveis</span>
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs text-gray-500 mb-1">Faixa de preço</p>
+            <p className="text-lg font-bold text-gray-800">
+              {condominium.priceRange}
+            </p>
+            <p className="text-xs text-gray-500">{condominium.developmentYear}</p>
+          </div>
+          <Link href={`/condominios/${condominium.id}`}>
+            <Button 
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium"
+              data-testid={`btn-ver-detalhes-${condominium.id}`}
+            >
+              Ver Detalhes
+            </Button>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
