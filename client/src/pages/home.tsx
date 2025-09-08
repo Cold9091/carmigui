@@ -10,7 +10,7 @@ import type { Property, Project, Condominium } from "@shared/schema";
 
 export default function HomePage() {
   const { data: featuredProperties = [], isLoading: propertiesLoading } = useQuery<Property[]>({
-    queryKey: ["/api/properties", { featured: true }],
+    queryKey: ["/api/properties", { featured: "true" }],
   });
 
   const { data: featuredProjects = [], isLoading: projectsLoading } = useQuery<Project[]>({
@@ -199,179 +199,45 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Casa de Vidro */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Casa de Vidro"
-                  className="w-full h-48 object-cover"
-                />
-                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </button>
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">Casa de Vidro</h3>
-                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
-                  <MapPin size={14} className="text-gray-400" />
-                  <span>Rua Marte, Júpiter - SP</span>
-                </div>
-                <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Square size={14} className="text-gray-400" />
-                    <span>812 m²</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Bed size={14} className="text-gray-400" />
-                    <span>5 quartos</span>
+          {propertiesLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden animate-pulse">
+                  <div className="h-48 bg-gray-200"></div>
+                  <div className="p-6">
+                    <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+                    <div className="flex gap-4 mb-4">
+                      <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                    </div>
+                    <div className="h-10 bg-gray-200 rounded"></div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">1.000.000 AKZ</p>
-                    <p className="text-xs text-gray-500">em 2 modalidades</p>
-                  </div>
-                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
-                    Ver preços
-                  </Button>
-                </div>
-              </div>
+              ))}
             </div>
-
-            {/* Sobrado Minimalista */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Sobrado Minimalista"
-                  className="w-full h-48 object-cover"
-                />
-                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </button>
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">Sobrado Minimalista</h3>
-                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
-                  <MapPin size={14} className="text-gray-400" />
-                  <span>Rua Marte, Saturno - SP</span>
-                </div>
-                <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Square size={14} className="text-gray-400" />
-                    <span>230 m²</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Bed size={14} className="text-gray-400" />
-                    <span>3 quartos</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">250.000 AKZ</p>
-                    <p className="text-xs text-gray-500">em 5 modalidades</p>
-                  </div>
-                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
-                    Ver preços
-                  </Button>
-                </div>
-              </div>
+          ) : featuredProperties.length === 0 ? (
+            <div className="text-center py-12">
+              <Home className="mx-auto text-gray-400 mb-4" size={64} />
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                Nenhum imóvel em destaque encontrado
+              </h3>
+              <p className="text-gray-500 mb-6">
+                Ainda não há imóveis em destaque. Veja todos os nossos imóveis disponíveis.
+              </p>
+              <Link href="/imoveis">
+                <Button className="bg-green-600 hover:bg-green-700 text-white" data-testid="btn-view-all-properties">
+                  Ver Todos os Imóveis
+                </Button>
+              </Link>
             </div>
-
-            {/* Casa de campo */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Casa de campo"
-                  className="w-full h-48 object-cover"
-                />
-                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </button>
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">Casa de campo</h3>
-                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
-                  <MapPin size={14} className="text-gray-400" />
-                  <span>Rua Marte, Saturno - SP</span>
-                </div>
-                <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Square size={14} className="text-gray-400" />
-                    <span>100 m²</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Bed size={14} className="text-gray-400" />
-                    <span>2 quartos</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">100.000 AKZ</p>
-                    <p className="text-xs text-gray-500">em 6 modalidades</p>
-                  </div>
-                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
-                    Ver preços
-                  </Button>
-                </div>
-              </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProperties.slice(0, 4).map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
             </div>
-
-            {/* Apartamento */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Apartamento"
-                  className="w-full h-48 object-cover"
-                />
-                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </button>
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">Apartamento</h3>
-                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
-                  <MapPin size={14} className="text-gray-400" />
-                  <span>Rua Marte, Saturno - SP</span>
-                </div>
-                <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Square size={14} className="text-gray-400" />
-                    <span>68 m²</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Bed size={14} className="text-gray-400" />
-                    <span>2 quartos</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">195.000 AKZ</p>
-                    <p className="text-xs text-gray-500">em 8 modalidades</p>
-                  </div>
-                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
-                    Ver preços
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
