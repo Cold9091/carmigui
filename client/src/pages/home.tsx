@@ -702,58 +702,58 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* São Paulo */}
-            <Link href="/imoveis?city=sao-paulo" className="group">
+            {/* Luanda */}
+            <Link href="/imoveis?city=luanda" className="group">
               <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
                 <img
-                  src="https://images.unsplash.com/photo-1493729463353-a98e5c23a95b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
-                  alt="São Paulo"
+                  src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+                  alt="Luanda"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
-                  <span className="text-white font-bold text-xl">São Paulo</span>
+                  <span className="text-white font-bold text-xl">Luanda</span>
                 </div>
               </div>
             </Link>
 
-            {/* Rio de Janeiro */}
-            <Link href="/imoveis?city=rio-de-janeiro" className="group">
+            {/* Benguela */}
+            <Link href="/imoveis?city=benguela" className="group">
               <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
                 <img
-                  src="https://images.unsplash.com/photo-1544737151821-6e4b99de3738?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
-                  alt="Rio de Janeiro"
+                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+                  alt="Benguela"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
-                  <span className="text-white font-bold text-xl">Rio de Janeiro</span>
+                  <span className="text-white font-bold text-xl">Benguela</span>
                 </div>
               </div>
             </Link>
 
-            {/* Minas Gerais */}
-            <Link href="/imoveis?city=minas-gerais" className="group">
+            {/* Lobito */}
+            <Link href="/imoveis?city=lobito" className="group">
               <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
                 <img
-                  src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
-                  alt="Minas Gerais"
+                  src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+                  alt="Lobito"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
-                  <span className="text-white font-bold text-xl">Minas Gerais</span>
+                  <span className="text-white font-bold text-xl">Lobito</span>
                 </div>
               </div>
             </Link>
 
-            {/* Salvador */}
-            <Link href="/imoveis?city=salvador" className="group">
+            {/* Huambo */}
+            <Link href="/imoveis?city=huambo" className="group">
               <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
                 <img
-                  src="https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
-                  alt="Salvador"
+                  src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+                  alt="Huambo"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
-                  <span className="text-white font-bold text-xl">Salvador</span>
+                  <span className="text-white font-bold text-xl">Huambo</span>
                 </div>
               </div>
             </Link>

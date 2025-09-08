@@ -169,6 +169,57 @@ export class MemoryStorage implements IStorage {
       featured: false,
       createdAt: new Date("2023-12-20"),
       updatedAt: new Date("2024-01-15")
+    },
+    {
+      id: "9",
+      title: "Casa T3 em Benguela",
+      description: "Casa moderna com 3 quartos na cidade de Benguela. Próxima ao centro da cidade com excelentes acessos.",
+      price: "145000000",
+      location: "Benguela",
+      type: "house",
+      bedrooms: 3,
+      bathrooms: 2,
+      area: 180,
+      images: ["/images/house-benguela.jpg"],
+      virtualTourUrl: null,
+      status: "available",
+      featured: true,
+      createdAt: new Date("2024-01-18"),
+      updatedAt: new Date("2024-01-18")
+    },
+    {
+      id: "10",
+      title: "Apartamento T2 no Lobito",
+      description: "Apartamento com vista para o mar no Lobito. Localização privilegiada próxima ao porto.",
+      price: "92000000",
+      location: "Lobito",
+      type: "apartment",
+      bedrooms: 2,
+      bathrooms: 2,
+      area: 95,
+      images: ["/images/apartment-lobito.jpg"],
+      virtualTourUrl: null,
+      status: "available",
+      featured: false,
+      createdAt: new Date("2024-01-16"),
+      updatedAt: new Date("2024-01-16")
+    },
+    {
+      id: "11",
+      title: "Casa T4 no Huambo",
+      description: "Espaçosa casa familiar no Huambo com jardim amplo. Zona residencial tranquila e segura.",
+      price: "165000000",
+      location: "Huambo",
+      type: "house",
+      bedrooms: 4,
+      bathrooms: 3,
+      area: 220,
+      images: ["/images/house-huambo.jpg"],
+      virtualTourUrl: null,
+      status: "available",
+      featured: true,
+      createdAt: new Date("2024-01-14"),
+      updatedAt: new Date("2024-01-14")
     }
   ];
 
