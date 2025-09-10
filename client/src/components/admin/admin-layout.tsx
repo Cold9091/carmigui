@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import {
   Sidebar,
   SidebarContent,
@@ -96,10 +96,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         isActive={location === item.url}
                         tooltip={item.description}
                       >
-                        <a href={item.url} data-testid={`nav-${item.title.toLowerCase()}`}>
+                        <Link href={item.url} data-testid={`nav-${item.title.toLowerCase()}`}>
                           <item.icon className="w-4 h-4" />
                           <span>{item.title}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}

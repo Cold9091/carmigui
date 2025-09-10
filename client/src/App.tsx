@@ -13,6 +13,10 @@ import CondominiumDetails from "@/pages/condominium-details";
 import Construction from "@/pages/construction";
 import ProjectDetails from "@/pages/project-details";
 import Admin from "@/pages/admin";
+import AdminProperties from "@/pages/admin/properties";
+import AdminProjects from "@/pages/admin/projects";
+import AdminCondominiums from "@/pages/admin/condominiums";
+import AdminContacts from "@/pages/admin/contacts";
 import Contact from "@/pages/contact";
 import NotFound from "@/pages/not-found";
 
@@ -33,6 +37,10 @@ function Router() {
           <Route path="/construcao" component={Construction} />
           <Route path="/construcao/:id" component={ProjectDetails} />
           <Route path="/admin" component={Admin} />
+          <Route path="/admin/properties" component={AdminProperties} />
+          <Route path="/admin/projects" component={AdminProjects} />
+          <Route path="/admin/condominiums" component={AdminCondominiums} />
+          <Route path="/admin/contacts" component={AdminContacts} />
           <Route path="/contacto" component={Contact} />
           <Route component={NotFound} />
         </Switch>
