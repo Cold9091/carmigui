@@ -47,67 +47,109 @@ export default function PropertiesPage() {
     });
   };
 
-  // Sample properties data similar to the image
-  const sampleProperties = [
+  // Sample properties data with proper Property schema format
+  const sampleProperties: Property[] = [
     {
       id: "1",
       title: "Casa de Vidro",
+      description: "Moderna casa de vidro com design contemporâneo e acabamentos de luxo",
       location: "Rua 1, Luanda - Angola",
+      type: "house",
       area: 812,
       bedrooms: 5,
+      bathrooms: 3,
       price: "1010000000",
       images: ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      modalidades: "em 2 modalidades"
+      virtualTourUrl: "https://example.com/tour/casa-vidro",
+      status: "available",
+      featured: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     {
       id: "2", 
       title: "Sobrado Minimalista",
+      description: "Sobrado com design minimalista e espaços amplos para conforto familiar",
       location: "Rua 2, Benguela - Angola",
+      type: "house",
       area: 230,
       bedrooms: 3,
+      bathrooms: 2,
       price: "250000000",
       images: ["https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      modalidades: "em 5 imobiliárias"
+      virtualTourUrl: null,
+      status: "available",
+      featured: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     {
       id: "3",
       title: "Casa de campo",
+      description: "Aconchegante casa de campo ideal para quem busca tranquilidade",
       location: "Rua 3, Huambo - Angola", 
+      type: "house",
       area: 100,
       bedrooms: 2,
+      bathrooms: 1,
       price: "100000000",
       images: ["https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      modalidades: "em 6 imobiliárias"
+      virtualTourUrl: "https://example.com/tour/casa-campo",
+      status: "available",
+      featured: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     {
       id: "4",
       title: "Apartamento",
+      description: "Apartamento moderno com localização privilegiada no centro da cidade",
       location: "Rua 4, Lobito - Angola",
+      type: "apartment",
       area: 68,
       bedrooms: 2,
+      bathrooms: 1,
       price: "195000000",
       images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      modalidades: "em 3 imobiliárias"
+      virtualTourUrl: null,
+      status: "available",
+      featured: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     {
       id: "5",
       title: "Casa de campo com piscina",
+      description: "Espaçosa casa de campo com piscina e área de lazer completa",
       location: "Rua 5, Malanje - Angola",
+      type: "house",
       area: 400,
       bedrooms: 3,
+      bathrooms: 2,
       price: "500000000",
       images: ["https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      modalidades: "em 3 imobiliárias"
+      virtualTourUrl: null,
+      status: "available",
+      featured: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     {
       id: "6",
       title: "Apartamento no centro",
+      description: "Elegante apartamento no centro com fácil acesso a todas as comodidades",
       location: "Rua 6, Cabinda - Angola",
+      type: "apartment",
       area: 400,
       bedrooms: 3,
+      bathrooms: 2,
       price: "410000000",
       images: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      modalidades: "em 3 imobiliárias"
+      virtualTourUrl: null,
+      status: "available",
+      featured: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
     }
   ];
 
@@ -242,59 +284,7 @@ export default function PropertiesPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {sampleProperties.map((property) => (
-            <div key={property.id} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
-              <div className="relative">
-                <img
-                  src={property.images[0]}
-                  alt={property.title}
-                  className="w-full h-48 object-cover"
-                />
-                <button 
-                  onClick={() => toggleFavorite(property.id)}
-                  className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50"
-                >
-                  <Heart 
-                    size={16}
-                    className={selectedProperties.has(property.id) ? "text-red-500 fill-current" : "text-gray-600"}
-                  />
-                </button>
-              </div>
-              
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">{property.title}</h3>
-                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
-                  <MapPin size={14} className="text-gray-400" />
-                  <span>{property.location}</span>
-                </div>
-                
-                <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Square size={14} className="text-gray-400" />
-                    <span>{property.area} m²</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Bed size={14} className="text-gray-400" />
-                    <span>{property.bedrooms} quartos</span>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">
-                      Kz{parseInt(property.price).toLocaleString()}
-                    </p>
-                    <p className="text-xs text-gray-500">{property.modalidades}</p>
-                  </div>
-                  <Button 
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium"
-                    data-testid={`btn-ver-precos-${property.id}`}
-                  >
-                    Ver preços
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <PropertyCard key={property.id} property={property} />
           ))}
         </div>
       </div>
