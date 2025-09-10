@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,10 @@ import ProjectCard from "@/components/project-card";
 import type { Property, Project, Condominium } from "@shared/schema";
 
 export default function HomePage() {
+  // Estados para carrossel
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const [cheaperIndex, setCheaperIndex] = useState(0);
+  
   const { data: featuredProperties = [], isLoading: propertiesLoading } = useQuery<Property[]>({
     queryKey: ["/api/properties", { featured: "true" }],
   });
@@ -20,6 +25,25 @@ export default function HomePage() {
   const { data: featuredCondominiums = [], isLoading: condominiumsLoading } = useQuery<Condominium[]>({
     queryKey: ["/api/condominiums", { featured: true }],
   });
+
+  // Funções de navegação para featured properties
+  const handleFeaturedPrev = () => {
+    setFeaturedIndex(prev => prev > 0 ? prev - 1 : 0);
+  };
+
+  const handleFeaturedNext = () => {
+    const maxIndex = Math.max(0, featuredProperties.length - 3);
+    setFeaturedIndex(prev => prev < maxIndex ? prev + 1 : maxIndex);
+  };
+
+  // Funções de navegação para cheaper properties
+  const handleCheaperPrev = () => {
+    setCheaperIndex(prev => prev > 0 ? prev - 1 : 0);
+  };
+
+  const handleCheaperNext = () => {
+    setCheaperIndex(prev => prev < 1 ? prev + 1 : 1); // máximo 2 páginas (6 propriedades / 3 por página)
+  };
 
   return (
     <div className="min-h-screen">
@@ -183,17 +207,21 @@ export default function HomePage() {
               </Link>
               <div className="flex gap-2">
                 <Button
+                  onClick={handleFeaturedPrev}
                   variant="outline"
                   size="icon"
                   className="rounded-full w-10 h-10 border-gray-300"
                   data-testid="btn-prev"
+                  disabled={featuredIndex === 0}
                 >
                   <ArrowLeft size={16} />
                 </Button>
                 <Button
+                  onClick={handleFeaturedNext}
                   size="icon"
                   className="rounded-full w-10 h-10 bg-green-600 hover:bg-green-700 text-white"
                   data-testid="btn-next"
+                  disabled={featuredIndex >= Math.max(0, featuredProperties.length - 3)}
                 >
                   <ArrowRight size={16} />
                 </Button>
@@ -235,7 +263,7 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredProperties.slice(0, 3).map((property) => (
+              {featuredProperties.slice(featuredIndex, featuredIndex + 3).map((property) => (
                 <PropertyCard key={property.id} property={property} />
               ))}
             </div>
@@ -337,17 +365,21 @@ export default function HomePage() {
               </Link>
               <div className="flex gap-2">
                 <Button
+                  onClick={handleCheaperPrev}
                   variant="outline"
                   size="icon"
                   className="rounded-full w-10 h-10 border-gray-300"
                   data-testid="btn-prev-precos"
+                  disabled={cheaperIndex === 0}
                 >
                   <ArrowLeft size={16} />
                 </Button>
                 <Button
+                  onClick={handleCheaperNext}
                   size="icon"
                   className="rounded-full w-10 h-10 bg-green-600 hover:bg-green-700 text-white"
                   data-testid="btn-next-precos"
+                  disabled={cheaperIndex >= 1}
                 >
                   <ArrowRight size={16} />
                 </Button>
@@ -425,12 +457,46 @@ export default function HomePage() {
                 featured: false,
                 createdAt: new Date(),
                 updatedAt: new Date()
+              },
+              {
+                id: "cheap-5",
+                title: "Apartamento moderno",
+                description: "Apartamento moderno com acabamentos de qualidade",
+                location: "Rua Marte, Barueri - SP",
+                type: "apartment",
+                area: 400,
+                bedrooms: 3,
+                bathrooms: 2,
+                price: "410000",
+                images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"],
+                virtualTourUrl: null,
+                status: "available",
+                featured: false,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              },
+              {
+                id: "cheap-6",
+                title: "Casa contemporânea",
+                description: "Casa contemporânea com design arrojado",
+                location: "Rua Marte, Barueri - SP",
+                type: "house",
+                area: 400,
+                bedrooms: 3,
+                bathrooms: 2,
+                price: "410000",
+                images: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"],
+                virtualTourUrl: "https://example.com/tour/casa-contemporanea",
+                status: "available",
+                featured: false,
+                createdAt: new Date(),
+                updatedAt: new Date()
               }
             ];
 
             return (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {cheaperProperties.slice(0, 3).map((property) => (
+                {cheaperProperties.slice(cheaperIndex * 3, (cheaperIndex * 3) + 3).map((property) => (
                   <PropertyCard key={property.id} property={property} />
                 ))}
               </div>
