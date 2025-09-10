@@ -172,13 +172,15 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                className="border-gray-300 text-gray-700 hover:bg-gray-50"
-                data-testid="btn-ver-mais"
-              >
-                Ver mais
-              </Button>
+              <Link href="/imoveis">
+                <Button
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                  data-testid="btn-ver-mais"
+                >
+                  Ver mais
+                </Button>
+              </Link>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -324,13 +326,15 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                className="border-gray-300 text-gray-700 hover:bg-gray-50"
-                data-testid="btn-ver-mais-precos"
-              >
-                Ver mais
-              </Button>
+              <Link href="/imoveis">
+                <Button
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                  data-testid="btn-ver-mais-precos"
+                >
+                  Ver mais
+                </Button>
+              </Link>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
