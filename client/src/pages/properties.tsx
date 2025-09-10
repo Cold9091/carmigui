@@ -13,8 +13,6 @@ export default function PropertiesPage() {
     bedrooms: "",
     location: "",
     type: "",
-    priceRange: [25000, 490000000],
-    style: "TODOS",
   });
 
   const [selectedProperties, setSelectedProperties] = useState<Set<string>>(new Set());
@@ -26,8 +24,6 @@ export default function PropertiesPage() {
       bedrooms: urlParams.get('bedrooms') || "",
       location: urlParams.get('location') || "",
       type: urlParams.get('type') || "",
-      priceRange: [25000, 490000000] as [number, number],
-      style: "TODOS"
     };
     setFilters(initialFilters);
   }, []);
@@ -36,8 +32,6 @@ export default function PropertiesPage() {
   if (filters.location) queryParams.append("location", filters.location);
   if (filters.bedrooms) queryParams.append("bedrooms", filters.bedrooms);
   if (filters.type) queryParams.append("type", filters.type);
-  if (filters.priceRange[0] > 25000) queryParams.append("minPrice", filters.priceRange[0].toString());
-  if (filters.priceRange[1] < 490000000) queryParams.append("maxPrice", filters.priceRange[1].toString());
 
   const queryString = queryParams.toString();
   const queryKey = queryString ? ["/api/properties", queryString] : ["/api/properties"];
@@ -345,52 +339,6 @@ export default function PropertiesPage() {
               </Select>
             </div>
 
-            {/* Price Range Slider */}
-            <div className="max-w-md mx-auto mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm text-gray-600">Kz{filters.priceRange[0].toLocaleString()}</span>
-                <span className="text-sm text-gray-600">Kz{filters.priceRange[1].toLocaleString()}</span>
-              </div>
-              <Slider
-                value={filters.priceRange}
-                onValueChange={(value) => handleFilterChange("priceRange", value)}
-                max={490000000}
-                min={25000}
-                step={5000000}
-                className="w-full"
-              />
-            </div>
-
-            {/* Style Selection */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-6">
-                <span className="text-gray-700">Estilo que talvez você goste</span>
-                <div className="flex gap-2">
-                  <button className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    ←
-                  </button>
-                  <button className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center">
-                    →
-                  </button>
-                </div>
-              </div>
-              
-              <div className="flex gap-4 justify-center">
-                {["TODOS", "ARQUITETÔNICO", "RÚSTICO", "CLÁSSICO", "AMERICANO", "COLONIAL"].map((style) => (
-                  <button
-                    key={style}
-                    onClick={() => handleFilterChange("style", style)}
-                    className={`px-6 py-3 border rounded-lg font-medium ${
-                      filters.style === style
-                        ? "bg-green-600 text-white border-green-600"
-                        : "bg-white text-gray-700 border-gray-300 hover:border-green-600"
-                    }`}
-                  >
-                    {style}
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </div>
