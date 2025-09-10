@@ -29,15 +29,39 @@ export default function ContactPage() {
     },
   });
 
+  const sendToWhatsApp = (data: InsertContact) => {
+    const phoneNumber = "945806968"; // Número da CARMIGUI
+    const message = `Olá! Meu nome é ${data.name}.
+
+Assunto: ${data.subject}
+
+Mensagem:
+${data.message}
+
+Contatos:
+Email: ${data.email}
+Telefone: ${data.phone || "Não informado"}
+
+Enviado através do site CARMIGUI.`;
+    
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   const contactMutation = useMutation({
     mutationFn: async (data: InsertContact) => {
       await apiRequest("POST", "/api/contacts", data);
+      return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
         title: "Mensagem enviada!",
-        description: "Obrigado pelo seu contacto. Responderemos em breve.",
+        description: "Redirecionando para WhatsApp para enviar a mensagem...",
       });
+      
+      // Enviar para WhatsApp
+      sendToWhatsApp(data);
+      
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["/api/contacts"] });
     },
