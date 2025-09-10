@@ -351,179 +351,87 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Casa de campo com piscina 1 */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Casa de campo com piscina"
-                  className="w-full h-48 object-cover"
-                />
-                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </button>
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">Casa de campo com piscina</h3>
-                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
-                  <MapPin size={14} className="text-gray-400" />
-                  <span>Rua Marte, Barueri - SP</span>
-                </div>
-                <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Square size={14} className="text-gray-400" />
-                    <span>400 m²</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Bed size={14} className="text-gray-400" />
-                    <span>3 quartos</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">410.000 AKZ</p>
-                    <p className="text-xs text-gray-500">em 3 imobiliárias</p>
-                  </div>
-                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
-                    Ver preços
-                  </Button>
-                </div>
-              </div>
-            </div>
+          {/* Create sample properties for the Os menores preços section */}
+          {(() => {
+            const cheaperProperties: Property[] = [
+              {
+                id: "cheap-1",
+                title: "Casa de campo com piscina",
+                description: "Linda casa de campo com piscina e jardim amplo",
+                location: "Rua Marte, Barueri - SP",
+                type: "house",
+                area: 400,
+                bedrooms: 3,
+                bathrooms: 2,
+                price: "410000",
+                images: ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"],
+                virtualTourUrl: "https://example.com/tour/casa-campo-piscina",
+                status: "available",
+                featured: false,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              },
+              {
+                id: "cheap-2",
+                title: "Casa de campo com piscina",
+                description: "Excelente casa de campo com piscina e área de lazer",
+                location: "Rua Marte, Barueri - SP",
+                type: "house",
+                area: 400,
+                bedrooms: 3,
+                bathrooms: 2,
+                price: "410000",
+                images: ["https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"],
+                virtualTourUrl: null,
+                status: "available",
+                featured: false,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              },
+              {
+                id: "cheap-3",
+                title: "Casa de campo com piscina",
+                description: "Moderna casa de campo com piscina e vista privilegiada",
+                location: "Rua Marte, Barueri - SP",
+                type: "house",
+                area: 400,
+                bedrooms: 3,
+                bathrooms: 2,
+                price: "410000",
+                images: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"],
+                virtualTourUrl: "https://example.com/tour/casa-campo-vista",
+                status: "available",
+                featured: false,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              },
+              {
+                id: "cheap-4",
+                title: "Casa de campo",
+                description: "Aconchegante casa de campo ideal para fins de semana",
+                location: "Rua Marte, Barueri - SP",
+                type: "house",
+                area: 400,
+                bedrooms: 3,
+                bathrooms: 2,
+                price: "410000",
+                images: ["https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"],
+                virtualTourUrl: null,
+                status: "available",
+                featured: false,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              }
+            ];
 
-            {/* Casa de campo com piscina 2 */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Casa de campo com piscina"
-                  className="w-full h-48 object-cover"
-                />
-                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </button>
+            return (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {cheaperProperties.map((property) => (
+                  <PropertyCard key={property.id} property={property} />
+                ))}
               </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">Casa de campo com piscina</h3>
-                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
-                  <MapPin size={14} className="text-gray-400" />
-                  <span>Rua Marte, Barueri - SP</span>
-                </div>
-                <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Square size={14} className="text-gray-400" />
-                    <span>400 m²</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Bed size={14} className="text-gray-400" />
-                    <span>3 quartos</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">410.000 AKZ</p>
-                    <p className="text-xs text-gray-500">em 3 imobiliárias</p>
-                  </div>
-                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
-                    Ver preços
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Casa de campo com piscina 3 */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Casa de campo com piscina"
-                  className="w-full h-48 object-cover"
-                />
-                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </button>
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">Casa de campo com piscina</h3>
-                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
-                  <MapPin size={14} className="text-gray-400" />
-                  <span>Rua Marte, Barueri - SP</span>
-                </div>
-                <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Square size={14} className="text-gray-400" />
-                    <span>400 m²</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Bed size={14} className="text-gray-400" />
-                    <span>3 quartos</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">410.000 AKZ</p>
-                    <p className="text-xs text-gray-500">em 3 imobiliárias</p>
-                  </div>
-                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
-                    Ver preços
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Casa de campo 4 */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Casa de campo"
-                  className="w-full h-48 object-cover"
-                />
-                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </button>
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">Casa de campo</h3>
-                <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
-                  <MapPin size={14} className="text-gray-400" />
-                  <span>Rua Marte, Barueri - SP</span>
-                </div>
-                <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Square size={14} className="text-gray-400" />
-                    <span>400 m²</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Bed size={14} className="text-gray-400" />
-                    <span>3 quartos</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">A partir de</p>
-                    <p className="text-lg font-bold text-gray-800">410.000 AKZ</p>
-                    <p className="text-xs text-gray-500">em 3 imobiliárias</p>
-                  </div>
-                  <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
-                    Ver preços
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
+            );
+          })()}
         </div>
       </section>
 
