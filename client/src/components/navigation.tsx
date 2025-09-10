@@ -59,12 +59,14 @@ export default function Navigation() {
                 {item.label}
               </Link>
             ))}
-            <Button
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium"
-              data-testid="btn-login"
-            >
-              Entrar
-            </Button>
+            <Link href="/contacto">
+              <Button
+                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium"
+                data-testid="btn-contact"
+              >
+                Contacto
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu */}
@@ -102,12 +104,15 @@ export default function Navigation() {
                       {item.label}
                     </Link>
                   ))}
-                  <Button
-                    className="bg-green-600 hover:bg-green-700 text-white mx-4 mt-4"
-                    data-testid="btn-mobile-login"
-                  >
-                    Entrar
-                  </Button>
+                  <Link href="/contacto">
+                    <Button
+                      className="bg-green-600 hover:bg-green-700 text-white mx-4 mt-4"
+                      data-testid="btn-mobile-contact"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Contacto
+                    </Button>
+                  </Link>
                 </div>
               </SheetContent>
             </Sheet>
