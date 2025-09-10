@@ -12,15 +12,30 @@ export default function PropertiesPage() {
   const [filters, setFilters] = useState({
     bedrooms: "",
     location: "",
+    type: "",
     priceRange: [25000, 490000000],
     style: "TODOS",
   });
 
   const [selectedProperties, setSelectedProperties] = useState<Set<string>>(new Set());
 
+  // Initialize filters from URL parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialFilters = {
+      bedrooms: urlParams.get('bedrooms') || "",
+      location: urlParams.get('location') || "",
+      type: urlParams.get('type') || "",
+      priceRange: [25000, 490000000] as [number, number],
+      style: "TODOS"
+    };
+    setFilters(initialFilters);
+  }, []);
+
   const queryParams = new URLSearchParams();
   if (filters.location) queryParams.append("location", filters.location);
   if (filters.bedrooms) queryParams.append("bedrooms", filters.bedrooms);
+  if (filters.type) queryParams.append("type", filters.type);
   if (filters.priceRange[0] > 25000) queryParams.append("minPrice", filters.priceRange[0].toString());
   if (filters.priceRange[1] < 490000000) queryParams.append("maxPrice", filters.priceRange[1].toString());
 
@@ -150,6 +165,91 @@ export default function PropertiesPage() {
       featured: false,
       createdAt: new Date(),
       updatedAt: new Date()
+    },
+    {
+      id: "7",
+      title: "Loft Moderno",
+      description: "Loft moderno com pé-direito alto e design industrial",
+      location: "Rua 7, Luanda - Angola",
+      type: "loft",
+      area: 120,
+      bedrooms: 1,
+      bathrooms: 1,
+      price: "180000000",
+      images: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
+      virtualTourUrl: null,
+      status: "available",
+      featured: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: "8",
+      title: "Fazenda Rural",
+      description: "Ampla fazenda com pastagens e instalações agrícolas",
+      location: "Rua 8, Malanje - Angola",
+      type: "fazenda",
+      area: 5000,
+      bedrooms: 4,
+      bathrooms: 3,
+      price: "800000000",
+      images: ["https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
+      virtualTourUrl: null,
+      status: "available",
+      featured: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: "9",
+      title: "Prédio Comercial",
+      description: "Prédio comercial completo com múltiplos andares",
+      location: "Rua 9, Benguela - Angola",
+      type: "building",
+      area: 800,
+      bedrooms: 0,
+      bathrooms: 6,
+      price: "1200000000",
+      images: ["https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
+      virtualTourUrl: null,
+      status: "available",
+      featured: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: "10",
+      title: "Espaço Comercial",
+      description: "Espaço comercial ideal para escritórios ou comércio",
+      location: "Rua 10, Lobito - Angola",
+      type: "office",
+      area: 200,
+      bedrooms: 0,
+      bathrooms: 2,
+      price: "300000000",
+      images: ["https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
+      virtualTourUrl: null,
+      status: "available",
+      featured: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: "11",
+      title: "Espaço de Coworking",
+      description: "Espaço colaborativo moderno com todas as facilidades",
+      location: "Rua 11, Huambo - Angola",
+      type: "coworking",
+      area: 150,
+      bedrooms: 0,
+      bathrooms: 2,
+      price: "250000000",
+      images: ["https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
+      virtualTourUrl: null,
+      status: "available",
+      featured: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
     }
   ];
 
@@ -177,7 +277,7 @@ export default function PropertiesPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
 
               <Select
                 value={filters.bedrooms}
@@ -214,9 +314,28 @@ export default function PropertiesPage() {
                 </SelectContent>
               </Select>
 
+              <Select
+                value={filters.type}
+                onValueChange={(value) => handleFilterChange("type", value)}
+              >
+                <SelectTrigger data-testid="filter-type" className="bg-white">
+                  <SelectValue placeholder="Tipo de imóvel" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os tipos</SelectItem>
+                  <SelectItem value="apartment">Apartamento</SelectItem>
+                  <SelectItem value="loft">Loft</SelectItem>
+                  <SelectItem value="house">Casa</SelectItem>
+                  <SelectItem value="fazenda">Fazenda</SelectItem>
+                  <SelectItem value="building">Prédio</SelectItem>
+                  <SelectItem value="office">Comercial</SelectItem>
+                  <SelectItem value="coworking">Coworking</SelectItem>
+                </SelectContent>
+              </Select>
+
               <Select>
                 <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="Mais caro" />
+                  <SelectValue placeholder="Ordenar por" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="price-asc">Menor preço</SelectItem>
@@ -283,7 +402,23 @@ export default function PropertiesPage() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {sampleProperties.map((property) => (
+          {sampleProperties
+            .filter(property => {
+              // Filter by type
+              if (filters.type && filters.type !== "all" && property.type !== filters.type) {
+                return false;
+              }
+              // Filter by bedrooms
+              if (filters.bedrooms && filters.bedrooms !== "all" && property.bedrooms && property.bedrooms.toString() !== filters.bedrooms) {
+                return false;
+              }
+              // Filter by location
+              if (filters.location && filters.location !== "all" && !property.location.includes(filters.location)) {
+                return false;
+              }
+              return true;
+            })
+            .map((property) => (
             <PropertyCard key={property.id} property={property} />
           ))}
         </div>
