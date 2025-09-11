@@ -28,318 +28,15 @@ export interface IStorage {
   deleteCondominium(id: string): Promise<boolean>;
 }
 
-// TODO: Preparar para integração futura com Supabase
-// Quando implementar Supabase, trocar MemoryStorage por SupabaseStorage
-// que implementará a mesma interface IStorage
+// Sistema de armazenamento limpo - sem dados demonstrativos
+// Usa SQLite para desenvolvimento local com possibilidade de migração para Supabase
 
 export class MemoryStorage implements IStorage {
-  private properties: Property[] = [
-    {
-      id: "1",
-      title: "Apartamento T3 em Luanda Sul",
-      description: "Luxuoso apartamento com 3 quartos, 2 casas de banho, sala ampla e cozinha moderna. Localizado numa das melhores zonas de Luanda Sul, com vista para o mar.",
-      price: "180000000",
-      location: "Luanda Sul",
-      type: "apartment",
-      bedrooms: 3,
-      bathrooms: 2,
-      area: 120,
-      images: ["/images/apartment1.jpg", "/images/apartment1-2.jpg"],
-      virtualTourUrl: "https://my.matterport.com/show/?m=vLYoS66CWpk",
-      status: "available",
-      featured: true,
-      createdAt: new Date("2024-01-15"),
-      updatedAt: new Date("2024-01-15")
-    },
-    {
-      id: "2",
-      title: "Casa T4 na Ilha de Luanda",
-      description: "Casa familiar com 4 quartos, jardim privado, garagem para 2 carros. Zona exclusiva da Ilha de Luanda com segurança 24h.",
-      price: "350000000",
-      location: "Ilha de Luanda",
-      type: "house",
-      bedrooms: 4,
-      bathrooms: 3,
-      area: 250,
-      images: ["/images/house1.jpg", "/images/house1-2.jpg"],
-      virtualTourUrl: "https://my.matterport.com/show/?m=ZeJ9oKnGqGG",
-      status: "available",
-      featured: true,
-      createdAt: new Date("2024-01-10"),
-      updatedAt: new Date("2024-01-10")
-    },
-    {
-      id: "3",
-      title: "Escritório no Centro de Luanda",
-      description: "Espaço comercial moderno no coração da cidade, ideal para empresas. Ar condicionado, elevador, segurança.",
-      price: "120000000",
-      location: "Centro de Luanda",
-      type: "office",
-      bedrooms: null,
-      bathrooms: 2,
-      area: 80,
-      images: ["/images/office1.jpg"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date("2024-01-05"),
-      updatedAt: new Date("2024-01-05")
-    },
-    {
-      id: "4",
-      title: "Apartamento T2 na Talatona",
-      description: "Moderno apartamento de 2 quartos na zona da Talatona. Condomínio fechado com piscina e ginásio.",
-      price: "95000000",
-      location: "Talatona",
-      type: "apartment",
-      bedrooms: 2,
-      bathrooms: 2,
-      area: 85,
-      images: ["/images/apartment2.jpg"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date("2024-01-12"),
-      updatedAt: new Date("2024-01-12")
-    },
-    {
-      id: "5",
-      title: "Casa T5 no Benfica",
-      description: "Ampla casa familiar com 5 quartos, jardim extenso, piscina e churrasqueira. Perfeita para famílias grandes.",
-      price: "280000000",
-      location: "Benfica",
-      type: "house",
-      bedrooms: 5,
-      bathrooms: 4,
-      area: 320,
-      images: ["/images/house2.jpg", "/images/house2-2.jpg"],
-      virtualTourUrl: "https://kuula.co/share/collection/7lBGt",
-      status: "available",
-      featured: true,
-      createdAt: new Date("2024-01-08"),
-      updatedAt: new Date("2024-01-08")
-    },
-    {
-      id: "6",
-      title: "Terreno em Viana",
-      description: "Terreno plano de 500m² ideal para construção de moradia. Localização estratégica com fácil acesso.",
-      price: "45000000",
-      location: "Viana",
-      type: "land",
-      bedrooms: null,
-      bathrooms: null,
-      area: 500,
-      images: ["/images/land1.jpg"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date("2024-01-03"),
-      updatedAt: new Date("2024-01-03")
-    },
-    {
-      id: "7",
-      title: "Apartamento T1 no Miramar",
-      description: "Apartamento compacto e moderno, ideal para jovens profissionais. Vista para o mar e próximo a restaurantes.",
-      price: "75000000",
-      location: "Miramar",
-      type: "apartment",
-      bedrooms: 1,
-      bathrooms: 1,
-      area: 55,
-      images: ["/images/apartment3.jpg"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date("2024-01-02"),
-      updatedAt: new Date("2024-01-02")
-    },
-    {
-      id: "8",
-      title: "Loja Comercial na Maianga",
-      description: "Espaço comercial térreo com grande visibilidade, ideal para comércio. Zona de grande movimento.",
-      price: "85000000",
-      location: "Maianga",
-      type: "office",
-      bedrooms: null,
-      bathrooms: 1,
-      area: 45,
-      images: ["/images/shop1.jpg"],
-      virtualTourUrl: null,
-      status: "sold",
-      featured: false,
-      createdAt: new Date("2023-12-20"),
-      updatedAt: new Date("2024-01-15")
-    },
-    {
-      id: "9",
-      title: "Casa T3 em Benguela",
-      description: "Casa moderna com 3 quartos na cidade de Benguela. Próxima ao centro da cidade com excelentes acessos.",
-      price: "145000000",
-      location: "Benguela",
-      type: "house",
-      bedrooms: 3,
-      bathrooms: 2,
-      area: 180,
-      images: ["/images/house-benguela.jpg"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: true,
-      createdAt: new Date("2024-01-18"),
-      updatedAt: new Date("2024-01-18")
-    },
-    {
-      id: "10",
-      title: "Apartamento T2 no Lobito",
-      description: "Apartamento com vista para o mar no Lobito. Localização privilegiada próxima ao porto.",
-      price: "92000000",
-      location: "Lobito",
-      type: "apartment",
-      bedrooms: 2,
-      bathrooms: 2,
-      area: 95,
-      images: ["/images/apartment-lobito.jpg"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date("2024-01-16"),
-      updatedAt: new Date("2024-01-16")
-    },
-    {
-      id: "11",
-      title: "Casa T4 no Huambo",
-      description: "Espaçosa casa familiar no Huambo com jardim amplo. Zona residencial tranquila e segura.",
-      price: "165000000",
-      location: "Huambo",
-      type: "house",
-      bedrooms: 4,
-      bathrooms: 3,
-      area: 220,
-      images: ["/images/house-huambo.jpg"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: true,
-      createdAt: new Date("2024-01-14"),
-      updatedAt: new Date("2024-01-14")
-    }
-  ];
-
-  private projects: Project[] = [
-    {
-      id: "1",
-      title: "Complexo Residencial Talatona Gardens",
-      description: "Moderno complexo residencial com apartamentos T2, T3 e T4. Inclui piscina, ginásio, parque infantil e segurança 24h.",
-      area: 15000,
-      duration: "24 meses",
-      units: "120 apartamentos",
-      year: "2024",
-      status: "in-progress",
-      images: ["/images/project1.jpg", "/images/project1-2.jpg"],
-      featured: true,
-      createdAt: new Date("2024-01-01"),
-      updatedAt: new Date("2024-01-01")
-    },
-    {
-      id: "2",
-      title: "Centro Comercial Benfica Plaza",
-      description: "Centro comercial moderno com lojas, restaurantes, cinema e estacionamento. Localização privilegiada em Benfica.",
-      area: 8000,
-      duration: "18 meses",
-      units: "45 lojas",
-      year: "2023",
-      status: "completed",
-      images: ["/images/project2.jpg"],
-      featured: true,
-      createdAt: new Date("2023-06-01"),
-      updatedAt: new Date("2023-12-01")
-    },
-    {
-      id: "3",
-      title: "Condomínio Luanda Bay",
-      description: "Desenvolvimento de luxo na beira-mar com apartamentos e penthouses. Vista panorâmica do oceano.",
-      area: 25000,
-      duration: "36 meses",
-      units: "200 apartamentos",
-      year: "2024",
-      status: "planning",
-      images: ["/images/project3.jpg"],
-      featured: true,
-      createdAt: new Date("2024-01-20"),
-      updatedAt: new Date("2024-01-20")
-    },
-    {
-      id: "4",
-      title: "Edifício de Escritórios Marginal",
-      description: "Torre comercial moderna com 20 andares, localizada na Marginal de Luanda. Espaços corporativos premium.",
-      area: 12000,
-      duration: "30 meses",
-      units: "180 escritórios",
-      year: "2023",
-      status: "in-progress",
-      images: ["/images/project4.jpg"],
-      featured: false,
-      createdAt: new Date("2023-08-01"),
-      updatedAt: new Date("2024-01-10")
-    }
-  ];
-
+  // Arrays vazios - sem dados demonstrativos
+  private properties: Property[] = [];
+  private projects: Project[] = [];
   private contacts: Contact[] = [];
-
-  private condominiums: Condominium[] = [
-    {
-      id: "1",
-      name: "Condomínio Miramar Residence",
-      description: "Condomínio de luxo com vista para o mar, piscina, ginásio e segurança 24h. Apartamentos T2, T3 e T4 disponíveis.",
-      location: "Miramar",
-      centralityOrDistrict: "Luanda",
-      totalUnits: 80,
-      completedUnits: 60,
-      availableUnits: 15,
-      priceRange: "150M - 400M AKZ",
-      status: "in-development",
-      images: ["/images/condominium1.jpg", "/images/condominium1-2.jpg"],
-      amenities: ["Piscina", "Ginásio", "Segurança 24h", "Parque infantil", "Estacionamento"],
-      featured: true,
-      developmentYear: "2024",
-      createdAt: new Date("2024-01-01"),
-      updatedAt: new Date("2024-01-01")
-    },
-    {
-      id: "2",
-      name: "Talatona Premium Village",
-      description: "Condomínio familiar na Talatona com casas geminadas e apartamentos. Zona verde, parque infantil e centro comercial integrado.",
-      location: "Talatona",
-      centralityOrDistrict: "Belas",
-      totalUnits: 150,
-      completedUnits: 120,
-      availableUnits: 25,
-      priceRange: "80M - 200M AKZ",
-      status: "in-development",
-      images: ["/images/condominium2.jpg"],
-      amenities: ["Zona verde", "Parque infantil", "Centro comercial", "Segurança 24h", "Campo de futebol"],
-      featured: true,
-      developmentYear: "2023",
-      createdAt: new Date("2023-05-01"),
-      updatedAt: new Date("2024-01-15")
-    },
-    {
-      id: "3",
-      name: "Benfica Gardens",
-      description: "Condomínio exclusivo no Benfica com apartamentos de alta qualidade. Design contemporâneo e acabamentos premium.",
-      location: "Benfica",
-      centralityOrDistrict: "Luanda",
-      totalUnits: 60,
-      completedUnits: 60,
-      availableUnits: 8,
-      priceRange: "200M - 500M AKZ",
-      status: "completed",
-      images: ["/images/condominium3.jpg", "/images/condominium3-2.jpg"],
-      amenities: ["Piscina", "Ginásio", "Spa", "Segurança 24h", "Sala de eventos", "Estacionamento subterrâneo"],
-      featured: false,
-      developmentYear: "2022",
-      createdAt: new Date("2022-03-01"),
-      updatedAt: new Date("2023-08-01")
-    }
-  ];
+  private condominiums: Condominium[] = [];
 
   // Properties
   async getProperties(filters?: { type?: string; location?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
@@ -377,6 +74,7 @@ export class MemoryStorage implements IStorage {
       bedrooms: property.bedrooms ?? null,
       bathrooms: property.bathrooms ?? null,
       images: property.images ?? [],
+      virtualTourUrl: property.virtualTourUrl ?? null,
       status: property.status ?? "available",
       featured: property.featured ?? false,
       createdAt: new Date(),
@@ -530,6 +228,16 @@ export class MemoryStorage implements IStorage {
   }
 }
 
-// Usar MemoryStorage para desenvolvimento do frontend
-// TODO: Trocar por SupabaseStorage quando implementar Supabase
-export const storage = new MemoryStorage();
+// Importar SimpleSQLiteStorage para usar banco de dados real
+import { SimpleSQLiteStorage } from "./simple-sqlite-storage";
+
+// Usar SimpleSQLiteStorage para dados reais persistidos no banco de dados
+// A MemoryStorage fica como fallback se SQLite falhar
+export const storage = (() => {
+  try {
+    return new SimpleSQLiteStorage();
+  } catch (error) {
+    console.error("Erro ao inicializar SimpleSQLiteStorage, usando MemoryStorage como fallback:", error);
+    return new MemoryStorage();
+  }
+})();
