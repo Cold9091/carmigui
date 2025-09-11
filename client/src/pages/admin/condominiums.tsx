@@ -120,36 +120,35 @@ export default function AdminCondominiumsPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
-            {condominiums.map((condominium) => (
-              <Card key={condominium.id} data-testid={`condominium-row-${condominium.id}`}>
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-semibold text-angola-primary">
-                          {condominium.name}
-                        </h3>
-                        {getCondominiumStatusBadge(condominium.status)}
-                        {condominium.featured && (
-                          <Badge className="bg-angola-secondary text-white">
-                            Destaque
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-gray-600 mb-2">{condominium.location}</p>
-                      <p className="text-lg font-bold text-angola-primary">
-                        {condominium.priceRange}
-                      </p>
-                      <p className="text-sm text-gray-500 mt-2">
-                        {condominium.totalUnits} unidades • {condominium.availableUnits} disponíveis • {condominium.developmentYear}
-                      </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {condominiums.map((condominium) => {
+              const mainImage = condominium.images && condominium.images.length > 0 
+                ? condominium.images[0] 
+                : "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600";
+              
+              return (
+                <Card key={condominium.id} className="card-hover bg-white shadow-lg overflow-hidden" data-testid={`condominium-card-${condominium.id}`}>
+                  <div className="relative">
+                    <img
+                      src={mainImage}
+                      alt={condominium.name}
+                      className="w-full h-48 object-cover"
+                      data-testid="condominium-image"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      {getCondominiumStatusBadge(condominium.status)}
+                      {condominium.featured && (
+                        <Badge className="bg-angola-secondary text-white">
+                          Destaque
+                        </Badge>
+                      )}
                     </div>
-                    <div className="flex gap-2">
+                    <div className="absolute top-4 right-4 flex gap-2">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleEditCondominium(condominium)}
+                        className="bg-white/90 hover:bg-white"
                         data-testid={`btn-edit-condominium-${condominium.id}`}
                       >
                         <Edit size={16} />
@@ -159,16 +158,66 @@ export default function AdminCondominiumsPage() {
                         size="sm"
                         onClick={() => deleteCondominiumMutation.mutate(condominium.id)}
                         disabled={deleteCondominiumMutation.isPending}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="bg-white/90 hover:bg-white text-red-600 hover:text-red-700"
                         data-testid={`btn-delete-condominium-${condominium.id}`}
                       >
                         <Trash2 size={16} />
                       </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-roboto font-bold text-angola-primary mb-2" data-testid="condominium-title">
+                      {condominium.name}
+                    </h3>
+                    <p className="text-angola-text mb-2" data-testid="condominium-location">
+                      {condominium.location} • {condominium.centralityOrDistrict}
+                    </p>
+                    <p className="text-2xl font-bold text-angola-primary mb-4" data-testid="condominium-price">
+                      {condominium.priceRange}
+                    </p>
+                    <div className="grid grid-cols-2 gap-2 text-sm text-angola-text mb-4">
+                      <div className="flex items-center" data-testid="condominium-total-units">
+                        <Home size={16} className="mr-1" />
+                        {condominium.totalUnits} unidades
+                      </div>
+                      <div className="flex items-center" data-testid="condominium-available-units">
+                        <span className="mr-1">✅</span>
+                        {condominium.availableUnits} disponíveis
+                      </div>
+                      <div className="flex items-center col-span-2" data-testid="condominium-development-year">
+                        <span className="mr-1">📅</span>
+                        {condominium.developmentYear}
+                      </div>
+                    </div>
+                    {condominium.description && (
+                      <p className="text-sm text-gray-600 mt-2 line-clamp-2" data-testid="condominium-description">
+                        {condominium.description}
+                      </p>
+                    )}
+                    {condominium.amenities && condominium.amenities.length > 0 && (
+                      <div className="mt-4">
+                        <div className="flex flex-wrap gap-1">
+                          {condominium.amenities.slice(0, 3).map((amenity, index) => (
+                            <span 
+                              key={index} 
+                              className="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
+                              data-testid={`condominium-amenity-${index}`}
+                            >
+                              {amenity}
+                            </span>
+                          ))}
+                          {condominium.amenities.length > 3 && (
+                            <span className="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
+                              +{condominium.amenities.length - 3} mais
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         )}
       </div>

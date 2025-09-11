@@ -120,33 +120,35 @@ export default function AdminProjectsPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
-            {projects.map((project) => (
-              <Card key={project.id} data-testid={`project-row-${project.id}`}>
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-semibold text-angola-primary">
-                          {project.title}
-                        </h3>
-                        {getProjectStatusBadge(project.status)}
-                        {project.featured && (
-                          <Badge className="bg-angola-secondary text-white">
-                            Destaque
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-gray-600 mb-2">{project.description}</p>
-                      <p className="text-sm text-gray-500">
-                        {project.area.toLocaleString()} m² • {project.duration} • {project.units} • {project.year}
-                      </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((project) => {
+              const mainImage = project.images && project.images.length > 0 
+                ? project.images[0] 
+                : "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600";
+              
+              return (
+                <Card key={project.id} className="card-hover bg-white shadow-lg overflow-hidden" data-testid={`project-card-${project.id}`}>
+                  <div className="relative">
+                    <img
+                      src={mainImage}
+                      alt={project.title}
+                      className="w-full h-48 object-cover"
+                      data-testid="project-image"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      {getProjectStatusBadge(project.status)}
+                      {project.featured && (
+                        <Badge className="bg-angola-secondary text-white">
+                          Destaque
+                        </Badge>
+                      )}
                     </div>
-                    <div className="flex gap-2">
+                    <div className="absolute top-4 right-4 flex gap-2">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleEditProject(project)}
+                        className="bg-white/90 hover:bg-white"
                         data-testid={`btn-edit-project-${project.id}`}
                       >
                         <Edit size={16} />
@@ -156,16 +158,42 @@ export default function AdminProjectsPage() {
                         size="sm"
                         onClick={() => deleteProjectMutation.mutate(project.id)}
                         disabled={deleteProjectMutation.isPending}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="bg-white/90 hover:bg-white text-red-600 hover:text-red-700"
                         data-testid={`btn-delete-project-${project.id}`}
                       >
                         <Trash2 size={16} />
                       </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-roboto font-bold text-angola-primary mb-2" data-testid="project-title">
+                      {project.title}
+                    </h3>
+                    <p className="text-angola-text mb-4 line-clamp-2" data-testid="project-description">
+                      {project.description}
+                    </p>
+                    <div className="grid grid-cols-2 gap-2 text-sm text-angola-text mb-4">
+                      <div className="flex items-center" data-testid="project-area">
+                        <Hammer size={16} className="mr-1" />
+                        {project.area.toLocaleString()} m²
+                      </div>
+                      <div className="flex items-center" data-testid="project-units">
+                        <span className="mr-1">🏢</span>
+                        {project.units}
+                      </div>
+                      <div className="flex items-center" data-testid="project-duration">
+                        <span className="mr-1">⏱️</span>
+                        {project.duration}
+                      </div>
+                      <div className="flex items-center" data-testid="project-year">
+                        <span className="mr-1">📅</span>
+                        {project.year}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         )}
       </div>
