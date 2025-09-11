@@ -128,38 +128,35 @@ export default function AdminPropertiesPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
-            {properties.map((property) => (
-              <Card key={property.id} data-testid={`property-row-${property.id}`}>
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-semibold text-angola-primary">
-                          {property.title}
-                        </h3>
-                        {getPropertyStatusBadge(property.status)}
-                        {property.featured && (
-                          <Badge className="bg-angola-secondary text-white">
-                            Destaque
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-gray-600 mb-2">{property.location}</p>
-                      <p className="text-lg font-bold text-angola-primary">
-                        {formatPrice(property.price)}
-                      </p>
-                      <p className="text-sm text-gray-500 mt-2">
-                        {property.area} m² • {property.type}
-                        {property.bedrooms && ` • ${property.bedrooms} quartos`}
-                        {property.bathrooms && ` • ${property.bathrooms} casas de banho`}
-                      </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {properties.map((property) => {
+              const mainImage = property.images && property.images.length > 0 
+                ? property.images[0] 
+                : "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600";
+              
+              return (
+                <Card key={property.id} className="card-hover bg-white shadow-lg overflow-hidden" data-testid={`property-card-${property.id}`}>
+                  <div className="relative">
+                    <img
+                      src={mainImage}
+                      alt={property.title}
+                      className="w-full h-48 object-cover"
+                      data-testid="property-image"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      {getPropertyStatusBadge(property.status)}
+                      {property.featured && (
+                        <Badge className="bg-angola-secondary text-white">
+                          Destaque
+                        </Badge>
+                      )}
                     </div>
-                    <div className="flex gap-2">
+                    <div className="absolute top-4 right-4 flex gap-2">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleEditProperty(property)}
+                        className="bg-white/90 hover:bg-white"
                         data-testid={`btn-edit-property-${property.id}`}
                       >
                         <Edit size={16} />
@@ -169,16 +166,63 @@ export default function AdminPropertiesPage() {
                         size="sm"
                         onClick={() => deletePropertyMutation.mutate(property.id)}
                         disabled={deletePropertyMutation.isPending}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="bg-white/90 hover:bg-white text-red-600 hover:text-red-700"
                         data-testid={`btn-delete-property-${property.id}`}
                       >
                         <Trash2 size={16} />
                       </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-roboto font-bold text-angola-primary mb-2" data-testid="property-title">
+                      {property.title}
+                    </h3>
+                    <p className="text-angola-text mb-2" data-testid="property-location">
+                      {property.location}
+                    </p>
+                    <p className="text-2xl font-bold text-angola-primary mb-4" data-testid="property-price">
+                      {formatPrice(property.price)}
+                    </p>
+                    <div className="grid grid-cols-3 gap-2 text-sm text-angola-text">
+                      <div className="flex items-center" data-testid="property-area">
+                        <Building size={16} className="mr-1" />
+                        {property.area} m²
+                      </div>
+                      {property.bedrooms && (
+                        <div className="flex items-center" data-testid="property-bedrooms">
+                          <span className="mr-1">🛏️</span>
+                          {property.bedrooms}
+                        </div>
+                      )}
+                      {property.bathrooms && (
+                        <div className="flex items-center" data-testid="property-bathrooms">
+                          <span className="mr-1">🚿</span>
+                          {property.bathrooms}
+                        </div>
+                      )}
+                    </div>
+                    {property.type && (
+                      <p className="text-sm text-gray-500 mt-2" data-testid="property-type">
+                        <strong>Tipo:</strong> {property.type}
+                      </p>
+                    )}
+                    {property.virtualTourUrl && (
+                      <div className="mt-4">
+                        <a 
+                          href={property.virtualTourUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm hover:bg-blue-200 transition-colors"
+                          data-testid="property-virtual-tour"
+                        >
+                          🏠 Tour Virtual
+                        </a>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         )}
       </div>

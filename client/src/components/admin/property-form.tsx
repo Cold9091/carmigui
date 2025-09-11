@@ -34,6 +34,7 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
       bathrooms: property?.bathrooms || undefined,
       area: property?.area || 0,
       images: property?.images || [],
+      virtualTourUrl: property?.virtualTourUrl || "",
       status: property?.status || "available",
       featured: property?.featured || false,
     },
@@ -318,6 +319,28 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
               </FormControl>
               <p className="text-sm text-muted-foreground">
                 Adicione URLs de imagens separados por vírgula
+              </p>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="virtualTourUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>URL da Visita Virtual (3D)</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Ex: https://tour.example.com/property123"
+                  {...field}
+                  value={field.value ?? ""}
+                  data-testid="input-property-virtual-tour"
+                />
+              </FormControl>
+              <p className="text-sm text-muted-foreground">
+                Adicione o link para tour virtual ou vídeo 360° do imóvel
               </p>
               <FormMessage />
             </FormItem>
