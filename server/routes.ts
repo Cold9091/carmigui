@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { getDatabaseStatus } from "./db";
 import { insertPropertySchema, insertProjectSchema, insertContactSchema, insertCondominiumSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -254,6 +255,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting condominium:", error);
       res.status(500).json({ message: "Failed to delete condominium" });
+    }
+  });
+
+  // Database management routes
+  app.get("/api/database/status", async (req, res) => {
+    try {
+      const status = getDatabaseStatus();
+      res.json(status);
+    } catch (error) {
+      console.error("Error getting database status:", error);
+      res.status(500).json({ message: "Failed to get database status" });
+    }
+  });
+
+  app.post("/api/database/test", async (req, res) => {
+    try {
+      // Test database connection by trying to fetch properties
+      await storage.getProperties();
+      res.json({ 
+        success: true, 
+        message: "Database connection is working",
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Database connection test failed:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Database connection failed",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 

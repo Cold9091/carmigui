@@ -21,6 +21,7 @@ import {
   Mail, 
   BarChart3, 
   Home,
+  Database,
   Settings,
   LogOut 
 } from "lucide-react";
@@ -62,6 +63,12 @@ const adminNavItems = [
     url: "/admin/contacts",
     icon: Mail,
     description: "Gerir mensagens de contacto",
+  },
+  {
+    title: "Banco de Dados",
+    url: "/admin/database",
+    icon: Database,
+    description: "Configurar e monitorizar banco de dados",
   },
 ];
 

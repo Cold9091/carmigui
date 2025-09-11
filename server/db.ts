@@ -1,37 +1,21 @@
-// TODO: Configuração da base de dados removida temporariamente
-// Para integrar com Supabase no futuro, descomentar e modificar este arquivo
+// Sistema de banco de dados flexível - suporta SQLite, PostgreSQL (Neon), e Supabase
+import { createDatabaseConnection, getDatabaseStatus, dbConfig } from './database-config';
 
-/*
-// === EXEMPLO PARA INTEGRAÇÃO FUTURA COM SUPABASE ===
+// Exportar conexão do banco de dados
+export const db = createDatabaseConnection();
 
-import { createClient } from '@supabase/supabase-js'
+// Exportar status e configuração para uso na administração
+export { getDatabaseStatus, dbConfig };
 
-// Configuração do Supabase (será necessário adicionar as variáveis de ambiente)
-const supabaseUrl = process.env.SUPABASE_URL!
-const supabaseKey = process.env.SUPABASE_ANON_KEY!
+// Para compatibilidade com integrações futuras do Supabase
+export let supabase: any = null;
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
-
-// Depois criar uma SupabaseStorage class em storage.ts que implementa IStorage
-// e usar supabase.from('table_name') para as operações CRUD
-
-*/
-
-// === CONFIGURAÇÃO POSTGRESQL ORIGINAL (COMENTADA) ===
-/*
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
-import * as schema from "@shared/schema";
-
-neonConfig.webSocketConstructor = ws;
-
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
+// Inicializar cliente Supabase se configurado
+if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+  try {
+    // Nota: A integração completa do Supabase será configurada via blueprint
+    console.log('Supabase configurado - URL:', process.env.SUPABASE_URL);
+  } catch (error) {
+    console.warn('Erro ao inicializar Supabase:', error);
+  }
 }
-
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
-*/
