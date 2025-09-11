@@ -153,7 +153,9 @@ export class SimpleSQLiteStorage implements IStorage {
         now
       );
       
-      return this.getProperty(id) as Promise<Property>;
+      const newProperty = await this.getProperty(id);
+      if (!newProperty) throw new Error("Failed to retrieve created property");
+      return newProperty;
     } catch (error) {
       console.error("Error creating property:", error);
       throw new Error("Failed to create property");
@@ -302,7 +304,9 @@ export class SimpleSQLiteStorage implements IStorage {
         now
       );
       
-      return this.getProject(id) as Promise<Project>;
+      const newProject = await this.getProject(id);
+      if (!newProject) throw new Error("Failed to retrieve created project");
+      return newProject;
     } catch (error) {
       console.error("Error creating project:", error);
       throw new Error("Failed to create project");
@@ -391,7 +395,8 @@ export class SimpleSQLiteStorage implements IStorage {
       );
       
       const newContact = this.getContact(id);
-      return newContact as Promise<Contact>;
+      if (!newContact) throw new Error("Failed to retrieve created contact");
+      return Promise.resolve(newContact);
     } catch (error) {
       console.error("Error creating contact:", error);
       throw new Error("Failed to create contact");
@@ -475,7 +480,9 @@ export class SimpleSQLiteStorage implements IStorage {
         now
       );
       
-      return this.getCondominium(id) as Promise<Condominium>;
+      const newCondominium = await this.getCondominium(id);
+      if (!newCondominium) throw new Error("Failed to retrieve created condominium");
+      return newCondominium;
     } catch (error) {
       console.error("Error creating condominium:", error);
       throw new Error("Failed to create condominium");
