@@ -127,8 +127,8 @@ export default function AdminProjectsPage() {
                 : "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600";
               
               return (
-                <Card key={project.id} className="card-hover bg-white shadow-lg overflow-hidden" data-testid={`project-card-${project.id}`}>
-                  <div className="relative">
+                <Card key={project.id} className="admin-triangular-card card-hover bg-white shadow-lg" data-testid={`project-card-${project.id}`}>
+                  <div className="relative image-container">
                     <img
                       src={mainImage}
                       alt={project.title}

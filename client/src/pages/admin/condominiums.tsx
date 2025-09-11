@@ -127,8 +127,8 @@ export default function AdminCondominiumsPage() {
                 : "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600";
               
               return (
-                <Card key={condominium.id} className="card-hover bg-white shadow-lg overflow-hidden" data-testid={`condominium-card-${condominium.id}`}>
-                  <div className="relative">
+                <Card key={condominium.id} className="admin-triangular-card card-hover bg-white shadow-lg" data-testid={`condominium-card-${condominium.id}`}>
+                  <div className="relative image-container">
                     <img
                       src={mainImage}
                       alt={condominium.name}

@@ -135,8 +135,8 @@ export default function AdminPropertiesPage() {
                 : "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600";
               
               return (
-                <Card key={property.id} className="card-hover bg-white shadow-lg overflow-hidden" data-testid={`property-card-${property.id}`}>
-                  <div className="relative">
+                <Card key={property.id} className="admin-triangular-card card-hover bg-white shadow-lg" data-testid={`property-card-${property.id}`}>
+                  <div className="relative image-container">
                     <img
                       src={mainImage}
                       alt={property.title}
