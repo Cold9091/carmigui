@@ -299,7 +299,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await fs.mkdir(uploadDir, { recursive: true });
         cb(null, uploadDir);
       } catch (error) {
-        cb(error, uploadDir);
+        cb(error instanceof Error ? error : new Error('Failed to create upload directory'), uploadDir);
       }
     },
     filename: (req, file, cb) => {
@@ -359,10 +359,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete('/api/upload/images/:filename', async (req, res) => {
     try {
       const filename = req.params.filename;
-      const filePath = path.join(process.cwd(), 'uploads', 'images', filename);
+      
+      // Security: Validate filename pattern to prevent path traversal
+      const filenamePattern = /^image-\d+-\d+\.(jpg|jpeg|png|gif|webp)$/i;
+      if (!filenamePattern.test(filename)) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Invalid filename format' 
+        });
+      }
+      
+      // Safely construct file path
+      const uploadsDir = path.join(process.cwd(), 'uploads', 'images');
+      const filePath = path.join(uploadsDir, filename);
+      
+      // Ensure the resolved path is still within uploads/images
+      const normalizedPath = path.normalize(filePath);
+      if (!normalizedPath.startsWith(uploadsDir)) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Invalid file path' 
+        });
+      }
       
       try {
-        await fs.unlink(filePath);
+        await fs.unlink(normalizedPath);
         res.json({ 
           success: true, 
           message: 'Image deleted successfully' 

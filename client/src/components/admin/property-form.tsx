@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertPropertySchema } from "@shared/schema";
@@ -307,18 +308,17 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
           name="images"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Imagens (URLs)</FormLabel>
+              <FormLabel>Imagens do Imóvel</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Cole os URLs das imagens, separados por vírgula..."
-                  rows={3}
-                  value={Array.isArray(field.value) ? field.value.join(", ") : (field.value ?? "")}
-                  onChange={(e) => field.onChange(e.target.value)}
-                  data-testid="textarea-property-images"
+                <ImageUpload
+                  value={Array.isArray(field.value) ? field.value : []}
+                  onChange={field.onChange}
+                  maxImages={10}
+                  disabled={propertyMutation.isPending}
                 />
               </FormControl>
               <p className="text-sm text-muted-foreground">
-                Adicione URLs de imagens separados por vírgula
+                Faça upload das imagens do imóvel (máximo 10 imagens, até 5MB cada)
               </p>
               <FormMessage />
             </FormItem>
