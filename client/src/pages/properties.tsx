@@ -1,10 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import { Search, Building, MapPin, Bed, Bath, Square, Heart } from "lucide-react";
 import PropertyCard from "@/components/property-card";
 import type { Property } from "@shared/schema";
 
@@ -14,8 +10,6 @@ export default function PropertiesPage() {
     location: "",
     type: "",
   });
-
-  const [selectedProperties, setSelectedProperties] = useState<Set<string>>(new Set());
 
   // Initialize filters from URL parameters
   useEffect(() => {
@@ -44,208 +38,20 @@ export default function PropertiesPage() {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
-  const toggleFavorite = (propertyId: string) => {
-    setSelectedProperties(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(propertyId)) {
-        newSet.delete(propertyId);
-      } else {
-        newSet.add(propertyId);
+  const filteredProperties = useMemo(() => {
+    return (properties || []).filter((property) => {
+      if (filters.type && filters.type !== 'all' && property.type !== filters.type) {
+        return false;
       }
-      return newSet;
+      if (filters.bedrooms && filters.bedrooms !== 'all' && property.bedrooms?.toString() !== filters.bedrooms) {
+        return false;
+      }
+      if (filters.location && filters.location !== 'all' && !property.location?.toLowerCase().includes(filters.location.toLowerCase())) {
+        return false;
+      }
+      return true;
     });
-  };
-
-  // Sample properties data with proper Property schema format
-  const sampleProperties: Property[] = [
-    {
-      id: "1",
-      title: "Casa de Vidro",
-      description: "Moderna casa de vidro com design contemporâneo e acabamentos de luxo",
-      location: "Rua 1, Luanda - Angola",
-      type: "house",
-      area: 812,
-      bedrooms: 5,
-      bathrooms: 3,
-      price: "1010000000",
-      images: ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      virtualTourUrl: "https://example.com/tour/casa-vidro",
-      status: "available",
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "2", 
-      title: "Sobrado Minimalista",
-      description: "Sobrado com design minimalista e espaços amplos para conforto familiar",
-      location: "Rua 2, Benguela - Angola",
-      type: "house",
-      area: 230,
-      bedrooms: 3,
-      bathrooms: 2,
-      price: "250000000",
-      images: ["https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "3",
-      title: "Casa de campo",
-      description: "Aconchegante casa de campo ideal para quem busca tranquilidade",
-      location: "Rua 3, Huambo - Angola", 
-      type: "house",
-      area: 100,
-      bedrooms: 2,
-      bathrooms: 1,
-      price: "100000000",
-      images: ["https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      virtualTourUrl: "https://example.com/tour/casa-campo",
-      status: "available",
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "4",
-      title: "Apartamento",
-      description: "Apartamento moderno com localização privilegiada no centro da cidade",
-      location: "Rua 4, Lobito - Angola",
-      type: "apartment",
-      area: 68,
-      bedrooms: 2,
-      bathrooms: 1,
-      price: "195000000",
-      images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "5",
-      title: "Casa de campo com piscina",
-      description: "Espaçosa casa de campo com piscina e área de lazer completa",
-      location: "Rua 5, Malanje - Angola",
-      type: "house",
-      area: 400,
-      bedrooms: 3,
-      bathrooms: 2,
-      price: "500000000",
-      images: ["https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "6",
-      title: "Apartamento no centro",
-      description: "Elegante apartamento no centro com fácil acesso a todas as comodidades",
-      location: "Rua 6, Cabinda - Angola",
-      type: "apartment",
-      area: 400,
-      bedrooms: 3,
-      bathrooms: 2,
-      price: "410000000",
-      images: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "7",
-      title: "Loft Moderno",
-      description: "Loft moderno com pé-direito alto e design industrial",
-      location: "Rua 7, Luanda - Angola",
-      type: "loft",
-      area: 120,
-      bedrooms: 1,
-      bathrooms: 1,
-      price: "180000000",
-      images: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "8",
-      title: "Fazenda Rural",
-      description: "Ampla fazenda com pastagens e instalações agrícolas",
-      location: "Rua 8, Malanje - Angola",
-      type: "fazenda",
-      area: 5000,
-      bedrooms: 4,
-      bathrooms: 3,
-      price: "800000000",
-      images: ["https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "9",
-      title: "Prédio Comercial",
-      description: "Prédio comercial completo com múltiplos andares",
-      location: "Rua 9, Benguela - Angola",
-      type: "building",
-      area: 800,
-      bedrooms: 0,
-      bathrooms: 6,
-      price: "1200000000",
-      images: ["https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "10",
-      title: "Espaço Comercial",
-      description: "Espaço comercial ideal para escritórios ou comércio",
-      location: "Rua 10, Lobito - Angola",
-      type: "office",
-      area: 200,
-      bedrooms: 0,
-      bathrooms: 2,
-      price: "300000000",
-      images: ["https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "11",
-      title: "Espaço de Coworking",
-      description: "Espaço colaborativo moderno com todas as facilidades",
-      location: "Rua 11, Huambo - Angola",
-      type: "coworking",
-      area: 150,
-      bedrooms: 0,
-      bathrooms: 2,
-      price: "250000000",
-      images: ["https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"],
-      virtualTourUrl: null,
-      status: "available",
-      featured: false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
-  ];
+  }, [properties, filters]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -346,30 +152,35 @@ export default function PropertiesPage() {
       {/* Properties Grid */}
       <div className="max-w-7xl mx-auto container-padding section-spacing">
         <h2 className="text-2xl font-bold text-gray-800 mb-8">
-          200 Imóveis à venda em Angola
+          {isLoading ? "Carregando..." : `${filteredProperties.length} Imóveis à venda em Angola`}
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {sampleProperties
-            .filter(property => {
-              // Filter by type
-              if (filters.type && filters.type !== "all" && property.type !== filters.type) {
-                return false;
-              }
-              // Filter by bedrooms
-              if (filters.bedrooms && filters.bedrooms !== "all" && property.bedrooms && property.bedrooms.toString() !== filters.bedrooms) {
-                return false;
-              }
-              // Filter by location
-              if (filters.location && filters.location !== "all" && !property.location.includes(filters.location)) {
-                return false;
-              }
-              return true;
-            })
-            .map((property) => (
-            <PropertyCard key={property.id} property={property} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white rounded-lg shadow-md animate-pulse">
+                <div className="h-48 bg-gray-300 rounded-t-lg"></div>
+                <div className="p-4">
+                  <div className="h-4 bg-gray-300 rounded mb-2"></div>
+                  <div className="h-4 bg-gray-300 rounded mb-2"></div>
+                  <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredProperties.map((property) => (
+              <PropertyCard key={property.id} property={property} />
+            ))}
+          </div>
+        )}
+
+        {!isLoading && filteredProperties.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">Nenhum imóvel encontrado com os filtros selecionados.</p>
+          </div>
+        )}
       </div>
     </div>
   );

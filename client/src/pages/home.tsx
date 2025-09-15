@@ -387,121 +387,21 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Create sample properties for the Os menores preços section */}
-          {(() => {
-            const cheaperProperties: Property[] = [
-              {
-                id: "cheap-1",
-                title: "Casa de campo com piscina",
-                description: "Linda casa de campo com piscina e jardim amplo",
-                location: "Rua Marte, Barueri - SP",
-                type: "house",
-                area: 400,
-                bedrooms: 3,
-                bathrooms: 2,
-                price: "410000",
-                images: ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"],
-                virtualTourUrl: "https://example.com/tour/casa-campo-piscina",
-                status: "available",
-                featured: false,
-                createdAt: new Date(),
-                updatedAt: new Date()
-              },
-              {
-                id: "cheap-2",
-                title: "Casa de campo com piscina",
-                description: "Excelente casa de campo com piscina e área de lazer",
-                location: "Rua Marte, Barueri - SP",
-                type: "house",
-                area: 400,
-                bedrooms: 3,
-                bathrooms: 2,
-                price: "410000",
-                images: ["https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"],
-                virtualTourUrl: null,
-                status: "available",
-                featured: false,
-                createdAt: new Date(),
-                updatedAt: new Date()
-              },
-              {
-                id: "cheap-3",
-                title: "Casa de campo com piscina",
-                description: "Moderna casa de campo com piscina e vista privilegiada",
-                location: "Rua Marte, Barueri - SP",
-                type: "house",
-                area: 400,
-                bedrooms: 3,
-                bathrooms: 2,
-                price: "410000",
-                images: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"],
-                virtualTourUrl: "https://example.com/tour/casa-campo-vista",
-                status: "available",
-                featured: false,
-                createdAt: new Date(),
-                updatedAt: new Date()
-              },
-              {
-                id: "cheap-4",
-                title: "Casa de campo",
-                description: "Aconchegante casa de campo ideal para fins de semana",
-                location: "Rua Marte, Barueri - SP",
-                type: "house",
-                area: 400,
-                bedrooms: 3,
-                bathrooms: 2,
-                price: "410000",
-                images: ["https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"],
-                virtualTourUrl: null,
-                status: "available",
-                featured: false,
-                createdAt: new Date(),
-                updatedAt: new Date()
-              },
-              {
-                id: "cheap-5",
-                title: "Apartamento moderno",
-                description: "Apartamento moderno com acabamentos de qualidade",
-                location: "Rua Marte, Barueri - SP",
-                type: "apartment",
-                area: 400,
-                bedrooms: 3,
-                bathrooms: 2,
-                price: "410000",
-                images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"],
-                virtualTourUrl: null,
-                status: "available",
-                featured: false,
-                createdAt: new Date(),
-                updatedAt: new Date()
-              },
-              {
-                id: "cheap-6",
-                title: "Casa contemporânea",
-                description: "Casa contemporânea com design arrojado",
-                location: "Rua Marte, Barueri - SP",
-                type: "house",
-                area: 400,
-                bedrooms: 3,
-                bathrooms: 2,
-                price: "410000",
-                images: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"],
-                virtualTourUrl: "https://example.com/tour/casa-contemporanea",
-                status: "available",
-                featured: false,
-                createdAt: new Date(),
-                updatedAt: new Date()
-              }
-            ];
-
-            return (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {cheaperProperties.slice(cheaperIndex * 3, (cheaperIndex * 3) + 3).map((property) => (
-                  <PropertyCard key={property.id} property={property} />
-                ))}
+          {/* Use all properties data sorted by price */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredProperties.length === 0 ? (
+              <div className="col-span-full text-center py-8">
+                <p className="text-gray-500">Nenhum imóvel disponível no momento</p>
               </div>
-            );
-          })()}
+            ) : (
+              featuredProperties
+                .sort((a, b) => Number(a.price) - Number(b.price))
+                .slice(cheaperIndex * 3, (cheaperIndex * 3) + 3)
+                .map((property) => (
+                  <PropertyCard key={property.id} property={property} />
+                ))
+            )}
+          </div>
         </div>
       </section>
 
