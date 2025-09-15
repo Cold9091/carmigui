@@ -4,6 +4,9 @@ import { storage } from "./storage";
 import { getDatabaseStatus } from "./db";
 import { insertPropertySchema, insertProjectSchema, insertContactSchema, insertCondominiumSchema } from "@shared/schema";
 import { z } from "zod";
+import multer from "multer";
+import path from "path";
+import fs from "fs/promises";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Properties routes
@@ -284,6 +287,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false, 
         message: "Database connection failed",
         error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Configure multer for file uploads
+  const storage_multer = multer.diskStorage({
+    destination: async (req, file, cb) => {
+      const uploadDir = path.join(process.cwd(), 'uploads', 'images');
+      try {
+        await fs.mkdir(uploadDir, { recursive: true });
+        cb(null, uploadDir);
+      } catch (error) {
+        cb(error, uploadDir);
+      }
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const ext = path.extname(file.originalname);
+      cb(null, `image-${uniqueSuffix}${ext}`);
+    }
+  });
+
+  const upload = multer({
+    storage: storage_multer,
+    limits: {
+      fileSize: 5 * 1024 * 1024, // 5MB limit
+    },
+    fileFilter: (req, file, cb) => {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.'));
+      }
+    }
+  });
+
+  // Image upload routes
+  app.post('/api/upload/images', upload.array('images', 10), async (req, res) => {
+    try {
+      if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
+        return res.status(400).json({ message: 'No images uploaded' });
+      }
+
+      const uploadedFiles = req.files.map((file: Express.Multer.File) => {
+        return {
+          filename: file.filename,
+          originalName: file.originalname,
+          size: file.size,
+          url: `/uploads/images/${file.filename}`
+        };
+      });
+
+      res.json({
+        success: true,
+        message: `${uploadedFiles.length} image(s) uploaded successfully`,
+        files: uploadedFiles
+      });
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to upload images',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // Delete image route
+  app.delete('/api/upload/images/:filename', async (req, res) => {
+    try {
+      const filename = req.params.filename;
+      const filePath = path.join(process.cwd(), 'uploads', 'images', filename);
+      
+      try {
+        await fs.unlink(filePath);
+        res.json({ 
+          success: true, 
+          message: 'Image deleted successfully' 
+        });
+      } catch (error) {
+        if ((error as any).code === 'ENOENT') {
+          return res.status(404).json({ 
+            success: false, 
+            message: 'Image not found' 
+          });
+        }
+        throw error;
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to delete image',
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   });
