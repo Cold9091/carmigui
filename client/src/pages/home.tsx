@@ -55,16 +55,16 @@ export default function HomePage() {
           alt="Banner Carmigui Imobiliária"
           className="w-full h-auto object-contain"
         />
-        <div className="absolute inset-0 flex items-center justify-end pr-8 md:pr-16 lg:pr-24">
-          <div className="max-w-xl text-right">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-tight mb-2">
+        <div className="absolute inset-0 flex items-center justify-end pr-4 sm:pr-8 md:pr-12 lg:pr-16 xl:pr-20">
+          <div className="hidden sm:block max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl text-right">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-2">
               <span className="text-[#F5A623]">BEM-VINDO</span>
               <br />
               <span className="text-white">AO SEU NOVO</span>
               <br />
               <span className="text-white">COMEÇO !</span>
             </h1>
-            <p className="text-white text-sm md:text-base lg:text-lg font-bold mt-6 leading-relaxed">
+            <p className="text-white text-xs sm:text-sm md:text-base lg:text-lg font-bold mt-3 md:mt-4 lg:mt-6 leading-relaxed">
               Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário.
             </p>
           </div>
