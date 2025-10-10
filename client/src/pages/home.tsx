@@ -50,7 +50,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white">
-        <div className="max-w-7xl mx-auto container-padding pt-8 pb-20">
+        <div className="max-w-7xl mx-auto container-padding pt-8 pb-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
@@ -64,7 +64,7 @@ export default function HomePage() {
               <img
                 src={heroImage}
                 alt="Corretora de imóveis"
-                className="w-full h-auto rounded-lg shadow-2xl"
+                className="w-full h-auto rounded-lg"
               />
             </div>
           </div>
@@ -72,7 +72,7 @@ export default function HomePage() {
       </section>
 
       {/* Property Types Section */}
-      <section className="py-12 bg-gray-50">
+      <section className="pt-8 pb-12 bg-gray-50">
         <div className="max-w-7xl mx-auto container-padding">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
             <Link href="/imoveis?type=apartment" className="group">
