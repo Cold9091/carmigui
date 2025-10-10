@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Building, Home, Hammer, Phone, Settings, Menu, X, Search } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import logoImage from "@assets/Component 2_1760109057752.png";
+import logoImage from "@assets/Component 2 1_1760109982800.png";
 
 export default function Navigation() {
   const [location] = useLocation();
