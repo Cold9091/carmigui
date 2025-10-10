@@ -50,13 +50,11 @@ export default function HomePage() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative w-full">
-        <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] xl:h-[700px]">
-          <img
-            src={heroImage}
-            alt="Banner Carmigui Imobiliária"
-            className="w-full h-full object-cover object-center"
-          />
-        </div>
+        <img
+          src={heroImage}
+          alt="Banner Carmigui Imobiliária"
+          className="w-full h-auto object-contain"
+        />
       </section>
 
       {/* Property Types Section */}
