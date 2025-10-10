@@ -8,6 +8,7 @@ import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowL
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
 import type { Property, Project, Condominium } from "@shared/schema";
+import heroImage from "@assets/POST PARA CORTEVIP PACK1 (7)_1760057178860.png";
 
 export default function HomePage() {
   // Estados para carrossel
@@ -61,8 +62,8 @@ export default function HomePage() {
             </div>
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
-                alt="Apartamento moderno"
+                src={heroImage}
+                alt="Corretora de imóveis"
                 className="w-full h-auto rounded-lg shadow-2xl"
               />
             </div>
