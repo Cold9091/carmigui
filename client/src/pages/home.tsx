@@ -8,7 +8,7 @@ import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowL
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
 import type { Property, Project, Condominium } from "@shared/schema";
-import heroImage from "@assets/POST PARA CORTEVIP PACK1 (7)_1760057178860.png";
+import heroImage from "@assets/POST PARA CORTEVIP PACK1 (8)_1760103181654.png";
 
 export default function HomePage() {
   // Estados para carrossel
@@ -49,7 +49,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white">
+      <section className="relative text-white" style={{ backgroundColor: '#165e31' }}>
         <div className="max-w-7xl mx-auto container-padding pt-8 pb-0">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
