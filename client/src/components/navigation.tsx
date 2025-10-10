@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Building, Home, Hammer, Phone, Settings, Menu, X, Search } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import logoImage from "@assets/Component 2_1760108947935.jpg";
 
 export default function Navigation() {
   const [location] = useLocation();
@@ -27,12 +28,11 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center" data-testid="logo-link">
-            <div className="text-xl font-roboto font-bold text-white flex items-center">
-              <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center mr-2 font-semibold">
-                CM
-              </div>
-              CARMIGUI
-            </div>
+            <img 
+              src={logoImage} 
+              alt="CM Carmigui" 
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Search Bar */}
