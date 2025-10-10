@@ -64,7 +64,7 @@ export default function HomePage() {
               <img
                 src={heroImage}
                 alt="Corretora de imóveis"
-                className="w-full h-auto rounded-lg"
+                className="w-full h-auto"
               />
             </div>
           </div>
