@@ -49,25 +49,46 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative w-full">
-        <img
-          src={heroImage}
-          alt="Banner Carmigui Imobiliária"
-          className="w-full h-auto object-contain"
-        />
-        <div className="absolute inset-0 flex items-center justify-end pr-4 sm:pr-8 md:pr-12 lg:pr-16 xl:pr-20">
-          <div className="hidden sm:block max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl text-right">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-2">
-              <span className="text-[#F5A623]">BEM-VINDO</span>
-              <br />
-              <span className="text-white">AO SEU NOVO</span>
-              <br />
-              <span className="text-white">COMEÇO !</span>
-            </h1>
-            <p className="text-white text-xs sm:text-sm md:text-base lg:text-lg font-bold mt-3 md:mt-4 lg:mt-6 leading-relaxed">
-              Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário.
-            </p>
+      <section className="relative w-full bg-[#165e31]">
+        <div className="flex flex-col lg:grid lg:grid-cols-[auto_minmax(0,500px)]">
+          {/* Image Column */}
+          <div className="w-full">
+            <img
+              src={heroImage}
+              alt="Banner Carmigui Imobiliária"
+              className="w-full h-full object-cover"
+            />
           </div>
+          
+          {/* Text Column - Hidden on small screens, visible on lg+ where it fits in the green space */}
+          <div className="hidden lg:flex items-center justify-center px-6 xl:px-8 py-8 bg-[#165e31]">
+            <div className="max-w-lg">
+              <h1 className="font-extrabold leading-tight mb-4" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 3.5rem)' }}>
+                <span className="text-[#F5A623]">BEM-VINDO</span>
+                <br />
+                <span className="text-white">AO SEU NOVO</span>
+                <br />
+                <span className="text-white">COMEÇO !</span>
+              </h1>
+              <p className="text-white font-bold leading-relaxed" style={{ fontSize: 'clamp(0.875rem, 1.2vw, 1.125rem)' }}>
+                Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Mobile Text - Shown below image on small screens */}
+        <div className="lg:hidden bg-[#165e31] px-6 py-8 text-center">
+          <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight mb-4">
+            <span className="text-[#F5A623]">BEM-VINDO</span>
+            <br />
+            <span className="text-white">AO SEU NOVO</span>
+            <br />
+            <span className="text-white">COMEÇO !</span>
+          </h1>
+          <p className="text-white text-sm sm:text-base font-bold leading-relaxed max-w-2xl mx-auto">
+            Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário.
+          </p>
         </div>
       </section>
 
