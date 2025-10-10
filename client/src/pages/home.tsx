@@ -55,16 +55,16 @@ export default function HomePage() {
           alt="Banner Carmigui Imobiliária"
           className="w-full h-auto object-contain"
         />
-        <div className="absolute inset-0 flex items-center justify-end" style={{ paddingRight: 'min(8vw, 5rem)' }}>
-          <div className="text-right" style={{ maxWidth: 'min(45%, 600px)' }}>
-            <h1 className="font-extrabold leading-tight mb-2" style={{ fontSize: 'clamp(1.25rem, 4vw, 3.5rem)' }}>
+        <div className="absolute inset-0 flex items-center justify-end" style={{ paddingRight: 'clamp(0.75rem, 5vw, 5rem)' }}>
+          <div className="text-right" style={{ maxWidth: 'min(48%, 600px)' }}>
+            <h1 className="font-extrabold leading-tight" style={{ fontSize: 'clamp(0.75rem, 4vw, 3.5rem)', marginBottom: 'clamp(0.25rem, 0.5vw, 0.5rem)' }}>
               <span className="text-[#F5A623]">BEM-VINDO</span>
               <br />
               <span className="text-white">AO SEU NOVO</span>
               <br />
               <span className="text-white">COMEÇO !</span>
             </h1>
-            <p className="text-white font-bold leading-relaxed" style={{ fontSize: 'clamp(0.625rem, 1.2vw, 1.125rem)', marginTop: 'clamp(0.5rem, 1.5vw, 1.5rem)' }}>
+            <p className="text-white font-bold leading-tight sm:leading-relaxed" style={{ fontSize: 'clamp(0.45rem, 1.2vw, 1.125rem)', marginTop: 'clamp(0.25rem, 1vw, 1.5rem)' }}>
               Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário.
             </p>
           </div>
