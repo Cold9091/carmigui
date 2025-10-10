@@ -8,7 +8,7 @@ import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowL
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
 import type { Property, Project, Condominium } from "@shared/schema";
-import heroImage from "@assets/POST PARA CORTEVIP PACK1 (8)_1760103181654.png";
+import heroImage from "@assets/Banner Carmigui (Capa para redes socias 2025)_1760103430715.jpg";
 
 export default function HomePage() {
   // Estados para carrossel
@@ -49,26 +49,12 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative text-white" style={{ backgroundColor: '#165e31' }}>
-        <div className="max-w-7xl mx-auto container-padding pt-8 pb-0">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
-                Encontre seu imóvel ideal em Luanda
-              </h1>
-              <p className="text-lg md:text-xl mb-8 text-gray-200">
-                São milhares de casas e apartamentos com toda a facilidade e a assessoria de corretores especializados.
-              </p>
-            </div>
-            <div className="relative">
-              <img
-                src={heroImage}
-                alt="Corretora de imóveis"
-                className="w-full h-auto"
-              />
-            </div>
-          </div>
-        </div>
+      <section className="relative">
+        <img
+          src={heroImage}
+          alt="Banner Carmigui Imobiliária"
+          className="w-full h-auto"
+        />
       </section>
 
       {/* Property Types Section */}
