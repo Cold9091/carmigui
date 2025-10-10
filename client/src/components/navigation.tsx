@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Building, Home, Hammer, Phone, Settings, Menu, X, Search } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import logoImage from "@assets/Component 2_1760108947935.jpg";
+import logoImage from "@assets/Component 2_1760109057752.png";
 
 export default function Navigation() {
   const [location] = useLocation();
@@ -31,7 +31,7 @@ export default function Navigation() {
             <img 
               src={logoImage} 
               alt="CM Carmigui" 
-              className="h-10 w-auto"
+              className="h-8 sm:h-10 md:h-12 w-auto"
             />
           </Link>
 
