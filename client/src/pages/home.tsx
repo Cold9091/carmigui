@@ -8,7 +8,7 @@ import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowL
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
 import type { Property, Project, Condominium } from "@shared/schema";
-import heroImage from "@assets/Banner Carmigui (Capa para redes socias 2025)_1760103430715.jpg";
+import heroImage from "@assets/Component 1_1760104843634.png";
 
 export default function HomePage() {
   // Estados para carrossel
@@ -49,12 +49,14 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative">
-        <img
-          src={heroImage}
-          alt="Banner Carmigui Imobiliária"
-          className="w-full h-auto"
-        />
+      <section className="relative w-full">
+        <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] xl:h-[700px]">
+          <img
+            src={heroImage}
+            alt="Banner Carmigui Imobiliária"
+            className="w-full h-full object-cover object-center"
+          />
+        </div>
       </section>
 
       {/* Property Types Section */}
