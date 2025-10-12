@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,12 +8,19 @@ import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowL
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
 import type { Property, Project, Condominium } from "@shared/schema";
-import heroImage from "@assets/Component 1_1760104843634.png";
+import heroImage from "@assets/hero-banner.webp";
 
 export default function HomePage() {
   // Estados para carrossel
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const [cheaperIndex, setCheaperIndex] = useState(0);
+  const [heroImageLoaded, setHeroImageLoaded] = useState(false);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = heroImage;
+    img.onload = () => setHeroImageLoaded(true);
+  }, []);
   
   const { data: featuredProperties = [], isLoading: propertiesLoading } = useQuery<Property[]>({
     queryKey: ["/api/properties", { featured: "true" }],
@@ -50,14 +57,25 @@ export default function HomePage() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative w-full">
-        <img
-          src={heroImage}
-          alt="Banner Carmigui Imobiliária"
-          className="w-full h-auto object-contain"
-          fetchPriority="high"
-          loading="eager"
-          decoding="async"
-        />
+        <div className={`relative w-full transition-opacity duration-500 ${heroImageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+          <img
+            src={heroImage}
+            alt="Banner Carmigui Imobiliária"
+            className="w-full h-auto object-contain"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+        {!heroImageLoaded && (
+          <div className="absolute inset-0 bg-gradient-to-br from-green-900 via-green-800 to-green-700 animate-pulse" style={{ aspectRatio: '16/6' }}>
+            <div className="absolute inset-0 flex items-center justify-end" style={{ paddingRight: 'clamp(0.75rem, 5vw, 5rem)' }}>
+              <div className="text-right" style={{ maxWidth: 'min(48%, 600px)' }}>
+                <div className="h-12 bg-white/20 rounded mb-4 animate-pulse"></div>
+                <div className="h-8 bg-white/20 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="absolute inset-0 flex items-center justify-end" style={{ paddingRight: 'clamp(0.75rem, 5vw, 5rem)' }}>
           <div className="text-right" style={{ maxWidth: 'min(48%, 600px)' }}>
             <h1 className="font-extrabold leading-tight" style={{ fontSize: 'clamp(0.75rem, 4vw, 3.5rem)', marginBottom: 'clamp(0.25rem, 0.5vw, 0.5rem)' }}>
