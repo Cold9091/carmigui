@@ -19,6 +19,7 @@ import AdminCondominiums from "@/pages/admin/condominiums";
 import AdminContacts from "@/pages/admin/contacts";
 import AdminDatabase from "@/pages/admin/database";
 import AdminCategories from "@/pages/admin/categories";
+import AdminHero from "@/pages/admin/hero";
 import Contact from "@/pages/contact";
 import NotFound from "@/pages/not-found";
 
@@ -44,6 +45,7 @@ function Router() {
           <Route path="/admin/condominiums" component={AdminCondominiums} />
           <Route path="/admin/contacts" component={AdminContacts} />
           <Route path="/admin/categories" component={AdminCategories} />
+          <Route path="/admin/hero" component={AdminHero} />
           <Route path="/admin/database" component={AdminDatabase} />
           <Route path="/contacto" component={Contact} />
           <Route component={NotFound} />

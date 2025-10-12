@@ -1,4 +1,4 @@
-import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory } from "@shared/schema";
+import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings } from "@shared/schema";
 import { IStorage } from "./storage";
 import Database from 'better-sqlite3';
 
@@ -75,6 +75,20 @@ sqlite.exec(`
     slug TEXT NOT NULL UNIQUE,
     image_url TEXT NOT NULL,
     display_order INTEGER DEFAULT 0,
+    active BOOLEAN DEFAULT TRUE,
+    created_at TEXT,
+    updated_at TEXT
+  );
+  
+  CREATE TABLE IF NOT EXISTS hero_settings (
+    id TEXT PRIMARY KEY,
+    images TEXT DEFAULT '[]',
+    title_line_1 TEXT NOT NULL DEFAULT 'BEM-VINDO',
+    title_line_2 TEXT NOT NULL DEFAULT 'AO SEU NOVO',
+    title_line_3 TEXT NOT NULL DEFAULT 'COMEÇO !',
+    description TEXT NOT NULL DEFAULT 'Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário.',
+    carousel_enabled BOOLEAN DEFAULT FALSE,
+    carousel_interval INTEGER DEFAULT 5000,
     active BOOLEAN DEFAULT TRUE,
     created_at TEXT,
     updated_at TEXT
@@ -778,6 +792,157 @@ export class SimpleSQLiteStorage implements IStorage {
       active: Boolean(dbCategory.active),
       createdAt: dbCategory.created_at ? new Date(dbCategory.created_at) : null,
       updatedAt: dbCategory.updated_at ? new Date(dbCategory.updated_at) : null,
+    };
+  }
+
+  async getHeroSettings(): Promise<HeroSettings | undefined> {
+    try {
+      const stmt = sqlite.prepare('SELECT * FROM hero_settings WHERE active = ? ORDER BY created_at DESC LIMIT 1');
+      const result = stmt.get(1);
+      return result ? this.convertHeroSettingsFromDB(result) : undefined;
+    } catch (error) {
+      console.error("Error fetching hero settings:", error);
+      return undefined;
+    }
+  }
+
+  async getHeroSettingsForAdmin(): Promise<HeroSettings | undefined> {
+    try {
+      const stmt = sqlite.prepare('SELECT * FROM hero_settings ORDER BY created_at DESC LIMIT 1');
+      const result = stmt.get();
+      return result ? this.convertHeroSettingsFromDB(result) : undefined;
+    } catch (error) {
+      console.error("Error fetching hero settings for admin:", error);
+      return undefined;
+    }
+  }
+
+  async getHeroSettingsById(id: string): Promise<HeroSettings | undefined> {
+    try {
+      const stmt = sqlite.prepare('SELECT * FROM hero_settings WHERE id = ?');
+      const result = stmt.get(id);
+      return result ? this.convertHeroSettingsFromDB(result) : undefined;
+    } catch (error) {
+      console.error("Error fetching hero settings by id:", error);
+      return undefined;
+    }
+  }
+
+  async createHeroSettings(heroSettings: InsertHeroSettings): Promise<HeroSettings> {
+    try {
+      const id = Math.random().toString(36).substring(2, 15);
+      const now = new Date().toISOString();
+      
+      const stmt = sqlite.prepare(`
+        INSERT INTO hero_settings (
+          id, images, title_line_1, title_line_2, title_line_3, description, 
+          carousel_enabled, carousel_interval, active, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+      
+      stmt.run(
+        id,
+        JSON.stringify(heroSettings.images || []),
+        heroSettings.titleLine1,
+        heroSettings.titleLine2,
+        heroSettings.titleLine3,
+        heroSettings.description,
+        heroSettings.carouselEnabled ? 1 : 0,
+        heroSettings.carouselInterval ?? 5000,
+        heroSettings.active ? 1 : 0,
+        now,
+        now
+      );
+      
+      const result = await this.getHeroSettingsById(id);
+      if (!result) throw new Error("Failed to create hero settings");
+      return result;
+    } catch (error) {
+      console.error("Error creating hero settings:", error);
+      throw error;
+    }
+  }
+
+  async updateHeroSettings(id: string, heroSettings: Partial<InsertHeroSettings>): Promise<HeroSettings | undefined> {
+    try {
+      const existing = await this.getHeroSettingsById(id);
+      if (!existing) return undefined;
+      
+      const now = new Date().toISOString();
+      const updates: string[] = [];
+      const params: any[] = [];
+      
+      if (heroSettings.images !== undefined) {
+        updates.push('images = ?');
+        params.push(JSON.stringify(heroSettings.images));
+      }
+      if (heroSettings.titleLine1 !== undefined) {
+        updates.push('title_line_1 = ?');
+        params.push(heroSettings.titleLine1);
+      }
+      if (heroSettings.titleLine2 !== undefined) {
+        updates.push('title_line_2 = ?');
+        params.push(heroSettings.titleLine2);
+      }
+      if (heroSettings.titleLine3 !== undefined) {
+        updates.push('title_line_3 = ?');
+        params.push(heroSettings.titleLine3);
+      }
+      if (heroSettings.description !== undefined) {
+        updates.push('description = ?');
+        params.push(heroSettings.description);
+      }
+      if (heroSettings.carouselEnabled !== undefined) {
+        updates.push('carousel_enabled = ?');
+        params.push(heroSettings.carouselEnabled ? 1 : 0);
+      }
+      if (heroSettings.carouselInterval !== undefined) {
+        updates.push('carousel_interval = ?');
+        params.push(heroSettings.carouselInterval);
+      }
+      if (heroSettings.active !== undefined) {
+        updates.push('active = ?');
+        params.push(heroSettings.active ? 1 : 0);
+      }
+      
+      updates.push('updated_at = ?');
+      params.push(now);
+      params.push(id);
+      
+      const stmt = sqlite.prepare(`UPDATE hero_settings SET ${updates.join(', ')} WHERE id = ?`);
+      stmt.run(params);
+      
+      return await this.getHeroSettingsById(id);
+    } catch (error) {
+      console.error("Error updating hero settings:", error);
+      return undefined;
+    }
+  }
+
+  async deleteHeroSettings(id: string): Promise<boolean> {
+    try {
+      const stmt = sqlite.prepare('DELETE FROM hero_settings WHERE id = ?');
+      const result = stmt.run(id);
+      return result.changes > 0;
+    } catch (error) {
+      console.error("Error deleting hero settings:", error);
+      return false;
+    }
+  }
+
+  private convertHeroSettingsFromDB(dbHeroSettings: any): HeroSettings {
+    return {
+      id: dbHeroSettings.id,
+      images: dbHeroSettings.images ? JSON.parse(dbHeroSettings.images) : [],
+      titleLine1: dbHeroSettings.title_line_1,
+      titleLine2: dbHeroSettings.title_line_2,
+      titleLine3: dbHeroSettings.title_line_3,
+      description: dbHeroSettings.description,
+      carouselEnabled: Boolean(dbHeroSettings.carousel_enabled),
+      carouselInterval: dbHeroSettings.carousel_interval,
+      active: Boolean(dbHeroSettings.active),
+      createdAt: dbHeroSettings.created_at ? new Date(dbHeroSettings.created_at) : null,
+      updatedAt: dbHeroSettings.updated_at ? new Date(dbHeroSettings.updated_at) : null,
     };
   }
 }

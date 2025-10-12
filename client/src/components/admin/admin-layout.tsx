@@ -24,7 +24,8 @@ import {
   Database,
   Settings,
   LogOut,
-  Folder
+  Folder,
+  Image
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -40,6 +41,12 @@ const adminNavItems = [
     url: "/admin",
     icon: BarChart3,
     description: "Visão geral das estatísticas",
+  },
+  {
+    title: "Hero",
+    url: "/admin/hero",
+    icon: Image,
+    description: "Gerir banner principal",
   },
   {
     title: "Imóveis",

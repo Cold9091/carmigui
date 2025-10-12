@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { getDatabaseStatus } from "./db";
-import { insertPropertySchema, insertProjectSchema, insertContactSchema, insertCondominiumSchema, insertPropertyCategorySchema } from "@shared/schema";
+import { insertPropertySchema, insertProjectSchema, insertContactSchema, insertCondominiumSchema, insertPropertyCategorySchema, insertHeroSettingsSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";
@@ -327,6 +327,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting category:", error);
       res.status(500).json({ message: "Failed to delete category" });
+    }
+  });
+
+  // Hero Settings routes
+  app.get("/api/hero-settings", async (req, res) => {
+    try {
+      const heroSettings = await storage.getHeroSettings();
+      res.json(heroSettings);
+    } catch (error) {
+      console.error("Error fetching hero settings:", error);
+      res.status(500).json({ message: "Failed to fetch hero settings" });
+    }
+  });
+
+  app.get("/api/admin/hero-settings", async (req, res) => {
+    try {
+      const heroSettings = await storage.getHeroSettingsForAdmin();
+      res.json(heroSettings);
+    } catch (error) {
+      console.error("Error fetching hero settings for admin:", error);
+      res.status(500).json({ message: "Failed to fetch hero settings" });
+    }
+  });
+
+  app.get("/api/hero-settings/:id", async (req, res) => {
+    try {
+      const heroSettings = await storage.getHeroSettingsById(req.params.id);
+      if (!heroSettings) {
+        return res.status(404).json({ message: "Hero settings not found" });
+      }
+      res.json(heroSettings);
+    } catch (error) {
+      console.error("Error fetching hero settings:", error);
+      res.status(500).json({ message: "Failed to fetch hero settings" });
+    }
+  });
+
+  app.post("/api/hero-settings", async (req, res) => {
+    try {
+      const heroSettings = insertHeroSettingsSchema.parse(req.body);
+      const newHeroSettings = await storage.createHeroSettings(heroSettings);
+      res.status(201).json(newHeroSettings);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid hero settings data", errors: error.errors });
+      }
+      console.error("Error creating hero settings:", error);
+      res.status(500).json({ message: "Failed to create hero settings" });
+    }
+  });
+
+  app.put("/api/hero-settings/:id", async (req, res) => {
+    try {
+      const updates = insertHeroSettingsSchema.partial().parse(req.body);
+      const updatedHeroSettings = await storage.updateHeroSettings(req.params.id, updates);
+      if (!updatedHeroSettings) {
+        return res.status(404).json({ message: "Hero settings not found" });
+      }
+      res.json(updatedHeroSettings);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid hero settings data", errors: error.errors });
+      }
+      console.error("Error updating hero settings:", error);
+      res.status(500).json({ message: "Failed to update hero settings" });
+    }
+  });
+
+  app.delete("/api/hero-settings/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteHeroSettings(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Hero settings not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting hero settings:", error);
+      res.status(500).json({ message: "Failed to delete hero settings" });
     }
   });
 

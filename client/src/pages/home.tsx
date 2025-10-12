@@ -7,7 +7,7 @@ import { Link } from "wouter";
 import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowLeft, Search, CheckCircle, Key, Square, Users } from "lucide-react";
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
-import type { Property, Project, Condominium, PropertyCategory } from "@shared/schema";
+import type { Property, Project, Condominium, PropertyCategory, HeroSettings } from "@shared/schema";
 import heroImage from "@assets/hero-banner.webp";
 
 export default function HomePage() {
@@ -15,12 +15,33 @@ export default function HomePage() {
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const [cheaperIndex, setCheaperIndex] = useState(0);
   const [heroImageLoaded, setHeroImageLoaded] = useState(false);
+  const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
+
+  const { data: heroSettings } = useQuery<HeroSettings | null>({
+    queryKey: ["/api/hero-settings"],
+  });
+
+  const heroImages = heroSettings?.images && heroSettings.images.length > 0 
+    ? heroSettings.images 
+    : [heroImage];
+  
+  const carouselEnabled = heroSettings?.carouselEnabled && heroImages.length > 1;
+  const carouselInterval = heroSettings?.carouselInterval || 5000;
 
   useEffect(() => {
     const img = new Image();
-    img.src = heroImage;
+    img.src = heroImages[0];
     img.onload = () => setHeroImageLoaded(true);
-  }, []);
+  }, [heroImages]);
+
+  useEffect(() => {
+    if (carouselEnabled) {
+      const interval = setInterval(() => {
+        setCurrentHeroIndex((prev) => (prev + 1) % heroImages.length);
+      }, carouselInterval);
+      return () => clearInterval(interval);
+    }
+  }, [carouselEnabled, heroImages.length, carouselInterval]);
   
   const { data: featuredProperties = [], isLoading: propertiesLoading } = useQuery<Property[]>({
     queryKey: ["/api/properties", { featured: "true" }],
@@ -38,7 +59,7 @@ export default function HomePage() {
     queryKey: ["/api/property-categories"],
   });
 
-  const activeCategories = categories.filter(cat => cat.active).sort((a, b) => a.displayOrder - b.displayOrder);
+  const activeCategories = categories.filter(cat => cat.active).sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
 
   // Funções de navegação para featured properties
   const handleFeaturedPrev = () => {
@@ -65,11 +86,12 @@ export default function HomePage() {
       <section className="relative w-full">
         <div className={`relative w-full transition-opacity duration-500 ${heroImageLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <img
-            src={heroImage}
+            src={heroImages[currentHeroIndex]}
             alt="Banner Carmigui Imobiliária"
             className="w-full h-auto object-contain"
             loading="eager"
             decoding="async"
+            data-testid="hero-image"
           />
         </div>
         {!heroImageLoaded && (
@@ -84,18 +106,52 @@ export default function HomePage() {
         )}
         <div className="absolute inset-0 flex items-center justify-end" style={{ paddingRight: 'clamp(0.75rem, 5vw, 5rem)' }}>
           <div className="text-right" style={{ maxWidth: 'min(48%, 600px)' }}>
-            <h1 className="font-extrabold leading-tight" style={{ fontSize: 'clamp(0.75rem, 4vw, 3.5rem)', marginBottom: 'clamp(0.25rem, 0.5vw, 0.5rem)' }}>
-              <span className="text-[#F5A623]">BEM-VINDO</span>
+            <h1 className="font-extrabold leading-tight" style={{ fontSize: 'clamp(0.75rem, 4vw, 3.5rem)', marginBottom: 'clamp(0.25rem, 0.5vw, 0.5rem)' }} data-testid="hero-title">
+              <span className="text-[#F5A623]">{heroSettings?.titleLine1 || "BEM-VINDO"}</span>
               <br />
-              <span className="text-white">AO SEU NOVO</span>
+              <span className="text-white">{heroSettings?.titleLine2 || "AO SEU NOVO"}</span>
               <br />
-              <span className="text-white">COMEÇO !</span>
+              <span className="text-white">{heroSettings?.titleLine3 || "COMEÇO !"}</span>
             </h1>
-            <p className="text-white font-bold leading-tight sm:leading-relaxed" style={{ fontSize: 'clamp(0.45rem, 1.2vw, 1.125rem)', marginTop: 'clamp(0.25rem, 1vw, 1.5rem)' }}>
-              Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário.
+            <p className="text-white font-bold leading-tight sm:leading-relaxed" style={{ fontSize: 'clamp(0.45rem, 1.2vw, 1.125rem)', marginTop: 'clamp(0.25rem, 1vw, 1.5rem)' }} data-testid="hero-description">
+              {heroSettings?.description || "Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário."}
             </p>
           </div>
         </div>
+        
+        {carouselEnabled && heroImages.length > 1 && (
+          <>
+            <button
+              onClick={() => setCurrentHeroIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length)}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white rounded-full p-2 transition-colors"
+              aria-label="Imagem anterior"
+              data-testid="btn-hero-prev"
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <button
+              onClick={() => setCurrentHeroIndex((prev) => (prev + 1) % heroImages.length)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white rounded-full p-2 transition-colors"
+              aria-label="Próxima imagem"
+              data-testid="btn-hero-next"
+            >
+              <ArrowRight size={24} />
+            </button>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+              {heroImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentHeroIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    index === currentHeroIndex ? 'bg-white' : 'bg-white/50'
+                  }`}
+                  aria-label={`Ir para imagem ${index + 1}`}
+                  data-testid={`btn-hero-dot-${index}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </section>
 
       {/* Property Types Section */}

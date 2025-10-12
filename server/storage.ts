@@ -1,4 +1,4 @@
-import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory } from "@shared/schema";
+import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings } from "@shared/schema";
 
 export interface IStorage {
   // Properties
@@ -33,6 +33,14 @@ export interface IStorage {
   createPropertyCategory(category: InsertPropertyCategory): Promise<PropertyCategory>;
   updatePropertyCategory(id: string, category: Partial<InsertPropertyCategory>): Promise<PropertyCategory | undefined>;
   deletePropertyCategory(id: string): Promise<boolean>;
+
+  // Hero Settings
+  getHeroSettings(): Promise<HeroSettings | undefined>;
+  getHeroSettingsForAdmin(): Promise<HeroSettings | undefined>;
+  getHeroSettingsById(id: string): Promise<HeroSettings | undefined>;
+  createHeroSettings(heroSettings: InsertHeroSettings): Promise<HeroSettings>;
+  updateHeroSettings(id: string, heroSettings: Partial<InsertHeroSettings>): Promise<HeroSettings | undefined>;
+  deleteHeroSettings(id: string): Promise<boolean>;
 }
 
 // Sistema de armazenamento limpo - sem dados demonstrativos
@@ -45,6 +53,7 @@ export class MemoryStorage implements IStorage {
   private contacts: Contact[] = [];
   private condominiums: Condominium[] = [];
   private propertyCategories: PropertyCategory[] = [];
+  private heroSettings: HeroSettings[] = [];
 
   // Properties
   async getProperties(filters?: { type?: string; location?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
@@ -280,6 +289,57 @@ export class MemoryStorage implements IStorage {
     if (index === -1) return false;
     
     this.propertyCategories.splice(index, 1);
+    return true;
+  }
+
+  async getHeroSettings(): Promise<HeroSettings | undefined> {
+    const active = this.heroSettings.filter(h => h.active);
+    return active.length > 0 ? active[0] : undefined;
+  }
+
+  async getHeroSettingsForAdmin(): Promise<HeroSettings | undefined> {
+    return this.heroSettings.length > 0 ? this.heroSettings[0] : undefined;
+  }
+
+  async getHeroSettingsById(id: string): Promise<HeroSettings | undefined> {
+    return this.heroSettings.find(h => h.id === id);
+  }
+
+  async createHeroSettings(heroSettings: InsertHeroSettings): Promise<HeroSettings> {
+    const newHeroSettings: HeroSettings = {
+      id: (this.heroSettings.length + 1).toString(),
+      images: heroSettings.images ?? [],
+      titleLine1: heroSettings.titleLine1 ?? "BEM-VINDO",
+      titleLine2: heroSettings.titleLine2 ?? "AO SEU NOVO",
+      titleLine3: heroSettings.titleLine3 ?? "COMEÇO !",
+      description: heroSettings.description ?? "Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário.",
+      carouselEnabled: heroSettings.carouselEnabled ?? false,
+      carouselInterval: heroSettings.carouselInterval ?? 5000,
+      active: heroSettings.active ?? true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.heroSettings.push(newHeroSettings);
+    return newHeroSettings;
+  }
+
+  async updateHeroSettings(id: string, heroSettings: Partial<InsertHeroSettings>): Promise<HeroSettings | undefined> {
+    const index = this.heroSettings.findIndex(h => h.id === id);
+    if (index === -1) return undefined;
+    
+    this.heroSettings[index] = {
+      ...this.heroSettings[index],
+      ...heroSettings,
+      updatedAt: new Date()
+    };
+    return this.heroSettings[index];
+  }
+
+  async deleteHeroSettings(id: string): Promise<boolean> {
+    const index = this.heroSettings.findIndex(h => h.id === id);
+    if (index === -1) return false;
+    
+    this.heroSettings.splice(index, 1);
     return true;
   }
 }

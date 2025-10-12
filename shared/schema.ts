@@ -76,6 +76,20 @@ export const propertyCategories = pgTable("property_categories", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const heroSettings = pgTable("hero_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  images: text("images").array().default([]),
+  titleLine1: text("title_line_1").notNull().default("BEM-VINDO"),
+  titleLine2: text("title_line_2").notNull().default("AO SEU NOVO"),
+  titleLine3: text("title_line_3").notNull().default("COMEÇO !"),
+  description: text("description").notNull().default("Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário."),
+  carouselEnabled: boolean("carousel_enabled").default(false),
+  carouselInterval: integer("carousel_interval").default(5000),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const insertPropertySchema = createInsertSchema(properties).omit({
   id: true,
   createdAt: true,
@@ -105,6 +119,12 @@ export const insertPropertyCategorySchema = createInsertSchema(propertyCategorie
   updatedAt: true,
 });
 
+export const insertHeroSettingsSchema = createInsertSchema(heroSettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type Property = typeof properties.$inferSelect;
 export type InsertProperty = z.infer<typeof insertPropertySchema>;
 export type Project = typeof projects.$inferSelect;
@@ -115,3 +135,5 @@ export type Condominium = typeof condominiums.$inferSelect;
 export type InsertCondominium = z.infer<typeof insertCondominiumSchema>;
 export type PropertyCategory = typeof propertyCategories.$inferSelect;
 export type InsertPropertyCategory = z.infer<typeof insertPropertyCategorySchema>;
+export type HeroSettings = typeof heroSettings.$inferSelect;
+export type InsertHeroSettings = z.infer<typeof insertHeroSettingsSchema>;
