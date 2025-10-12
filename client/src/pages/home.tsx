@@ -54,6 +54,9 @@ export default function HomePage() {
           src={heroImage}
           alt="Banner Carmigui Imobiliária"
           className="w-full h-auto object-contain"
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
         />
         <div className="absolute inset-0 flex items-center justify-end" style={{ paddingRight: 'clamp(0.75rem, 5vw, 5rem)' }}>
           <div className="text-right" style={{ maxWidth: 'min(48%, 600px)' }}>
