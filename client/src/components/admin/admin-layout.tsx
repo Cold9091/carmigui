@@ -23,7 +23,8 @@ import {
   Home,
   Database,
   Settings,
-  LogOut 
+  LogOut,
+  Folder
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -63,6 +64,12 @@ const adminNavItems = [
     url: "/admin/contacts",
     icon: Mail,
     description: "Gerir mensagens de contacto",
+  },
+  {
+    title: "Categorias",
+    url: "/admin/categories",
+    icon: Folder,
+    description: "Gerir categorias de imóveis",
   },
   {
     title: "Banco de Dados",
