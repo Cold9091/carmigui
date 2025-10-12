@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { getDatabaseStatus } from "./db";
-import { insertPropertySchema, insertProjectSchema, insertContactSchema, insertCondominiumSchema } from "@shared/schema";
+import { insertPropertySchema, insertProjectSchema, insertContactSchema, insertCondominiumSchema, insertPropertyCategorySchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";
@@ -258,6 +258,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting condominium:", error);
       res.status(500).json({ message: "Failed to delete condominium" });
+    }
+  });
+
+  // Property Categories routes
+  app.get("/api/property-categories", async (req, res) => {
+    try {
+      const activeOnly = req.query.active === "true" ? true : req.query.active === "false" ? false : undefined;
+      const categories = await storage.getPropertyCategories(activeOnly);
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching property categories:", error);
+      res.status(500).json({ message: "Failed to fetch property categories" });
+    }
+  });
+
+  app.get("/api/property-categories/:id", async (req, res) => {
+    try {
+      const category = await storage.getPropertyCategory(req.params.id);
+      if (!category) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+      res.json(category);
+    } catch (error) {
+      console.error("Error fetching category:", error);
+      res.status(500).json({ message: "Failed to fetch category" });
+    }
+  });
+
+  app.post("/api/property-categories", async (req, res) => {
+    try {
+      const category = insertPropertyCategorySchema.parse(req.body);
+      const newCategory = await storage.createPropertyCategory(category);
+      res.status(201).json(newCategory);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid category data", errors: error.errors });
+      }
+      console.error("Error creating category:", error);
+      res.status(500).json({ message: "Failed to create category" });
+    }
+  });
+
+  app.put("/api/property-categories/:id", async (req, res) => {
+    try {
+      const updates = insertPropertyCategorySchema.partial().parse(req.body);
+      const updatedCategory = await storage.updatePropertyCategory(req.params.id, updates);
+      if (!updatedCategory) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+      res.json(updatedCategory);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid category data", errors: error.errors });
+      }
+      console.error("Error updating category:", error);
+      res.status(500).json({ message: "Failed to update category" });
+    }
+  });
+
+  app.delete("/api/property-categories/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deletePropertyCategory(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      res.status(500).json({ message: "Failed to delete category" });
     }
   });
 

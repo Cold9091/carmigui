@@ -1,4 +1,4 @@
-import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium } from "@shared/schema";
+import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory } from "@shared/schema";
 import { IStorage } from "./storage";
 import Database from 'better-sqlite3';
 
@@ -65,6 +65,17 @@ sqlite.exec(`
     amenities TEXT DEFAULT '[]',
     featured BOOLEAN DEFAULT FALSE,
     development_year TEXT NOT NULL,
+    created_at TEXT,
+    updated_at TEXT
+  );
+  
+  CREATE TABLE IF NOT EXISTS property_categories (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    slug TEXT NOT NULL UNIQUE,
+    image_url TEXT NOT NULL,
+    display_order INTEGER DEFAULT 0,
+    active BOOLEAN DEFAULT TRUE,
     created_at TEXT,
     updated_at TEXT
   );
@@ -635,6 +646,138 @@ export class SimpleSQLiteStorage implements IStorage {
       developmentYear: dbCondominium.development_year,
       createdAt: dbCondominium.created_at ? new Date(dbCondominium.created_at) : null,
       updatedAt: dbCondominium.updated_at ? new Date(dbCondominium.updated_at) : null,
+    };
+  }
+
+  // Property Categories
+  async getPropertyCategories(activeOnly?: boolean): Promise<PropertyCategory[]> {
+    try {
+      let sql = 'SELECT * FROM property_categories WHERE 1=1';
+      const params: any[] = [];
+      
+      if (activeOnly !== undefined && activeOnly) {
+        sql += ' AND active = ?';
+        params.push(1);
+      }
+      
+      sql += ' ORDER BY display_order ASC';
+      
+      const stmt = sqlite.prepare(sql);
+      const results = stmt.all(params);
+      
+      return results.map(this.convertPropertyCategoryFromDB);
+    } catch (error) {
+      console.error("Error fetching property categories:", error);
+      return [];
+    }
+  }
+
+  async getPropertyCategory(id: string): Promise<PropertyCategory | undefined> {
+    try {
+      const stmt = sqlite.prepare('SELECT * FROM property_categories WHERE id = ?');
+      const result = stmt.get(id);
+      return result ? this.convertPropertyCategoryFromDB(result) : undefined;
+    } catch (error) {
+      console.error("Error fetching property category:", error);
+      return undefined;
+    }
+  }
+
+  async createPropertyCategory(category: InsertPropertyCategory): Promise<PropertyCategory> {
+    try {
+      const id = Math.random().toString(36).substring(2, 15);
+      const now = new Date().toISOString();
+      
+      const stmt = sqlite.prepare(`
+        INSERT INTO property_categories (id, name, slug, image_url, display_order, active, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+      
+      stmt.run(
+        id,
+        category.name,
+        category.slug,
+        category.imageUrl,
+        category.displayOrder ?? 0,
+        category.active ? 1 : 0,
+        now,
+        now
+      );
+      
+      const result = await this.getPropertyCategory(id);
+      if (!result) throw new Error("Failed to create property category");
+      return result;
+    } catch (error) {
+      console.error("Error creating property category:", error);
+      throw error;
+    }
+  }
+
+  async updatePropertyCategory(id: string, category: Partial<InsertPropertyCategory>): Promise<PropertyCategory | undefined> {
+    try {
+      const existing = await this.getPropertyCategory(id);
+      if (!existing) return undefined;
+      
+      const now = new Date().toISOString();
+      const updates: string[] = [];
+      const params: any[] = [];
+      
+      if (category.name !== undefined) {
+        updates.push('name = ?');
+        params.push(category.name);
+      }
+      if (category.slug !== undefined) {
+        updates.push('slug = ?');
+        params.push(category.slug);
+      }
+      if (category.imageUrl !== undefined) {
+        updates.push('image_url = ?');
+        params.push(category.imageUrl);
+      }
+      if (category.displayOrder !== undefined) {
+        updates.push('display_order = ?');
+        params.push(category.displayOrder);
+      }
+      if (category.active !== undefined) {
+        updates.push('active = ?');
+        params.push(category.active ? 1 : 0);
+      }
+      
+      updates.push('updated_at = ?');
+      params.push(now);
+      params.push(id);
+      
+      const stmt = sqlite.prepare(`UPDATE property_categories SET ${updates.join(', ')} WHERE id = ?`);
+      stmt.run(params);
+      
+      return await this.getPropertyCategory(id);
+    } catch (error) {
+      console.error("Error updating property category:", error);
+      return undefined;
+    }
+  }
+
+  async deletePropertyCategory(id: string): Promise<boolean> {
+    try {
+      const stmt = sqlite.prepare('DELETE FROM property_categories WHERE id = ?');
+      const result = stmt.run(id);
+      return result.changes > 0;
+    } catch (error) {
+      console.error("Error deleting property category:", error);
+      return false;
+    }
+  }
+
+  private convertPropertyCategoryFromDB(dbCategory: any): PropertyCategory {
+    return {
+      id: dbCategory.id,
+      name: dbCategory.name,
+      slug: dbCategory.slug,
+      imageUrl: dbCategory.image_url,
+      displayOrder: dbCategory.display_order,
+      active: Boolean(dbCategory.active),
+      createdAt: dbCategory.created_at ? new Date(dbCategory.created_at) : null,
+      updatedAt: dbCategory.updated_at ? new Date(dbCategory.updated_at) : null,
     };
   }
 }
