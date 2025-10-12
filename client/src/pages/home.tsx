@@ -95,33 +95,7 @@ export default function HomePage() {
       {/* Property Types Section */}
       <section className="pt-8 pb-12 bg-gray-50">
         <div className="max-w-7xl mx-auto container-padding">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-            <Link href="/imoveis?type=apartment" className="group">
-              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Apartamento"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">Apartamento</span>
-                </div>
-              </div>
-            </Link>
-            
-            <Link href="/imoveis?type=kitnet" className="group">
-              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Kitnet"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">Kitnet</span>
-                </div>
-              </div>
-            </Link>
-            
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
             <Link href="/imoveis?type=loft" className="group">
               <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
                 <img
@@ -183,19 +157,6 @@ export default function HomePage() {
                 />
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <span className="text-white font-semibold text-sm">Comercial</span>
-                </div>
-              </div>
-            </Link>
-            
-            <Link href="/imoveis?type=coworking" className="group">
-              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Coworking"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">Coworking</span>
                 </div>
               </div>
             </Link>
