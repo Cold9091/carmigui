@@ -1,4 +1,4 @@
-import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium } from "@shared/schema";
+import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory } from "@shared/schema";
 
 export interface IStorage {
   // Properties
@@ -26,6 +26,13 @@ export interface IStorage {
   createCondominium(condominium: InsertCondominium): Promise<Condominium>;
   updateCondominium(id: string, condominium: Partial<InsertCondominium>): Promise<Condominium | undefined>;
   deleteCondominium(id: string): Promise<boolean>;
+
+  // Property Categories
+  getPropertyCategories(activeOnly?: boolean): Promise<PropertyCategory[]>;
+  getPropertyCategory(id: string): Promise<PropertyCategory | undefined>;
+  createPropertyCategory(category: InsertPropertyCategory): Promise<PropertyCategory>;
+  updatePropertyCategory(id: string, category: Partial<InsertPropertyCategory>): Promise<PropertyCategory | undefined>;
+  deletePropertyCategory(id: string): Promise<boolean>;
 }
 
 // Sistema de armazenamento limpo - sem dados demonstrativos
@@ -37,6 +44,7 @@ export class MemoryStorage implements IStorage {
   private projects: Project[] = [];
   private contacts: Contact[] = [];
   private condominiums: Condominium[] = [];
+  private propertyCategories: PropertyCategory[] = [];
 
   // Properties
   async getProperties(filters?: { type?: string; location?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
@@ -224,6 +232,54 @@ export class MemoryStorage implements IStorage {
     if (index === -1) return false;
     
     this.condominiums.splice(index, 1);
+    return true;
+  }
+
+  // Property Categories
+  async getPropertyCategories(activeOnly?: boolean): Promise<PropertyCategory[]> {
+    let result = [...this.propertyCategories];
+    
+    if (activeOnly !== undefined && activeOnly) {
+      result = result.filter(c => c.active === true);
+    }
+    
+    return result.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+  }
+
+  async getPropertyCategory(id: string): Promise<PropertyCategory | undefined> {
+    return this.propertyCategories.find(c => c.id === id);
+  }
+
+  async createPropertyCategory(category: InsertPropertyCategory): Promise<PropertyCategory> {
+    const newCategory: PropertyCategory = {
+      id: (this.propertyCategories.length + 1).toString(),
+      ...category,
+      displayOrder: category.displayOrder ?? 0,
+      active: category.active ?? true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.propertyCategories.push(newCategory);
+    return newCategory;
+  }
+
+  async updatePropertyCategory(id: string, category: Partial<InsertPropertyCategory>): Promise<PropertyCategory | undefined> {
+    const index = this.propertyCategories.findIndex(c => c.id === id);
+    if (index === -1) return undefined;
+    
+    this.propertyCategories[index] = {
+      ...this.propertyCategories[index],
+      ...category,
+      updatedAt: new Date()
+    };
+    return this.propertyCategories[index];
+  }
+
+  async deletePropertyCategory(id: string): Promise<boolean> {
+    const index = this.propertyCategories.findIndex(c => c.id === id);
+    if (index === -1) return false;
+    
+    this.propertyCategories.splice(index, 1);
     return true;
   }
 }

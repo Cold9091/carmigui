@@ -65,6 +65,17 @@ export const condominiums = pgTable("condominiums", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const propertyCategories = pgTable("property_categories", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull().unique(),
+  slug: text("slug").notNull().unique(),
+  imageUrl: text("image_url").notNull(),
+  displayOrder: integer("display_order").default(0),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const insertPropertySchema = createInsertSchema(properties).omit({
   id: true,
   createdAt: true,
@@ -88,6 +99,12 @@ export const insertCondominiumSchema = createInsertSchema(condominiums).omit({
   updatedAt: true,
 });
 
+export const insertPropertyCategorySchema = createInsertSchema(propertyCategories).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type Property = typeof properties.$inferSelect;
 export type InsertProperty = z.infer<typeof insertPropertySchema>;
 export type Project = typeof projects.$inferSelect;
@@ -96,3 +113,5 @@ export type Contact = typeof contacts.$inferSelect;
 export type InsertContact = z.infer<typeof insertContactSchema>;
 export type Condominium = typeof condominiums.$inferSelect;
 export type InsertCondominium = z.infer<typeof insertCondominiumSchema>;
+export type PropertyCategory = typeof propertyCategories.$inferSelect;
+export type InsertPropertyCategory = z.infer<typeof insertPropertyCategorySchema>;
