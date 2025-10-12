@@ -7,7 +7,7 @@ import { Link } from "wouter";
 import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowLeft, Search, CheckCircle, Key, Square, Users } from "lucide-react";
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
-import type { Property, Project, Condominium } from "@shared/schema";
+import type { Property, Project, Condominium, PropertyCategory } from "@shared/schema";
 import heroImage from "@assets/hero-banner.webp";
 
 export default function HomePage() {
@@ -33,6 +33,12 @@ export default function HomePage() {
   const { data: featuredCondominiums = [], isLoading: condominiumsLoading } = useQuery<Condominium[]>({
     queryKey: ["/api/condominiums", { featured: true }],
   });
+
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery<PropertyCategory[]>({
+    queryKey: ["/api/property-categories"],
+  });
+
+  const activeCategories = categories.filter(cat => cat.active).sort((a, b) => a.displayOrder - b.displayOrder);
 
   // Funções de navegação para featured properties
   const handleFeaturedPrev = () => {
@@ -95,72 +101,39 @@ export default function HomePage() {
       {/* Property Types Section */}
       <section className="pt-8 pb-12 bg-gray-50">
         <div className="max-w-7xl mx-auto container-padding">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            <Link href="/imoveis?type=loft" className="group">
-              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Loft"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">Loft</span>
-                </div>
-              </div>
-            </Link>
-            
-            <Link href="/imoveis?type=house" className="group">
-              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Casa"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">Casa</span>
-                </div>
-              </div>
-            </Link>
-            
-            <Link href="/imoveis?type=fazenda" className="group">
-              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Fazenda"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">Fazenda</span>
-                </div>
-              </div>
-            </Link>
-            
-            <Link href="/imoveis?type=building" className="group">
-              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Prédio"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">Prédio</span>
-                </div>
-              </div>
-            </Link>
-            
-            <Link href="/imoveis?type=office" className="group">
-              <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"
-                  alt="Comercial"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">Comercial</span>
-                </div>
-              </div>
-            </Link>
-          </div>
+          {categoriesLoading ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="relative h-32 rounded-lg bg-gray-200 animate-pulse"></div>
+              ))}
+            </div>
+          ) : activeCategories.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">Nenhuma categoria disponível no momento.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {activeCategories.map((category) => (
+                <Link 
+                  key={category.id} 
+                  href={`/imoveis?type=${category.slug}`} 
+                  className="group"
+                  data-testid={`category-${category.slug}`}
+                >
+                  <div className="relative h-32 rounded-lg overflow-hidden cursor-pointer">
+                    <img
+                      src={category.imageUrl}
+                      alt={category.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <span className="text-white font-semibold text-sm">{category.name}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

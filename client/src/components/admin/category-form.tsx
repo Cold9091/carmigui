@@ -15,7 +15,7 @@ const categoryFormSchema = insertPropertyCategorySchema.extend({
   name: z.string().min(1, "Nome é obrigatório"),
   slug: z.string().min(1, "Slug é obrigatório").regex(/^[a-z0-9-]+$/, "Slug deve conter apenas letras minúsculas, números e hífens"),
   imageUrl: z.string().url("URL da imagem inválida"),
-  displayOrder: z.number().min(0, "Ordem deve ser 0 ou maior").optional(),
+  displayOrder: z.coerce.number().min(0, "Ordem deve ser 0 ou maior").optional(),
   active: z.boolean().optional(),
 });
 
