@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { getDatabaseStatus } from "./db";
-import { insertPropertySchema, insertProjectSchema, insertContactSchema, insertCondominiumSchema, insertPropertyCategorySchema, insertHeroSettingsSchema, insertCitySchema } from "@shared/schema";
+import { insertPropertySchema, insertProjectSchema, insertContactSchema, insertCondominiumSchema, insertPropertyCategorySchema, insertHeroSettingsSchema, insertCitySchema, insertAboutUsSchema, insertEmployeeSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";
@@ -620,6 +620,146 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: 'Failed to delete image',
         error: error instanceof Error ? error.message : 'Unknown error'
       });
+    }
+  });
+
+  // About Us routes
+  app.get("/api/about-us", async (req, res) => {
+    try {
+      const sections = await storage.getAboutUsSections();
+      res.json(sections);
+    } catch (error) {
+      console.error("Error fetching about us sections:", error);
+      res.status(500).json({ message: "Failed to fetch about us sections" });
+    }
+  });
+
+  app.get("/api/about-us/:id", async (req, res) => {
+    try {
+      const section = await storage.getAboutUsSection(req.params.id);
+      if (!section) {
+        return res.status(404).json({ message: "About us section not found" });
+      }
+      res.json(section);
+    } catch (error) {
+      console.error("Error fetching about us section:", error);
+      res.status(500).json({ message: "Failed to fetch about us section" });
+    }
+  });
+
+  app.post("/api/about-us", async (req, res) => {
+    try {
+      const aboutUs = insertAboutUsSchema.parse(req.body);
+      const newSection = await storage.createAboutUsSection(aboutUs);
+      res.status(201).json(newSection);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid about us data", errors: error.errors });
+      }
+      console.error("Error creating about us section:", error);
+      res.status(500).json({ message: "Failed to create about us section" });
+    }
+  });
+
+  app.put("/api/about-us/:id", async (req, res) => {
+    try {
+      const updates = insertAboutUsSchema.partial().parse(req.body);
+      const updatedSection = await storage.updateAboutUsSection(req.params.id, updates);
+      if (!updatedSection) {
+        return res.status(404).json({ message: "About us section not found" });
+      }
+      res.json(updatedSection);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid about us data", errors: error.errors });
+      }
+      console.error("Error updating about us section:", error);
+      res.status(500).json({ message: "Failed to update about us section" });
+    }
+  });
+
+  app.delete("/api/about-us/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteAboutUsSection(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ message: "About us section not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting about us section:", error);
+      res.status(500).json({ message: "Failed to delete about us section" });
+    }
+  });
+
+  // Employees routes
+  app.get("/api/employees", async (req, res) => {
+    try {
+      const filters = {
+        department: req.query.department as string,
+        activeOnly: req.query.activeOnly === "true" ? true : req.query.activeOnly === "false" ? false : undefined,
+      };
+      const employees = await storage.getEmployees(filters);
+      res.json(employees);
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+      res.status(500).json({ message: "Failed to fetch employees" });
+    }
+  });
+
+  app.get("/api/employees/:id", async (req, res) => {
+    try {
+      const employee = await storage.getEmployee(req.params.id);
+      if (!employee) {
+        return res.status(404).json({ message: "Employee not found" });
+      }
+      res.json(employee);
+    } catch (error) {
+      console.error("Error fetching employee:", error);
+      res.status(500).json({ message: "Failed to fetch employee" });
+    }
+  });
+
+  app.post("/api/employees", async (req, res) => {
+    try {
+      const employee = insertEmployeeSchema.parse(req.body);
+      const newEmployee = await storage.createEmployee(employee);
+      res.status(201).json(newEmployee);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid employee data", errors: error.errors });
+      }
+      console.error("Error creating employee:", error);
+      res.status(500).json({ message: "Failed to create employee" });
+    }
+  });
+
+  app.put("/api/employees/:id", async (req, res) => {
+    try {
+      const updates = insertEmployeeSchema.partial().parse(req.body);
+      const updatedEmployee = await storage.updateEmployee(req.params.id, updates);
+      if (!updatedEmployee) {
+        return res.status(404).json({ message: "Employee not found" });
+      }
+      res.json(updatedEmployee);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid employee data", errors: error.errors });
+      }
+      console.error("Error updating employee:", error);
+      res.status(500).json({ message: "Failed to update employee" });
+    }
+  });
+
+  app.delete("/api/employees/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteEmployee(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Employee not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+      res.status(500).json({ message: "Failed to delete employee" });
     }
   });
 

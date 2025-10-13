@@ -14,6 +14,7 @@ export default function Navigation() {
     { href: "/imoveis", label: "Imóveis" },
     { href: "/condominios", label: "Condomínio" },
     { href: "/construcao", label: "Construção" },
+    { href: "/sobre-nos", label: "Sobre Nós" },
   ];
 
   const isActive = (href: string) => {

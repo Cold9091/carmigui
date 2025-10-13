@@ -12,6 +12,7 @@ import Condominiums from "@/pages/condominiums";
 import CondominiumDetails from "@/pages/condominium-details";
 import Construction from "@/pages/construction";
 import ProjectDetails from "@/pages/project-details";
+import SobreNos from "@/pages/sobre-nos";
 import Admin from "@/pages/admin";
 import AdminProperties from "@/pages/admin/properties";
 import AdminProjects from "@/pages/admin/projects";
@@ -21,6 +22,7 @@ import AdminDatabase from "@/pages/admin/database";
 import AdminCategories from "@/pages/admin/categories";
 import AdminHero from "@/pages/admin/hero";
 import AdminCities from "@/pages/admin/cities";
+import AdminAbout from "@/pages/admin/about";
 import Contact from "@/pages/contact";
 import NotFound from "@/pages/not-found";
 
@@ -40,6 +42,7 @@ function Router() {
           <Route path="/condominios/:id" component={CondominiumDetails} />
           <Route path="/construcao" component={Construction} />
           <Route path="/construcao/:id" component={ProjectDetails} />
+          <Route path="/sobre-nos" component={SobreNos} />
           <Route path="/admin" component={Admin} />
           <Route path="/admin/properties" component={AdminProperties} />
           <Route path="/admin/projects" component={AdminProjects} />
@@ -48,6 +51,7 @@ function Router() {
           <Route path="/admin/categories" component={AdminCategories} />
           <Route path="/admin/hero" component={AdminHero} />
           <Route path="/admin/cities" component={AdminCities} />
+          <Route path="/admin/about" component={AdminAbout} />
           <Route path="/admin/database" component={AdminDatabase} />
           <Route path="/contacto" component={Contact} />
           <Route component={NotFound} />

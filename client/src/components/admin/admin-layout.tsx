@@ -26,7 +26,8 @@ import {
   LogOut,
   Folder,
   Image,
-  MapPin
+  MapPin,
+  Info
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -84,6 +85,12 @@ const adminNavItems = [
     url: "/admin/cities",
     icon: MapPin,
     description: "Gerir cidades na seção principal",
+  },
+  {
+    title: "Sobre Nós",
+    url: "/admin/about",
+    icon: Info,
+    description: "Gerir informações da empresa e funcionários",
   },
   {
     title: "Banco de Dados",

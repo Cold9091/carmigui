@@ -1,4 +1,4 @@
-import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity } from "@shared/schema";
+import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity, type AboutUs, type InsertAboutUs, type Employee, type InsertEmployee } from "@shared/schema";
 
 export interface IStorage {
   // Properties
@@ -48,6 +48,20 @@ export interface IStorage {
   createCity(city: InsertCity): Promise<City>;
   updateCity(id: string, city: Partial<InsertCity>): Promise<City | undefined>;
   deleteCity(id: string): Promise<boolean>;
+
+  // About Us
+  getAboutUsSections(): Promise<AboutUs[]>;
+  getAboutUsSection(id: string): Promise<AboutUs | undefined>;
+  createAboutUsSection(aboutUs: InsertAboutUs): Promise<AboutUs>;
+  updateAboutUsSection(id: string, aboutUs: Partial<InsertAboutUs>): Promise<AboutUs | undefined>;
+  deleteAboutUsSection(id: string): Promise<boolean>;
+
+  // Employees
+  getEmployees(filters?: { department?: string; activeOnly?: boolean }): Promise<Employee[]>;
+  getEmployee(id: string): Promise<Employee | undefined>;
+  createEmployee(employee: InsertEmployee): Promise<Employee>;
+  updateEmployee(id: string, employee: Partial<InsertEmployee>): Promise<Employee | undefined>;
+  deleteEmployee(id: string): Promise<boolean>;
 }
 
 // Sistema de armazenamento limpo - sem dados demonstrativos
@@ -62,6 +76,8 @@ export class MemoryStorage implements IStorage {
   private propertyCategories: PropertyCategory[] = [];
   private heroSettings: HeroSettings[] = [];
   private cities: City[] = [];
+  private aboutUsSections: AboutUs[] = [];
+  private employees: Employee[] = [];
 
   // Properties
   async getProperties(filters?: { type?: string; location?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
@@ -396,6 +412,108 @@ export class MemoryStorage implements IStorage {
     if (index === -1) return false;
     
     this.cities.splice(index, 1);
+    return true;
+  }
+
+  // About Us
+  async getAboutUsSections(): Promise<AboutUs[]> {
+    return [...this.aboutUsSections].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+  }
+
+  async getAboutUsSection(id: string): Promise<AboutUs | undefined> {
+    return this.aboutUsSections.find(a => a.id === id);
+  }
+
+  async createAboutUsSection(aboutUs: InsertAboutUs): Promise<AboutUs> {
+    const newAboutUs: AboutUs = {
+      id: (this.aboutUsSections.length + 1).toString(),
+      ...aboutUs,
+      mission: aboutUs.mission ?? null,
+      vision: aboutUs.vision ?? null,
+      values: aboutUs.values ?? [],
+      images: aboutUs.images ?? [],
+      displayOrder: aboutUs.displayOrder ?? 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.aboutUsSections.push(newAboutUs);
+    return newAboutUs;
+  }
+
+  async updateAboutUsSection(id: string, aboutUs: Partial<InsertAboutUs>): Promise<AboutUs | undefined> {
+    const index = this.aboutUsSections.findIndex(a => a.id === id);
+    if (index === -1) return undefined;
+    
+    this.aboutUsSections[index] = {
+      ...this.aboutUsSections[index],
+      ...aboutUs,
+      updatedAt: new Date()
+    };
+    return this.aboutUsSections[index];
+  }
+
+  async deleteAboutUsSection(id: string): Promise<boolean> {
+    const index = this.aboutUsSections.findIndex(a => a.id === id);
+    if (index === -1) return false;
+    
+    this.aboutUsSections.splice(index, 1);
+    return true;
+  }
+
+  // Employees
+  async getEmployees(filters?: { department?: string; activeOnly?: boolean }): Promise<Employee[]> {
+    let result = [...this.employees];
+    
+    if (filters) {
+      if (filters.department) {
+        result = result.filter(e => e.department === filters.department);
+      }
+      if (filters.activeOnly !== undefined && filters.activeOnly) {
+        result = result.filter(e => e.active === true);
+      }
+    }
+    
+    return result.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+  }
+
+  async getEmployee(id: string): Promise<Employee | undefined> {
+    return this.employees.find(e => e.id === id);
+  }
+
+  async createEmployee(employee: InsertEmployee): Promise<Employee> {
+    const newEmployee: Employee = {
+      id: (this.employees.length + 1).toString(),
+      ...employee,
+      bio: employee.bio ?? null,
+      email: employee.email ?? null,
+      phone: employee.phone ?? null,
+      imageUrl: employee.imageUrl ?? null,
+      displayOrder: employee.displayOrder ?? 0,
+      active: employee.active ?? true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.employees.push(newEmployee);
+    return newEmployee;
+  }
+
+  async updateEmployee(id: string, employee: Partial<InsertEmployee>): Promise<Employee | undefined> {
+    const index = this.employees.findIndex(e => e.id === id);
+    if (index === -1) return undefined;
+    
+    this.employees[index] = {
+      ...this.employees[index],
+      ...employee,
+      updatedAt: new Date()
+    };
+    return this.employees[index];
+  }
+
+  async deleteEmployee(id: string): Promise<boolean> {
+    const index = this.employees.findIndex(e => e.id === id);
+    if (index === -1) return false;
+    
+    this.employees.splice(index, 1);
     return true;
   }
 }
