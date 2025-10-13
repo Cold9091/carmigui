@@ -27,7 +27,7 @@ import {
   Folder,
   Image,
   MapPin,
-  Info
+  Users
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -87,10 +87,10 @@ const adminNavItems = [
     description: "Gerir cidades na seção principal",
   },
   {
-    title: "Sobre Nós",
+    title: "Funcionários",
     url: "/admin/about",
-    icon: Info,
-    description: "Gerir informações da empresa e funcionários",
+    icon: Users,
+    description: "Gerir funcionários da CARMIGUI",
   },
   {
     title: "Banco de Dados",
