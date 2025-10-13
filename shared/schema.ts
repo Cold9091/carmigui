@@ -101,34 +101,6 @@ export const cities = pgTable("cities", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const aboutCompany = pgTable("about_company", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  division: text("division").notNull(), // 'real-estate' or 'construction'
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  mission: text("mission"),
-  vision: text("vision"),
-  values: text("values").array().default([]),
-  imageUrl: text("image_url"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-export const teamMembers = pgTable("team_members", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  name: text("name").notNull(),
-  position: text("position").notNull(),
-  division: text("division").notNull(), // 'real-estate' or 'construction'
-  bio: text("bio"),
-  imageUrl: text("image_url"),
-  email: text("email"),
-  phone: text("phone"),
-  displayOrder: integer("display_order").default(0),
-  active: boolean("active").default(true),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
 export const insertPropertySchema = createInsertSchema(properties).omit({
   id: true,
   createdAt: true,
@@ -170,18 +142,6 @@ export const insertCitySchema = createInsertSchema(cities).omit({
   updatedAt: true,
 });
 
-export const insertAboutCompanySchema = createInsertSchema(aboutCompany).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
 export type Property = typeof properties.$inferSelect;
 export type InsertProperty = z.infer<typeof insertPropertySchema>;
 export type Project = typeof projects.$inferSelect;
@@ -196,7 +156,3 @@ export type HeroSettings = typeof heroSettings.$inferSelect;
 export type InsertHeroSettings = z.infer<typeof insertHeroSettingsSchema>;
 export type City = typeof cities.$inferSelect;
 export type InsertCity = z.infer<typeof insertCitySchema>;
-export type AboutCompany = typeof aboutCompany.$inferSelect;
-export type InsertAboutCompany = z.infer<typeof insertAboutCompanySchema>;
-export type TeamMember = typeof teamMembers.$inferSelect;
-export type InsertTeamMember = z.infer<typeof insertTeamMemberSchema>;

@@ -1,4 +1,4 @@
-import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity, type AboutCompany, type InsertAboutCompany, type TeamMember, type InsertTeamMember } from "@shared/schema";
+import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity } from "@shared/schema";
 import { IStorage } from "./storage";
 import Database from 'better-sqlite3';
 
@@ -12,8 +12,8 @@ sqlite.exec(`
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     price TEXT NOT NULL,
-    city_id TEXT NOT NULL,
-    category_id TEXT NOT NULL,
+    location TEXT NOT NULL,
+    type TEXT NOT NULL,
     bedrooms INTEGER,
     bathrooms INTEGER,
     area INTEGER NOT NULL,
@@ -104,44 +104,24 @@ sqlite.exec(`
     created_at TEXT,
     updated_at TEXT
   );
-  
-  CREATE TABLE IF NOT EXISTS about_company (
-    id TEXT PRIMARY KEY,
-    division TEXT NOT NULL,
-    title TEXT NOT NULL,
-    description TEXT NOT NULL,
-    mission TEXT,
-    vision TEXT,
-    "values" TEXT DEFAULT '[]',
-    image_url TEXT,
-    created_at TEXT,
-    updated_at TEXT
-  );
-  
-  CREATE TABLE IF NOT EXISTS team_members (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
-    position TEXT NOT NULL,
-    division TEXT NOT NULL,
-    bio TEXT,
-    image_url TEXT,
-    email TEXT,
-    phone TEXT,
-    display_order INTEGER DEFAULT 0,
-    active BOOLEAN DEFAULT TRUE,
-    created_at TEXT,
-    updated_at TEXT
-  );
 `);
 
 export class SimpleSQLiteStorage implements IStorage {
   // Properties
-  async getProperties(filters?: { minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
+  async getProperties(filters?: { type?: string; location?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
     try {
       let sql = 'SELECT * FROM properties WHERE 1=1';
       const params: any[] = [];
       
       if (filters) {
+        if (filters.type) {
+          sql += ' AND type = ?';
+          params.push(filters.type);
+        }
+        if (filters.location) {
+          sql += ' AND location LIKE ?';
+          params.push(`%${filters.location}%`);
+        }
         if (filters.minPrice) {
           sql += ' AND CAST(price AS INTEGER) >= ?';
           params.push(filters.minPrice);
@@ -186,7 +166,7 @@ export class SimpleSQLiteStorage implements IStorage {
       
       const stmt = sqlite.prepare(`
         INSERT INTO properties (
-          id, title, description, price, city_id, category_id, bedrooms, bathrooms, 
+          id, title, description, price, location, type, bedrooms, bathrooms, 
           area, images, virtual_tour_url, status, featured, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
@@ -196,8 +176,8 @@ export class SimpleSQLiteStorage implements IStorage {
         property.title,
         property.description,
         property.price,
-        property.cityId,
-        property.categoryId,
+        property.location,
+        property.type,
         property.bedrooms || null,
         property.bathrooms || null,
         property.area,
@@ -238,13 +218,13 @@ export class SimpleSQLiteStorage implements IStorage {
         updates.push('price = ?');
         params.push(property.price);
       }
-      if (property.cityId !== undefined) {
-        updates.push('city_id = ?');
-        params.push(property.cityId);
+      if (property.location !== undefined) {
+        updates.push('location = ?');
+        params.push(property.location);
       }
-      if (property.categoryId !== undefined) {
-        updates.push('category_id = ?');
-        params.push(property.categoryId);
+      if (property.type !== undefined) {
+        updates.push('type = ?');
+        params.push(property.type);
       }
       if (property.bedrooms !== undefined) {
         updates.push('bedrooms = ?');
@@ -630,8 +610,8 @@ export class SimpleSQLiteStorage implements IStorage {
       title: dbProperty.title,
       description: dbProperty.description,
       price: dbProperty.price,
-      cityId: dbProperty.city_id,
-      categoryId: dbProperty.category_id,
+      location: dbProperty.location,
+      type: dbProperty.type,
       bedrooms: dbProperty.bedrooms,
       bathrooms: dbProperty.bathrooms,
       area: dbProperty.area,
@@ -1105,313 +1085,6 @@ export class SimpleSQLiteStorage implements IStorage {
       active: Boolean(dbCity.active),
       createdAt: dbCity.created_at ? new Date(dbCity.created_at) : null,
       updatedAt: dbCity.updated_at ? new Date(dbCity.updated_at) : null,
-    };
-  }
-
-  // About Company
-  async getAboutCompanyInfo(division?: string): Promise<AboutCompany[]> {
-    try {
-      let sql = 'SELECT * FROM about_company';
-      const params: any[] = [];
-      
-      if (division) {
-        sql += ' WHERE division = ?';
-        params.push(division);
-      }
-      
-      sql += ' ORDER BY created_at DESC';
-      
-      const stmt = sqlite.prepare(sql);
-      const rows = params.length > 0 ? stmt.all(params) : stmt.all();
-      return rows.map(row => this.convertAboutCompanyFromDB(row));
-    } catch (error) {
-      console.error("Error fetching about company info:", error);
-      return [];
-    }
-  }
-
-  async getAboutCompany(id: string): Promise<AboutCompany | undefined> {
-    try {
-      const stmt = sqlite.prepare('SELECT * FROM about_company WHERE id = ?');
-      const row = stmt.get(id);
-      return row ? this.convertAboutCompanyFromDB(row) : undefined;
-    } catch (error) {
-      console.error("Error fetching about company:", error);
-      return undefined;
-    }
-  }
-
-  async createAboutCompany(aboutCompany: InsertAboutCompany): Promise<AboutCompany> {
-    try {
-      const id = crypto.randomUUID();
-      const now = new Date().toISOString();
-      
-      const stmt = sqlite.prepare(`
-        INSERT INTO about_company (
-          id, division, title, description, mission, vision, values, image_url, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-      
-      stmt.run(
-        id,
-        aboutCompany.division,
-        aboutCompany.title,
-        aboutCompany.description,
-        aboutCompany.mission || null,
-        aboutCompany.vision || null,
-        JSON.stringify(aboutCompany.values || []),
-        aboutCompany.imageUrl || null,
-        now,
-        now
-      );
-      
-      const result = await this.getAboutCompany(id);
-      if (!result) throw new Error("Failed to create about company");
-      return result;
-    } catch (error) {
-      console.error("Error creating about company:", error);
-      throw error;
-    }
-  }
-
-  async updateAboutCompany(id: string, aboutCompany: Partial<InsertAboutCompany>): Promise<AboutCompany | undefined> {
-    try {
-      const existing = await this.getAboutCompany(id);
-      if (!existing) return undefined;
-      
-      const now = new Date().toISOString();
-      const updates: string[] = [];
-      const params: any[] = [];
-      
-      if (aboutCompany.division !== undefined) {
-        updates.push('division = ?');
-        params.push(aboutCompany.division);
-      }
-      if (aboutCompany.title !== undefined) {
-        updates.push('title = ?');
-        params.push(aboutCompany.title);
-      }
-      if (aboutCompany.description !== undefined) {
-        updates.push('description = ?');
-        params.push(aboutCompany.description);
-      }
-      if (aboutCompany.mission !== undefined) {
-        updates.push('mission = ?');
-        params.push(aboutCompany.mission);
-      }
-      if (aboutCompany.vision !== undefined) {
-        updates.push('vision = ?');
-        params.push(aboutCompany.vision);
-      }
-      if (aboutCompany.values !== undefined) {
-        updates.push('values = ?');
-        params.push(JSON.stringify(aboutCompany.values));
-      }
-      if (aboutCompany.imageUrl !== undefined) {
-        updates.push('image_url = ?');
-        params.push(aboutCompany.imageUrl);
-      }
-      
-      updates.push('updated_at = ?');
-      params.push(now);
-      params.push(id);
-      
-      const stmt = sqlite.prepare(`UPDATE about_company SET ${updates.join(', ')} WHERE id = ?`);
-      stmt.run(params);
-      
-      return await this.getAboutCompany(id);
-    } catch (error) {
-      console.error("Error updating about company:", error);
-      return undefined;
-    }
-  }
-
-  async deleteAboutCompany(id: string): Promise<boolean> {
-    try {
-      const stmt = sqlite.prepare('DELETE FROM about_company WHERE id = ?');
-      const result = stmt.run(id);
-      return result.changes > 0;
-    } catch (error) {
-      console.error("Error deleting about company:", error);
-      return false;
-    }
-  }
-
-  private convertAboutCompanyFromDB(dbAboutCompany: any): AboutCompany {
-    return {
-      id: dbAboutCompany.id,
-      division: dbAboutCompany.division,
-      title: dbAboutCompany.title,
-      description: dbAboutCompany.description,
-      mission: dbAboutCompany.mission,
-      vision: dbAboutCompany.vision,
-      values: dbAboutCompany.values ? JSON.parse(dbAboutCompany.values) : [],
-      imageUrl: dbAboutCompany.image_url,
-      createdAt: dbAboutCompany.created_at ? new Date(dbAboutCompany.created_at) : null,
-      updatedAt: dbAboutCompany.updated_at ? new Date(dbAboutCompany.updated_at) : null,
-    };
-  }
-
-  // Team Members
-  async getTeamMembers(filters?: { division?: string; activeOnly?: boolean }): Promise<TeamMember[]> {
-    try {
-      let sql = 'SELECT * FROM team_members WHERE 1=1';
-      const params: any[] = [];
-      
-      if (filters) {
-        if (filters.division) {
-          sql += ' AND division = ?';
-          params.push(filters.division);
-        }
-        if (filters.activeOnly) {
-          sql += ' AND active = ?';
-          params.push(1);
-        }
-      }
-      
-      sql += ' ORDER BY display_order ASC';
-      
-      const stmt = sqlite.prepare(sql);
-      const rows = stmt.all(params);
-      return rows.map(row => this.convertTeamMemberFromDB(row));
-    } catch (error) {
-      console.error("Error fetching team members:", error);
-      return [];
-    }
-  }
-
-  async getTeamMember(id: string): Promise<TeamMember | undefined> {
-    try {
-      const stmt = sqlite.prepare('SELECT * FROM team_members WHERE id = ?');
-      const row = stmt.get(id);
-      return row ? this.convertTeamMemberFromDB(row) : undefined;
-    } catch (error) {
-      console.error("Error fetching team member:", error);
-      return undefined;
-    }
-  }
-
-  async createTeamMember(teamMember: InsertTeamMember): Promise<TeamMember> {
-    try {
-      const id = crypto.randomUUID();
-      const now = new Date().toISOString();
-      
-      const stmt = sqlite.prepare(`
-        INSERT INTO team_members (
-          id, name, position, division, bio, image_url, email, phone, 
-          display_order, active, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-      
-      stmt.run(
-        id,
-        teamMember.name,
-        teamMember.position,
-        teamMember.division,
-        teamMember.bio || null,
-        teamMember.imageUrl || null,
-        teamMember.email || null,
-        teamMember.phone || null,
-        teamMember.displayOrder ?? 0,
-        teamMember.active ? 1 : 0,
-        now,
-        now
-      );
-      
-      const result = await this.getTeamMember(id);
-      if (!result) throw new Error("Failed to create team member");
-      return result;
-    } catch (error) {
-      console.error("Error creating team member:", error);
-      throw error;
-    }
-  }
-
-  async updateTeamMember(id: string, teamMember: Partial<InsertTeamMember>): Promise<TeamMember | undefined> {
-    try {
-      const existing = await this.getTeamMember(id);
-      if (!existing) return undefined;
-      
-      const now = new Date().toISOString();
-      const updates: string[] = [];
-      const params: any[] = [];
-      
-      if (teamMember.name !== undefined) {
-        updates.push('name = ?');
-        params.push(teamMember.name);
-      }
-      if (teamMember.position !== undefined) {
-        updates.push('position = ?');
-        params.push(teamMember.position);
-      }
-      if (teamMember.division !== undefined) {
-        updates.push('division = ?');
-        params.push(teamMember.division);
-      }
-      if (teamMember.bio !== undefined) {
-        updates.push('bio = ?');
-        params.push(teamMember.bio);
-      }
-      if (teamMember.imageUrl !== undefined) {
-        updates.push('image_url = ?');
-        params.push(teamMember.imageUrl);
-      }
-      if (teamMember.email !== undefined) {
-        updates.push('email = ?');
-        params.push(teamMember.email);
-      }
-      if (teamMember.phone !== undefined) {
-        updates.push('phone = ?');
-        params.push(teamMember.phone);
-      }
-      if (teamMember.displayOrder !== undefined) {
-        updates.push('display_order = ?');
-        params.push(teamMember.displayOrder);
-      }
-      if (teamMember.active !== undefined) {
-        updates.push('active = ?');
-        params.push(teamMember.active ? 1 : 0);
-      }
-      
-      updates.push('updated_at = ?');
-      params.push(now);
-      params.push(id);
-      
-      const stmt = sqlite.prepare(`UPDATE team_members SET ${updates.join(', ')} WHERE id = ?`);
-      stmt.run(params);
-      
-      return await this.getTeamMember(id);
-    } catch (error) {
-      console.error("Error updating team member:", error);
-      return undefined;
-    }
-  }
-
-  async deleteTeamMember(id: string): Promise<boolean> {
-    try {
-      const stmt = sqlite.prepare('DELETE FROM team_members WHERE id = ?');
-      const result = stmt.run(id);
-      return result.changes > 0;
-    } catch (error) {
-      console.error("Error deleting team member:", error);
-      return false;
-    }
-  }
-
-  private convertTeamMemberFromDB(dbTeamMember: any): TeamMember {
-    return {
-      id: dbTeamMember.id,
-      name: dbTeamMember.name,
-      position: dbTeamMember.position,
-      division: dbTeamMember.division,
-      bio: dbTeamMember.bio,
-      imageUrl: dbTeamMember.image_url,
-      email: dbTeamMember.email,
-      phone: dbTeamMember.phone,
-      displayOrder: dbTeamMember.display_order,
-      active: Boolean(dbTeamMember.active),
-      createdAt: dbTeamMember.created_at ? new Date(dbTeamMember.created_at) : null,
-      updatedAt: dbTeamMember.updated_at ? new Date(dbTeamMember.updated_at) : null,
     };
   }
 }
