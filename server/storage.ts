@@ -1,8 +1,8 @@
-import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity } from "@shared/schema";
+import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity, type AboutCompany, type InsertAboutCompany, type TeamMember, type InsertTeamMember } from "@shared/schema";
 
 export interface IStorage {
   // Properties
-  getProperties(filters?: { type?: string; location?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]>;
+  getProperties(filters?: { minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]>;
   getProperty(id: string): Promise<Property | undefined>;
   createProperty(property: InsertProperty): Promise<Property>;
   updateProperty(id: string, property: Partial<InsertProperty>): Promise<Property | undefined>;
@@ -48,6 +48,20 @@ export interface IStorage {
   createCity(city: InsertCity): Promise<City>;
   updateCity(id: string, city: Partial<InsertCity>): Promise<City | undefined>;
   deleteCity(id: string): Promise<boolean>;
+
+  // About Company
+  getAboutCompanyInfo(division?: string): Promise<AboutCompany[]>;
+  getAboutCompany(id: string): Promise<AboutCompany | undefined>;
+  createAboutCompany(aboutCompany: InsertAboutCompany): Promise<AboutCompany>;
+  updateAboutCompany(id: string, aboutCompany: Partial<InsertAboutCompany>): Promise<AboutCompany | undefined>;
+  deleteAboutCompany(id: string): Promise<boolean>;
+
+  // Team Members
+  getTeamMembers(filters?: { division?: string; activeOnly?: boolean }): Promise<TeamMember[]>;
+  getTeamMember(id: string): Promise<TeamMember | undefined>;
+  createTeamMember(teamMember: InsertTeamMember): Promise<TeamMember>;
+  updateTeamMember(id: string, teamMember: Partial<InsertTeamMember>): Promise<TeamMember | undefined>;
+  deleteTeamMember(id: string): Promise<boolean>;
 }
 
 // Sistema de armazenamento limpo - sem dados demonstrativos
@@ -62,18 +76,14 @@ export class MemoryStorage implements IStorage {
   private propertyCategories: PropertyCategory[] = [];
   private heroSettings: HeroSettings[] = [];
   private cities: City[] = [];
+  private aboutCompany: AboutCompany[] = [];
+  private teamMembers: TeamMember[] = [];
 
   // Properties
-  async getProperties(filters?: { type?: string; location?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
+  async getProperties(filters?: { minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
     let result = [...this.properties];
     
     if (filters) {
-      if (filters.type) {
-        result = result.filter(p => p.type === filters.type);
-      }
-      if (filters.location) {
-        result = result.filter(p => p.location.toLowerCase().includes(filters.location!.toLowerCase()));
-      }
       if (filters.minPrice) {
         result = result.filter(p => Number(p.price) >= filters.minPrice!);
       }
@@ -396,6 +406,111 @@ export class MemoryStorage implements IStorage {
     if (index === -1) return false;
     
     this.cities.splice(index, 1);
+    return true;
+  }
+
+  // About Company
+  async getAboutCompanyInfo(division?: string): Promise<AboutCompany[]> {
+    let result = [...this.aboutCompany];
+    if (division) {
+      result = result.filter(ac => ac.division === division);
+    }
+    return result;
+  }
+
+  async getAboutCompany(id: string): Promise<AboutCompany | undefined> {
+    return this.aboutCompany.find(ac => ac.id === id);
+  }
+
+  async createAboutCompany(aboutCompany: InsertAboutCompany): Promise<AboutCompany> {
+    const newAboutCompany: AboutCompany = {
+      id: (this.aboutCompany.length + 1).toString(),
+      ...aboutCompany,
+      mission: aboutCompany.mission ?? null,
+      vision: aboutCompany.vision ?? null,
+      values: aboutCompany.values ?? [],
+      imageUrl: aboutCompany.imageUrl ?? null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.aboutCompany.push(newAboutCompany);
+    return newAboutCompany;
+  }
+
+  async updateAboutCompany(id: string, aboutCompany: Partial<InsertAboutCompany>): Promise<AboutCompany | undefined> {
+    const index = this.aboutCompany.findIndex(ac => ac.id === id);
+    if (index === -1) return undefined;
+    
+    this.aboutCompany[index] = {
+      ...this.aboutCompany[index],
+      ...aboutCompany,
+      updatedAt: new Date()
+    };
+    return this.aboutCompany[index];
+  }
+
+  async deleteAboutCompany(id: string): Promise<boolean> {
+    const index = this.aboutCompany.findIndex(ac => ac.id === id);
+    if (index === -1) return false;
+    
+    this.aboutCompany.splice(index, 1);
+    return true;
+  }
+
+  // Team Members
+  async getTeamMembers(filters?: { division?: string; activeOnly?: boolean }): Promise<TeamMember[]> {
+    let result = [...this.teamMembers];
+    
+    if (filters) {
+      if (filters.division) {
+        result = result.filter(tm => tm.division === filters.division);
+      }
+      if (filters.activeOnly) {
+        result = result.filter(tm => tm.active === true);
+      }
+    }
+    
+    return result.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+  }
+
+  async getTeamMember(id: string): Promise<TeamMember | undefined> {
+    return this.teamMembers.find(tm => tm.id === id);
+  }
+
+  async createTeamMember(teamMember: InsertTeamMember): Promise<TeamMember> {
+    const newTeamMember: TeamMember = {
+      id: (this.teamMembers.length + 1).toString(),
+      ...teamMember,
+      bio: teamMember.bio ?? null,
+      imageUrl: teamMember.imageUrl ?? null,
+      email: teamMember.email ?? null,
+      phone: teamMember.phone ?? null,
+      displayOrder: teamMember.displayOrder ?? 0,
+      active: teamMember.active ?? true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.teamMembers.push(newTeamMember);
+    return newTeamMember;
+  }
+
+  async updateTeamMember(id: string, teamMember: Partial<InsertTeamMember>): Promise<TeamMember | undefined> {
+    const index = this.teamMembers.findIndex(tm => tm.id === id);
+    if (index === -1) return undefined;
+    
+    this.teamMembers[index] = {
+      ...this.teamMembers[index],
+      ...teamMember,
+      updatedAt: new Date()
+    };
+    return this.teamMembers[index];
+  }
+
+  async deleteTeamMember(id: string): Promise<boolean> {
+    const index = this.teamMembers.findIndex(tm => tm.id === id);
+    if (index === -1) return false;
+    
+    this.teamMembers.splice(index, 1);
     return true;
   }
 }
