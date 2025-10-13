@@ -43,8 +43,8 @@ export default function ConstructionPage() {
             </h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            <div className="text-center" data-testid="service-card-1">
+          <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
+            <div className="text-center w-full md:w-[calc(33.333%-1rem)]" data-testid="service-card-1">
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Building2 className="h-6 w-6 text-green-600" />
               </div>
@@ -53,7 +53,7 @@ export default function ConstructionPage() {
               </h3>
             </div>
             
-            <div className="text-center" data-testid="service-card-2">
+            <div className="text-center w-full md:w-[calc(33.333%-1rem)]" data-testid="service-card-2">
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <ClipboardCheck className="h-6 w-6 text-green-600" />
               </div>
@@ -62,7 +62,7 @@ export default function ConstructionPage() {
               </h3>
             </div>
             
-            <div className="text-center" data-testid="service-card-3">
+            <div className="text-center w-full md:w-[calc(33.333%-1rem)]" data-testid="service-card-3">
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Wrench className="h-6 w-6 text-green-600" />
               </div>
@@ -71,7 +71,7 @@ export default function ConstructionPage() {
               </h3>
             </div>
             
-            <div className="text-center" data-testid="service-card-4">
+            <div className="text-center w-full md:w-[calc(33.333%-1rem)]" data-testid="service-card-4">
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Users className="h-6 w-6 text-green-600" />
               </div>
@@ -80,7 +80,7 @@ export default function ConstructionPage() {
               </h3>
             </div>
             
-            <div className="text-center" data-testid="service-card-5">
+            <div className="text-center w-full md:w-[calc(33.333%-1rem)]" data-testid="service-card-5">
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
