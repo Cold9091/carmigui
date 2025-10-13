@@ -506,6 +506,218 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Turso configuration routes
+  app.post("/api/database/test-turso", async (req, res) => {
+    try {
+      const { databaseUrl, authToken } = req.body;
+
+      if (!databaseUrl || !authToken) {
+        return res.status(400).json({
+          success: false,
+          message: "Database URL e Auth Token são obrigatórios"
+        });
+      }
+
+      const { createClient } = await import('@libsql/client');
+      
+      const testClient = createClient({
+        url: databaseUrl,
+        authToken: authToken
+      });
+      
+      const result = await testClient.execute('SELECT 1 as test');
+      await testClient.close();
+      
+      res.json({
+        success: true,
+        message: "Conexão com Turso testada com sucesso!",
+        result: result.rows[0]
+      });
+    } catch (error) {
+      console.error("Turso connection test failed:", error);
+      res.status(500).json({
+        success: false,
+        message: "Falha ao conectar com o Turso",
+        error: error instanceof Error ? error.message : "Erro desconhecido"
+      });
+    }
+  });
+
+  app.post("/api/database/configure-turso", async (req, res) => {
+    try {
+      const { databaseUrl, authToken } = req.body;
+
+      if (!databaseUrl || !authToken) {
+        return res.status(400).json({
+          success: false,
+          message: "Todos os campos são obrigatórios"
+        });
+      }
+
+      process.env.TURSO_DATABASE_URL = databaseUrl;
+      process.env.TURSO_AUTH_TOKEN = authToken;
+
+      res.json({
+        success: true,
+        message: "Configurações do Turso salvas! Reinicie o servidor para aplicar as mudanças.",
+        note: "Configure estas variáveis nos Secrets do Replit para persistência: TURSO_DATABASE_URL e TURSO_AUTH_TOKEN"
+      });
+    } catch (error) {
+      console.error("Failed to configure Turso:", error);
+      res.status(500).json({
+        success: false,
+        message: "Falha ao salvar configurações do Turso",
+        error: error instanceof Error ? error.message : "Erro desconhecido"
+      });
+    }
+  });
+
+  app.get("/api/database/turso-config", async (req, res) => {
+    try {
+      const hasConfig = !!(process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN);
+      
+      res.json({
+        configured: hasConfig,
+        databaseUrl: process.env.TURSO_DATABASE_URL ? process.env.TURSO_DATABASE_URL.substring(0, 40) + '...' : null
+      });
+    } catch (error) {
+      console.error("Failed to get Turso config:", error);
+      res.status(500).json({
+        success: false,
+        message: "Falha ao obter configurações do Turso"
+      });
+    }
+  });
+
+  app.post("/api/database/migrate-to-turso", async (req, res) => {
+    try {
+      const { databaseUrl, authToken } = req.body;
+
+      if (!databaseUrl || !authToken) {
+        return res.status(400).json({
+          success: false,
+          message: "Database URL e Auth Token são obrigatórios para migração"
+        });
+      }
+
+      const { createClient } = await import('@libsql/client');
+      const { drizzle } = await import('drizzle-orm/libsql');
+      const schema = await import('@shared/schema');
+
+      const tursoClient = createClient({
+        url: databaseUrl,
+        authToken: authToken
+      });
+      const tursoDb = drizzle(tursoClient, { schema });
+
+      await tursoClient.batch([
+        'CREATE TABLE IF NOT EXISTS properties (id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL, price TEXT NOT NULL, city_id TEXT NOT NULL, category_id TEXT NOT NULL, bedrooms INTEGER, bathrooms INTEGER, area INTEGER NOT NULL, images TEXT DEFAULT "[]", virtual_tour_url TEXT, status TEXT NOT NULL DEFAULT "available", featured BOOLEAN DEFAULT FALSE, created_at TEXT, updated_at TEXT)',
+        'CREATE TABLE IF NOT EXISTS projects (id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL, area INTEGER NOT NULL, duration TEXT NOT NULL, units TEXT NOT NULL, year TEXT NOT NULL, status TEXT NOT NULL, images TEXT DEFAULT "[]", featured BOOLEAN DEFAULT FALSE, created_at TEXT, updated_at TEXT)',
+        'CREATE TABLE IF NOT EXISTS contacts (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT, subject TEXT NOT NULL, message TEXT NOT NULL, created_at TEXT)',
+        'CREATE TABLE IF NOT EXISTS condominiums (id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, location TEXT NOT NULL, centrality_or_district TEXT NOT NULL, total_units INTEGER NOT NULL, completed_units INTEGER DEFAULT 0, available_units INTEGER NOT NULL, price_range TEXT NOT NULL, status TEXT NOT NULL DEFAULT "in-development", images TEXT DEFAULT "[]", amenities TEXT DEFAULT "[]", featured BOOLEAN DEFAULT FALSE, development_year TEXT NOT NULL, created_at TEXT, updated_at TEXT)',
+        'CREATE TABLE IF NOT EXISTS property_categories (id TEXT PRIMARY KEY, name TEXT NOT NULL UNIQUE, slug TEXT NOT NULL UNIQUE, image_url TEXT NOT NULL, display_order INTEGER DEFAULT 0, active BOOLEAN DEFAULT TRUE, created_at TEXT, updated_at TEXT)',
+        'CREATE TABLE IF NOT EXISTS hero_settings (id TEXT PRIMARY KEY, images TEXT DEFAULT "[]", title_line1 TEXT, title_line2 TEXT, title_line3 TEXT, description TEXT, carousel_enabled BOOLEAN DEFAULT TRUE, active BOOLEAN DEFAULT TRUE, created_at TEXT, updated_at TEXT)',
+        'CREATE TABLE IF NOT EXISTS cities (id TEXT PRIMARY KEY, name TEXT NOT NULL UNIQUE, slug TEXT NOT NULL UNIQUE, image_url TEXT NOT NULL, display_order INTEGER DEFAULT 0, active BOOLEAN DEFAULT TRUE, created_at TEXT, updated_at TEXT)',
+        'CREATE TABLE IF NOT EXISTS about_us (id TEXT PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL, image_url TEXT, display_order INTEGER DEFAULT 0, created_at TEXT, updated_at TEXT)',
+        'CREATE TABLE IF NOT EXISTS employees (id TEXT PRIMARY KEY, name TEXT NOT NULL, position TEXT NOT NULL, department TEXT, bio TEXT, email TEXT, phone TEXT, image_url TEXT, display_order INTEGER DEFAULT 0, active BOOLEAN DEFAULT TRUE, created_at TEXT, updated_at TEXT)'
+      ], 'write');
+
+      const migratedTables = [];
+      let totalRecords = 0;
+
+      const properties = await storage.getProperties();
+      if (properties.length > 0) {
+        for (const prop of properties) {
+          await tursoDb.insert(schema.properties).values(prop).onConflictDoNothing();
+        }
+        migratedTables.push(`properties (${properties.length})`);
+        totalRecords += properties.length;
+      }
+
+      const projects = await storage.getProjects();
+      if (projects.length > 0) {
+        for (const proj of projects) {
+          await tursoDb.insert(schema.projects).values(proj).onConflictDoNothing();
+        }
+        migratedTables.push(`projects (${projects.length})`);
+        totalRecords += projects.length;
+      }
+
+      const condominiums = await storage.getCondominiums();
+      if (condominiums.length > 0) {
+        for (const condo of condominiums) {
+          await tursoDb.insert(schema.condominiums).values(condo).onConflictDoNothing();
+        }
+        migratedTables.push(`condominiums (${condominiums.length})`);
+        totalRecords += condominiums.length;
+      }
+
+      const contacts = await storage.getContacts();
+      if (contacts.length > 0) {
+        for (const contact of contacts) {
+          await tursoDb.insert(schema.contacts).values(contact).onConflictDoNothing();
+        }
+        migratedTables.push(`contacts (${contacts.length})`);
+        totalRecords += contacts.length;
+      }
+
+      const categories = await storage.getPropertyCategories();
+      if (categories.length > 0) {
+        for (const cat of categories) {
+          await tursoDb.insert(schema.propertyCategories).values(cat).onConflictDoNothing();
+        }
+        migratedTables.push(`categories (${categories.length})`);
+        totalRecords += categories.length;
+      }
+
+      const cities = await storage.getCities();
+      if (cities.length > 0) {
+        for (const city of cities) {
+          await tursoDb.insert(schema.cities).values(city).onConflictDoNothing();
+        }
+        migratedTables.push(`cities (${cities.length})`);
+        totalRecords += cities.length;
+      }
+
+      const aboutUs = await storage.getAboutUsSections();
+      if (aboutUs.length > 0) {
+        for (const section of aboutUs) {
+          await tursoDb.insert(schema.aboutUs).values(section).onConflictDoNothing();
+        }
+        migratedTables.push(`about_us (${aboutUs.length})`);
+        totalRecords += aboutUs.length;
+      }
+
+      const employees = await storage.getEmployees();
+      if (employees.length > 0) {
+        for (const emp of employees) {
+          await tursoDb.insert(schema.employees).values(emp).onConflictDoNothing();
+        }
+        migratedTables.push(`employees (${employees.length})`);
+        totalRecords += employees.length;
+      }
+
+      await tursoClient.close();
+
+      res.json({
+        success: true,
+        message: `Migração concluída com sucesso!`,
+        details: {
+          totalRecords,
+          tables: migratedTables
+        },
+        note: "As tabelas devem ser criadas no Turso antes da migração. Execute: turso db shell [nome] < schema.sql ou npm run db:push com TURSO_DATABASE_URL configurado"
+      });
+    } catch (error) {
+      console.error("Migration to Turso failed:", error);
+      res.status(500).json({
+        success: false,
+        message: "Falha na migração para Turso",
+        error: error instanceof Error ? error.message : "Erro desconhecido"
+      });
+    }
+  });
+
   // Configure multer for file uploads
   const storage_multer = multer.diskStorage({
     destination: async (req, file, cb) => {
