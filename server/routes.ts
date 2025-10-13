@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { getDatabaseStatus } from "./db";
-import { insertPropertySchema, insertProjectSchema, insertContactSchema, insertCondominiumSchema, insertPropertyCategorySchema, insertHeroSettingsSchema } from "@shared/schema";
+import { insertPropertySchema, insertProjectSchema, insertContactSchema, insertCondominiumSchema, insertPropertyCategorySchema, insertHeroSettingsSchema, insertCitySchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";
@@ -405,6 +405,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting hero settings:", error);
       res.status(500).json({ message: "Failed to delete hero settings" });
+    }
+  });
+
+  // Cities routes
+  app.get("/api/cities", async (req, res) => {
+    try {
+      const activeOnly = req.query.active === "true" ? true : req.query.active === "false" ? false : undefined;
+      const cities = await storage.getCities(activeOnly);
+      res.json(cities);
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+      res.status(500).json({ message: "Failed to fetch cities" });
+    }
+  });
+
+  app.get("/api/cities/:id", async (req, res) => {
+    try {
+      const city = await storage.getCity(req.params.id);
+      if (!city) {
+        return res.status(404).json({ message: "City not found" });
+      }
+      res.json(city);
+    } catch (error) {
+      console.error("Error fetching city:", error);
+      res.status(500).json({ message: "Failed to fetch city" });
+    }
+  });
+
+  app.post("/api/cities", async (req, res) => {
+    try {
+      const city = insertCitySchema.parse(req.body);
+      const newCity = await storage.createCity(city);
+      res.status(201).json(newCity);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid city data", errors: error.errors });
+      }
+      console.error("Error creating city:", error);
+      res.status(500).json({ message: "Failed to create city" });
+    }
+  });
+
+  app.put("/api/cities/:id", async (req, res) => {
+    try {
+      const updates = insertCitySchema.partial().parse(req.body);
+      const updatedCity = await storage.updateCity(req.params.id, updates);
+      if (!updatedCity) {
+        return res.status(404).json({ message: "City not found" });
+      }
+      res.json(updatedCity);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid city data", errors: error.errors });
+      }
+      console.error("Error updating city:", error);
+      res.status(500).json({ message: "Failed to update city" });
+    }
+  });
+
+  app.delete("/api/cities/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteCity(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ message: "City not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting city:", error);
+      res.status(500).json({ message: "Failed to delete city" });
     }
   });
 
