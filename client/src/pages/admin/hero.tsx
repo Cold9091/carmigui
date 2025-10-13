@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Image as ImageIcon, Save } from "lucide-react";
+import { Image as ImageIcon, Save, Eye } from "lucide-react";
 import AdminLayout from "@/components/admin/admin-layout";
 import { ImageUpload } from "@/components/ui/image-upload";
 import type { HeroSettings, InsertHeroSettings } from "@shared/schema";
@@ -103,6 +103,43 @@ export default function AdminHeroPage() {
           <h1 className="text-3xl font-bold text-angola-primary mb-2">Gestão do Hero</h1>
           <p className="text-gray-600">Configure a imagem e texto do banner principal da página inicial</p>
         </div>
+
+        {heroSettings && heroSettings.images && heroSettings.images.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Eye size={20} />
+                Imagens Atuais ({heroSettings.images.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {heroSettings.images.map((image, index) => (
+                  <div 
+                    key={index} 
+                    className="relative aspect-video rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                    data-testid={`image-preview-${index}`}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`Hero imagem ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs py-1 px-2">
+                      Imagem {index + 1}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {heroSettings.carouselEnabled && (
+                <p className="text-sm text-gray-500 mt-4 flex items-center gap-2">
+                  <ImageIcon size={16} />
+                  Carrossel ativado - Intervalo: {heroSettings.carouselInterval}ms
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -258,6 +295,35 @@ export default function AdminHeroPage() {
                         Texto descritivo exibido abaixo do título
                       </FormDescription>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Configurações de Ativação</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={form.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Ativar Hero</FormLabel>
+                        <FormDescription>
+                          Quando desativado, o Hero não será exibido na página inicial
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value ?? true}
+                          onCheckedChange={field.onChange}
+                          data-testid="switch-active"
+                        />
+                      </FormControl>
                     </FormItem>
                   )}
                 />
