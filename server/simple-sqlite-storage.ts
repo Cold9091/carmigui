@@ -112,7 +112,7 @@ sqlite.exec(`
     description TEXT NOT NULL,
     mission TEXT,
     vision TEXT,
-    values TEXT DEFAULT '[]',
+    "values" TEXT DEFAULT '[]',
     images TEXT DEFAULT '[]',
     display_order INTEGER DEFAULT 0,
     created_at TEXT,
@@ -1146,7 +1146,7 @@ export class SimpleSQLiteStorage implements IStorage {
       const now = new Date().toISOString();
       
       const stmt = sqlite.prepare(`
-        INSERT INTO about_us (id, company_type, title, description, mission, vision, values, images, display_order, created_at, updated_at)
+        INSERT INTO about_us (id, company_type, title, description, mission, vision, "values", images, display_order, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
       
@@ -1203,7 +1203,7 @@ export class SimpleSQLiteStorage implements IStorage {
         params.push(aboutUs.vision);
       }
       if (aboutUs.values !== undefined) {
-        updates.push('values = ?');
+        updates.push('"values" = ?');
         params.push(JSON.stringify(aboutUs.values));
       }
       if (aboutUs.images !== undefined) {
