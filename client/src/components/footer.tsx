@@ -1,7 +1,22 @@
-import { Facebook, Instagram, Linkedin } from "lucide-react";
-import { Link } from "wouter";
+import { Facebook, Instagram } from "lucide-react";
+import { SiTiktok } from "react-icons/si";
+import { Link, useLocation } from "wouter";
 
 export default function Footer() {
+  const [location] = useLocation();
+  
+  const isConstructionPage = location.includes('/construcao') || location.includes('/construction');
+  
+  const socialLinks = isConstructionPage ? {
+    instagram: "https://www.instagram.com/carmigui_construtora_lda",
+    facebook: "https://www.facebook.com/Carmiguii",
+    tiktok: "https://www.tiktok.com/@carmigui_lda",
+  } : {
+    instagram: "https://www.instagram.com/carmigui_imobiliaria_lda",
+    facebook: "https://www.facebook.com/Carmiguii2",
+    tiktok: "https://www.tiktok.com/@carmigui_lda",
+  };
+
   return (
     <footer className="bg-gray-100 text-gray-600 py-12">
       <div className="max-w-7xl mx-auto px-6">
@@ -120,25 +135,34 @@ export default function Footer() {
             <h3 className="text-gray-800 mb-4">Siga-nos!</h3>
             <div className="flex space-x-4">
               <a
-                href="#"
+                href={socialLinks.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
                 className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-green-600 hover:border-green-600 transition-colors"
                 data-testid="social-instagram"
               >
                 <Instagram size={20} />
               </a>
               <a
-                href="#"
+                href={socialLinks.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
                 className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-green-600 hover:border-green-600 transition-colors"
                 data-testid="social-facebook"
               >
                 <Facebook size={20} />
               </a>
               <a
-                href="#"
+                href={socialLinks.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok"
                 className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-green-600 hover:border-green-600 transition-colors"
-                data-testid="social-linkedin"
+                data-testid="social-tiktok"
               >
-                <Linkedin size={20} />
+                <SiTiktok size={20} />
               </a>
             </div>
           </div>
