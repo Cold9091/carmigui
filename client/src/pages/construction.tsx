@@ -43,48 +43,48 @@ export default function ConstructionPage() {
             </h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center" data-testid="service-card-1">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Building2 className="h-8 w-8 text-green-600" />
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Building2 className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Construção de moradias e empreendimentos
               </h3>
             </div>
             
             <div className="text-center" data-testid="service-card-2">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ClipboardCheck className="h-8 w-8 text-green-600" />
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <ClipboardCheck className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Projetos de arquitetura e engenharia personalizados
               </h3>
             </div>
             
             <div className="text-center" data-testid="service-card-3">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Wrench className="h-8 w-8 text-green-600" />
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Wrench className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Reformas, ampliações e reabilitação de imóveis
               </h3>
             </div>
             
             <div className="text-center" data-testid="service-card-4">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-green-600" />
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Users className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Fiscalização e gestão de obras
               </h3>
             </div>
             
             <div className="text-center" data-testid="service-card-5">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-green-600" />
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Consultoria imobiliária e acompanhamento técnico
               </h3>
             </div>
@@ -93,18 +93,18 @@ export default function ConstructionPage() {
       </section>
 
       {/* Na Carmigui */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto container-padding">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
               NA CARMIGUI...
             </h2>
           </div>
-          <div className="max-w-4xl mx-auto">
-            <p className="text-lg text-gray-700 leading-relaxed mb-6">
+          <div className="max-w-5xl mx-auto text-center">
+            <p className="text-base md:text-lg text-gray-700 leading-relaxed mb-4">
               Acreditamos que construir vai muito além de erguer paredes. É dar vida a projetos, criar espaços que inspirem e oferecer soluções seguras e duradouras para cada cliente.
             </p>
-            <p className="text-lg text-gray-700 leading-relaxed">
+            <p className="text-base md:text-lg text-gray-700 leading-relaxed">
               Com uma equipe qualificada, tecnologia moderna e compromisso com a qualidade, somos a solução que você procura para transformar o seu investimento em um verdadeiro lar ou num projeto sólido e rentável.
             </p>
           </div>
@@ -112,21 +112,21 @@ export default function ConstructionPage() {
       </section>
 
       {/* Nossa Evolução */}
-      <section className="py-16 bg-white">
+      <section className="py-12 bg-white">
         <div className="max-w-7xl mx-auto container-padding">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
               A NOSSA EVOLUÇÃO
             </h2>
           </div>
-          <div className="max-w-4xl mx-auto bg-gradient-to-br from-green-900 via-green-800 to-green-700 p-8 md:p-12 rounded-2xl shadow-xl text-white">
-            <p className="text-lg leading-relaxed mb-6">
+          <div className="max-w-5xl mx-auto bg-gradient-to-br from-green-900 via-green-800 to-green-700 p-8 md:p-10 rounded-2xl shadow-lg text-white">
+            <p className="text-base md:text-lg leading-relaxed mb-4">
               A CARMIGUI nasceu com a visão de ser uma referência no setor da construção civil.
             </p>
-            <p className="text-lg leading-relaxed mb-6">
+            <p className="text-base md:text-lg leading-relaxed mb-4">
               Ao longo dos anos, evoluímos e prestamos trabalhos para grandes empreendimentos, sempre com o mesmo propósito: unir qualidade, tecnologia e confiança para cada projeto realizado.
             </p>
-            <p className="text-lg leading-relaxed">
+            <p className="text-base md:text-lg leading-relaxed">
               Cada obra entregue representa não apenas a superação de um desafio, mas também a concretização de sonhos de clientes que acreditam no nosso trabalho.
             </p>
           </div>
@@ -134,123 +134,123 @@ export default function ConstructionPage() {
       </section>
 
       {/* Nossa Eficiência */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto container-padding">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               A NOSSA EFICIÊNCIA
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-base md:text-lg text-gray-600 max-w-4xl mx-auto">
               Na construção, cada minuto conta. Por isso, criamos processos inteligentes que garantem:
             </p>
           </div>
-          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex items-start gap-4" data-testid="efficiency-item-1">
-              <CheckCircle className="w-8 h-8 text-green-600 flex-shrink-0 mt-1" />
-              <p className="text-lg text-gray-700">Cumprimento rigoroso dos prazos</p>
+          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-start gap-3" data-testid="efficiency-item-1">
+              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+              <p className="text-base text-gray-700">Cumprimento rigoroso dos prazos</p>
             </div>
-            <div className="flex items-start gap-4" data-testid="efficiency-item-2">
-              <CheckCircle className="w-8 h-8 text-green-600 flex-shrink-0 mt-1" />
-              <p className="text-lg text-gray-700">Gestão eficaz de recursos</p>
+            <div className="flex items-start gap-3" data-testid="efficiency-item-2">
+              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+              <p className="text-base text-gray-700">Gestão eficaz de recursos</p>
             </div>
-            <div className="flex items-start gap-4" data-testid="efficiency-item-3">
-              <CheckCircle className="w-8 h-8 text-green-600 flex-shrink-0 mt-1" />
-              <p className="text-lg text-gray-700">Equipes altamente capacitadas e motivadas</p>
+            <div className="flex items-start gap-3" data-testid="efficiency-item-3">
+              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+              <p className="text-base text-gray-700">Equipes altamente capacitadas e motivadas</p>
             </div>
-            <div className="flex items-start gap-4" data-testid="efficiency-item-4">
-              <CheckCircle className="w-8 h-8 text-green-600 flex-shrink-0 mt-1" />
-              <p className="text-lg text-gray-700">Acompanhamento técnico detalhado para total transparência</p>
+            <div className="flex items-start gap-3" data-testid="efficiency-item-4">
+              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+              <p className="text-base text-gray-700">Acompanhamento técnico detalhado para total transparência</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Nossas Metas */}
-      <section className="py-16 bg-white">
+      <section className="py-12 bg-white">
         <div className="max-w-7xl mx-auto container-padding">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               AS NOSSAS METAS
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-base md:text-lg text-gray-600">
               Desde o início, estabelecemos objetivos claros:
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="text-center" data-testid="goal-card-1">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="h-8 w-8 text-green-600" />
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Award className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Excelência na qualidade</h3>
-              <p className="text-gray-600">Entregando construções seguras e modernas</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Excelência na qualidade</h3>
+              <p className="text-sm text-gray-600">Entregando construções seguras e modernas</p>
             </div>
             
             <div className="text-center" data-testid="goal-card-2">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-green-600" />
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Users className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Satisfação do cliente</h3>
-              <p className="text-gray-600">Criando espaços que inspiram e atendem às suas necessidades</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Satisfação do cliente</h3>
+              <p className="text-sm text-gray-600">Criando espaços que inspiram e atendem às suas necessidades</p>
             </div>
             
             <div className="text-center" data-testid="goal-card-3">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-8 w-8 text-green-600" />
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Shield className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Sustentabilidade</h3>
-              <p className="text-gray-600">Aplicando técnicas e materiais amigos do ambiente</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Sustentabilidade</h3>
+              <p className="text-sm text-gray-600">Aplicando técnicas e materiais amigos do ambiente</p>
             </div>
             
             <div className="text-center" data-testid="goal-card-4">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Building2 className="h-8 w-8 text-green-600" />
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Building2 className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Contribuição social</h3>
-              <p className="text-gray-600">Apoiando o crescimento das comunidades locais</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Contribuição social</h3>
+              <p className="text-sm text-gray-600">Apoiando o crescimento das comunidades locais</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Contato */}
-      <section className="py-16 bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white">
+      <section className="py-12 bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white">
         <div className="max-w-7xl mx-auto container-padding">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">CONTACTO</h2>
-            <p className="text-lg md:text-xl text-gray-200">
+            <p className="text-base md:text-lg text-gray-200 max-w-3xl mx-auto">
               Entre em contacto conosco e descubra como podemos construir juntos o futuro que você merece.
             </p>
           </div>
           
           <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <a 
                 href="tel:923006615" 
-                className="flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm p-6 rounded-xl hover:bg-white/20 transition-colors"
+                className="flex items-center justify-center gap-3 bg-green-800/50 backdrop-blur-sm p-4 rounded-xl hover:bg-green-800/70 transition-colors border border-green-700"
                 data-testid="link-phone-1"
               >
-                <Phone className="w-6 h-6" />
-                <span className="text-xl font-semibold">923 006 615</span>
+                <Phone className="w-5 h-5" />
+                <span className="text-lg font-semibold">923 006 615</span>
               </a>
               
               <a 
                 href="tel:957970604" 
-                className="flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm p-6 rounded-xl hover:bg-white/20 transition-colors"
+                className="flex items-center justify-center gap-3 bg-green-800/50 backdrop-blur-sm p-4 rounded-xl hover:bg-green-800/70 transition-colors border border-green-700"
                 data-testid="link-phone-2"
               >
-                <Phone className="w-6 h-6" />
-                <span className="text-xl font-semibold">957 970 604</span>
+                <Phone className="w-5 h-5" />
+                <span className="text-lg font-semibold">957 970 604</span>
               </a>
             </div>
             
             <a 
               href="mailto:GERAL@CARMIGUI.COM" 
-              className="flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm p-6 rounded-xl hover:bg-white/20 transition-colors"
+              className="flex items-center justify-center gap-3 bg-green-800/50 backdrop-blur-sm p-4 rounded-xl hover:bg-green-800/70 transition-colors border border-green-700"
               data-testid="link-email"
             >
-              <Mail className="w-6 h-6" />
-              <span className="text-xl font-semibold">GERAL@CARMIGUI.COM</span>
+              <Mail className="w-5 h-5" />
+              <span className="text-lg font-semibold">GERAL@CARMIGUI.COM</span>
             </a>
           </div>
         </div>
@@ -263,7 +263,7 @@ export default function ConstructionPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               TODOS OS PROJETOS
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
               Conheça nossa carteira completa de projetos de construção, desde empreendimentos residenciais até complexos comerciais.
             </p>
           </div>
