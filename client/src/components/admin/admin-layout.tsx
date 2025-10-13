@@ -25,7 +25,8 @@ import {
   Settings,
   LogOut,
   Folder,
-  Image
+  Image,
+  MapPin
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -77,6 +78,12 @@ const adminNavItems = [
     url: "/admin/categories",
     icon: Folder,
     description: "Gerir categorias de imóveis",
+  },
+  {
+    title: "Cidades",
+    url: "/admin/cities",
+    icon: MapPin,
+    description: "Gerir cidades na seção principal",
   },
   {
     title: "Banco de Dados",
