@@ -1,13 +1,24 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { Database, Server, Settings, CheckCircle, AlertCircle, Info } from "lucide-react";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { Database, Server, Settings, CheckCircle, AlertCircle, Info, ExternalLink, Loader2 } from "lucide-react";
 import AdminLayout from "@/components/admin/admin-layout";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface DatabaseStatus {
   type: string;
@@ -18,12 +29,29 @@ interface DatabaseStatus {
   lastConnection?: string;
 }
 
+interface SupabaseConfig {
+  configured: boolean;
+  supabaseUrl: string | null;
+  hasDatabaseUrl: boolean;
+}
+
 export default function AdminDatabasePage() {
   const { toast } = useToast();
+  const [isSupabaseDialogOpen, setIsSupabaseDialogOpen] = useState(false);
+  const [supabaseConfig, setSupabaseConfig] = useState({
+    supabaseUrl: "",
+    supabaseAnonKey: "",
+    databaseUrl: "",
+  });
   
   // Fetch database status
   const { data: dbStatus, isLoading: statusLoading, refetch } = useQuery<DatabaseStatus>({
     queryKey: ["/api/database/status"],
+  });
+
+  // Fetch current Supabase config
+  const { data: currentConfig } = useQuery<SupabaseConfig>({
+    queryKey: ["/api/database/supabase-config"],
   });
 
   const getDatabaseTypeBadge = (type: string) => {
@@ -64,11 +92,75 @@ export default function AdminDatabasePage() {
     }
   };
 
+  // Mutation to test Supabase credentials
+  const testSupabaseMutation = useMutation({
+    mutationFn: async (config: typeof supabaseConfig) => {
+      return await apiRequest("POST", "/api/database/test-supabase", config);
+    },
+    onSuccess: (data: any) => {
+      toast({
+        title: "Teste bem-sucedido!",
+        description: data.message || "Credenciais do Supabase validadas com sucesso.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro no teste",
+        description: error.message || "Falha ao testar as credenciais do Supabase.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mutation to save Supabase configuration
+  const configureSupabaseMutation = useMutation({
+    mutationFn: async (config: typeof supabaseConfig) => {
+      return await apiRequest("POST", "/api/database/configure-supabase", config);
+    },
+    onSuccess: (data: any) => {
+      toast({
+        title: "Configuração salva!",
+        description: data.message || "Supabase configurado com sucesso.",
+      });
+      setIsSupabaseDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["/api/database/supabase-config"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/database/status"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao salvar",
+        description: error.message || "Falha ao salvar as configurações do Supabase.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleMigrateToSupabase = () => {
-    toast({
-      title: "Migração para Supabase",
-      description: "Em breve você poderá migrar facilmente para Supabase através desta interface.",
-    });
+    setIsSupabaseDialogOpen(true);
+  };
+
+  const handleTestSupabase = () => {
+    if (!supabaseConfig.supabaseUrl || !supabaseConfig.supabaseAnonKey || !supabaseConfig.databaseUrl) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Por favor, preencha todos os campos antes de testar.",
+        variant: "destructive",
+      });
+      return;
+    }
+    testSupabaseMutation.mutate(supabaseConfig);
+  };
+
+  const handleSaveSupabase = () => {
+    if (!supabaseConfig.supabaseUrl || !supabaseConfig.supabaseAnonKey || !supabaseConfig.databaseUrl) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Por favor, preencha todos os campos antes de salvar.",
+        variant: "destructive",
+      });
+      return;
+    }
+    configureSupabaseMutation.mutate(supabaseConfig);
   };
 
   return (
@@ -203,6 +295,215 @@ export default function AdminDatabasePage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Supabase Configuration Dialog */}
+      <Dialog open={isSupabaseDialogOpen} onOpenChange={setIsSupabaseDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Database className="text-purple-600" />
+              Configurar Supabase
+            </DialogTitle>
+            <DialogDescription>
+              Configure as credenciais do Supabase para migrar seu banco de dados
+            </DialogDescription>
+          </DialogHeader>
+
+          <Tabs defaultValue="config" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="config">Configuração</TabsTrigger>
+              <TabsTrigger value="instructions">Instruções</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="config" className="space-y-4 mt-4">
+              {currentConfig?.configured && (
+                <Alert className="bg-green-50 border-green-200">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <AlertDescription className="text-green-800">
+                    Supabase já está configurado. Você pode atualizar as credenciais abaixo.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="supabase-url">Supabase Project URL</Label>
+                  <Input
+                    id="supabase-url"
+                    placeholder="https://seu-projeto.supabase.co"
+                    value={supabaseConfig.supabaseUrl}
+                    onChange={(e) => setSupabaseConfig({ ...supabaseConfig, supabaseUrl: e.target.value })}
+                    data-testid="input-supabase-url"
+                  />
+                  <p className="text-xs text-gray-500">
+                    URL do seu projeto no Supabase (Settings → API → Project URL)
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="supabase-anon-key">Supabase Anon Key</Label>
+                  <Input
+                    id="supabase-anon-key"
+                    type="password"
+                    placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    value={supabaseConfig.supabaseAnonKey}
+                    onChange={(e) => setSupabaseConfig({ ...supabaseConfig, supabaseAnonKey: e.target.value })}
+                    data-testid="input-supabase-anon-key"
+                  />
+                  <p className="text-xs text-gray-500">
+                    Chave pública do Supabase (Settings → API → anon/public key)
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="database-url">Database URL (Connection String)</Label>
+                  <Input
+                    id="database-url"
+                    type="password"
+                    placeholder="postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres"
+                    value={supabaseConfig.databaseUrl}
+                    onChange={(e) => setSupabaseConfig({ ...supabaseConfig, databaseUrl: e.target.value })}
+                    data-testid="input-database-url"
+                  />
+                  <p className="text-xs text-gray-500">
+                    String de conexão PostgreSQL (Settings → Database → Connection string → URI)
+                  </p>
+                </div>
+
+                <Alert>
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    <strong>Importante:</strong> Em produção, configure estas variáveis diretamente nos Secrets do Replit ou no seu provedor de hospedagem.
+                  </AlertDescription>
+                </Alert>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="instructions" className="space-y-4 mt-4">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-2 flex items-center gap-2">
+                    1. Criar Projeto no Supabase
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Acesse <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline inline-flex items-center gap-1">
+                      supabase.com <ExternalLink className="h-3 w-3" />
+                    </a> e crie uma conta gratuita
+                  </p>
+                  <ul className="list-disc list-inside text-sm text-gray-600 space-y-1 ml-4">
+                    <li>Clique em "Start your project"</li>
+                    <li>Escolha um nome para o projeto</li>
+                    <li>Defina uma senha segura para o banco de dados</li>
+                    <li>Escolha a região mais próxima (ex: São Paulo)</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-2 flex items-center gap-2">
+                    2. Obter Credenciais
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    No painel do Supabase, vá para Settings → API:
+                  </p>
+                  <ul className="list-disc list-inside text-sm text-gray-600 space-y-1 ml-4">
+                    <li><strong>Project URL:</strong> Copie a URL do projeto</li>
+                    <li><strong>anon/public key:</strong> Copie a chave pública</li>
+                  </ul>
+                  <p className="text-sm text-gray-600 mt-2 mb-2">
+                    Depois vá para Settings → Database:
+                  </p>
+                  <ul className="list-disc list-inside text-sm text-gray-600 space-y-1 ml-4">
+                    <li><strong>Connection string → URI:</strong> Copie a string de conexão</li>
+                    <li>Substitua [YOUR-PASSWORD] pela senha do banco de dados</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-2 flex items-center gap-2">
+                    3. Migrar Dados
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Após configurar o Supabase:
+                  </p>
+                  <ul className="list-disc list-inside text-sm text-gray-600 space-y-1 ml-4">
+                    <li>Execute <code className="bg-gray-100 px-2 py-1 rounded">npm run db:push</code> para criar as tabelas</li>
+                    <li>Exporte seus dados atuais se necessário</li>
+                    <li>Importe os dados no Supabase</li>
+                    <li>Reinicie a aplicação para usar o novo banco</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-2 flex items-center gap-2">
+                    4. Schema do Banco de Dados
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Seu projeto usa as seguintes tabelas:
+                  </p>
+                  <div className="bg-gray-50 p-3 rounded text-xs font-mono">
+                    <ul className="space-y-1">
+                      <li>✓ properties (imóveis)</li>
+                      <li>✓ projects (projetos)</li>
+                      <li>✓ contacts (contactos)</li>
+                      <li>✓ condominiums (condomínios)</li>
+                      <li>✓ property_categories (categorias)</li>
+                      <li>✓ hero_settings (configurações hero)</li>
+                      <li>✓ cities (cidades)</li>
+                      <li>✓ about_us (sobre nós)</li>
+                      <li>✓ employees (funcionários)</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsSupabaseDialogOpen(false)}
+              data-testid="btn-cancel-supabase"
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleTestSupabase}
+              disabled={testSupabaseMutation.isPending}
+              data-testid="btn-test-supabase"
+            >
+              {testSupabaseMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Testando...
+                </>
+              ) : (
+                <>
+                  <Settings className="mr-2 h-4 w-4" />
+                  Testar Conexão
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={handleSaveSupabase}
+              disabled={configureSupabaseMutation.isPending}
+              data-testid="btn-save-supabase"
+            >
+              {configureSupabaseMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  Salvar Configuração
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
