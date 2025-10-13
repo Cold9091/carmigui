@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Building2, MapPin, Users, Home, CheckCircle, Calendar, ArrowRight } from "lucide-react";
 import type { Condominium } from "@shared/schema";
+import logoImage from "@assets/Component 2 1_1760109982800.png";
 
 export default function CondominiumsPage() {
   const { data: condominiums = [], isLoading } = useQuery<Condominium[]>({
@@ -40,12 +41,20 @@ export default function CondominiumsPage() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white">
-        <div className="max-w-7xl mx-auto container-padding py-16">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920')] bg-cover bg-center opacity-20"></div>
+        <div className="relative max-w-7xl mx-auto container-padding py-20">
           <div className="text-center max-w-4xl mx-auto">
+            <div className="flex items-center justify-center mb-8">
+              <img 
+                src={logoImage} 
+                alt="CM Carmigui" 
+                className="h-16 md:h-20 w-auto"
+              />
+            </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
               Descubra Condomínios <br />de Excelência
             </h1>
-            <p className="text-lg md:text-xl mb-8 text-gray-200">
+            <p className="text-lg md:text-xl text-gray-200">
               Explore nossos projetos residenciais exclusivos em Luanda, projetados para oferecer 
               qualidade de vida e segurança para sua família.
             </p>
