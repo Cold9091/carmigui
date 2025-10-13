@@ -1,4 +1,4 @@
-import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings } from "@shared/schema";
+import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity } from "@shared/schema";
 import { IStorage } from "./storage";
 import Database from 'better-sqlite3';
 
@@ -89,6 +89,17 @@ sqlite.exec(`
     description TEXT NOT NULL DEFAULT 'Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário.',
     carousel_enabled BOOLEAN DEFAULT FALSE,
     carousel_interval INTEGER DEFAULT 5000,
+    active BOOLEAN DEFAULT TRUE,
+    created_at TEXT,
+    updated_at TEXT
+  );
+  
+  CREATE TABLE IF NOT EXISTS cities (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    slug TEXT NOT NULL UNIQUE,
+    image_url TEXT NOT NULL,
+    display_order INTEGER DEFAULT 0,
     active BOOLEAN DEFAULT TRUE,
     created_at TEXT,
     updated_at TEXT
@@ -943,6 +954,137 @@ export class SimpleSQLiteStorage implements IStorage {
       active: Boolean(dbHeroSettings.active),
       createdAt: dbHeroSettings.created_at ? new Date(dbHeroSettings.created_at) : null,
       updatedAt: dbHeroSettings.updated_at ? new Date(dbHeroSettings.updated_at) : null,
+    };
+  }
+
+  // Cities
+  async getCities(activeOnly?: boolean): Promise<City[]> {
+    try {
+      let sql = 'SELECT * FROM cities';
+      const params: any[] = [];
+      
+      if (activeOnly) {
+        sql += ' WHERE active = ?';
+        params.push(1);
+      }
+      
+      sql += ' ORDER BY display_order ASC';
+      
+      const stmt = sqlite.prepare(sql);
+      const rows = params.length > 0 ? stmt.all(params) : stmt.all();
+      return rows.map(row => this.convertCityFromDB(row));
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+      return [];
+    }
+  }
+
+  async getCity(id: string): Promise<City | undefined> {
+    try {
+      const stmt = sqlite.prepare('SELECT * FROM cities WHERE id = ?');
+      const row = stmt.get(id);
+      return row ? this.convertCityFromDB(row) : undefined;
+    } catch (error) {
+      console.error("Error fetching city:", error);
+      return undefined;
+    }
+  }
+
+  async createCity(city: InsertCity): Promise<City> {
+    try {
+      const id = `city_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const now = new Date().toISOString();
+      
+      const stmt = sqlite.prepare(`
+        INSERT INTO cities (id, name, slug, image_url, display_order, active, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+      
+      stmt.run(
+        id,
+        city.name,
+        city.slug,
+        city.imageUrl,
+        city.displayOrder ?? 0,
+        city.active ? 1 : 0,
+        now,
+        now
+      );
+      
+      const result = await this.getCity(id);
+      if (!result) throw new Error("Failed to create city");
+      return result;
+    } catch (error) {
+      console.error("Error creating city:", error);
+      throw error;
+    }
+  }
+
+  async updateCity(id: string, city: Partial<InsertCity>): Promise<City | undefined> {
+    try {
+      const existing = await this.getCity(id);
+      if (!existing) return undefined;
+      
+      const now = new Date().toISOString();
+      const updates: string[] = [];
+      const params: any[] = [];
+      
+      if (city.name !== undefined) {
+        updates.push('name = ?');
+        params.push(city.name);
+      }
+      if (city.slug !== undefined) {
+        updates.push('slug = ?');
+        params.push(city.slug);
+      }
+      if (city.imageUrl !== undefined) {
+        updates.push('image_url = ?');
+        params.push(city.imageUrl);
+      }
+      if (city.displayOrder !== undefined) {
+        updates.push('display_order = ?');
+        params.push(city.displayOrder);
+      }
+      if (city.active !== undefined) {
+        updates.push('active = ?');
+        params.push(city.active ? 1 : 0);
+      }
+      
+      updates.push('updated_at = ?');
+      params.push(now);
+      params.push(id);
+      
+      const stmt = sqlite.prepare(`UPDATE cities SET ${updates.join(', ')} WHERE id = ?`);
+      stmt.run(params);
+      
+      return await this.getCity(id);
+    } catch (error) {
+      console.error("Error updating city:", error);
+      return undefined;
+    }
+  }
+
+  async deleteCity(id: string): Promise<boolean> {
+    try {
+      const stmt = sqlite.prepare('DELETE FROM cities WHERE id = ?');
+      const result = stmt.run(id);
+      return result.changes > 0;
+    } catch (error) {
+      console.error("Error deleting city:", error);
+      return false;
+    }
+  }
+
+  private convertCityFromDB(dbCity: any): City {
+    return {
+      id: dbCity.id,
+      name: dbCity.name,
+      slug: dbCity.slug,
+      imageUrl: dbCity.image_url,
+      displayOrder: dbCity.display_order,
+      active: Boolean(dbCity.active),
+      createdAt: dbCity.created_at ? new Date(dbCity.created_at) : null,
+      updatedAt: dbCity.updated_at ? new Date(dbCity.updated_at) : null,
     };
   }
 }

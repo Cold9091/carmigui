@@ -1,4 +1,4 @@
-import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings } from "@shared/schema";
+import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity } from "@shared/schema";
 
 export interface IStorage {
   // Properties
@@ -41,6 +41,13 @@ export interface IStorage {
   createHeroSettings(heroSettings: InsertHeroSettings): Promise<HeroSettings>;
   updateHeroSettings(id: string, heroSettings: Partial<InsertHeroSettings>): Promise<HeroSettings | undefined>;
   deleteHeroSettings(id: string): Promise<boolean>;
+
+  // Cities
+  getCities(activeOnly?: boolean): Promise<City[]>;
+  getCity(id: string): Promise<City | undefined>;
+  createCity(city: InsertCity): Promise<City>;
+  updateCity(id: string, city: Partial<InsertCity>): Promise<City | undefined>;
+  deleteCity(id: string): Promise<boolean>;
 }
 
 // Sistema de armazenamento limpo - sem dados demonstrativos
@@ -54,6 +61,7 @@ export class MemoryStorage implements IStorage {
   private condominiums: Condominium[] = [];
   private propertyCategories: PropertyCategory[] = [];
   private heroSettings: HeroSettings[] = [];
+  private cities: City[] = [];
 
   // Properties
   async getProperties(filters?: { type?: string; location?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
@@ -340,6 +348,54 @@ export class MemoryStorage implements IStorage {
     if (index === -1) return false;
     
     this.heroSettings.splice(index, 1);
+    return true;
+  }
+
+  // Cities
+  async getCities(activeOnly?: boolean): Promise<City[]> {
+    let result = [...this.cities];
+    
+    if (activeOnly !== undefined && activeOnly) {
+      result = result.filter(c => c.active === true);
+    }
+    
+    return result.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+  }
+
+  async getCity(id: string): Promise<City | undefined> {
+    return this.cities.find(c => c.id === id);
+  }
+
+  async createCity(city: InsertCity): Promise<City> {
+    const newCity: City = {
+      id: (this.cities.length + 1).toString(),
+      ...city,
+      displayOrder: city.displayOrder ?? 0,
+      active: city.active ?? true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.cities.push(newCity);
+    return newCity;
+  }
+
+  async updateCity(id: string, city: Partial<InsertCity>): Promise<City | undefined> {
+    const index = this.cities.findIndex(c => c.id === id);
+    if (index === -1) return undefined;
+    
+    this.cities[index] = {
+      ...this.cities[index],
+      ...city,
+      updatedAt: new Date()
+    };
+    return this.cities[index];
+  }
+
+  async deleteCity(id: string): Promise<boolean> {
+    const index = this.cities.findIndex(c => c.id === id);
+    if (index === -1) return false;
+    
+    this.cities.splice(index, 1);
     return true;
   }
 }
