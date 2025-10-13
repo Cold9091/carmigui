@@ -7,7 +7,7 @@ import { Link } from "wouter";
 import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowLeft, Search, CheckCircle, Key, Square, Users } from "lucide-react";
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
-import type { Property, Project, Condominium, PropertyCategory, HeroSettings } from "@shared/schema";
+import type { Property, Project, Condominium, PropertyCategory, HeroSettings, City } from "@shared/schema";
 import heroImage from "@assets/hero-banner.webp";
 
 export default function HomePage() {
@@ -59,7 +59,12 @@ export default function HomePage() {
     queryKey: ["/api/property-categories"],
   });
 
+  const { data: cities = [], isLoading: citiesLoading } = useQuery<City[]>({
+    queryKey: ["/api/cities"],
+  });
+
   const activeCategories = categories.filter(cat => cat.active).sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+  const activeCities = cities.filter(city => city.active).sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
 
   // Funções de navegação para featured properties
   const handleFeaturedPrev = () => {
@@ -458,61 +463,30 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Luanda */}
-            <Link href="/imoveis?city=luanda" className="group">
-              <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
-                  alt="Luanda"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
-                  <span className="text-white font-bold text-xl">Luanda</span>
-                </div>
+            {citiesLoading ? (
+              [...Array(4)].map((_, i) => (
+                <div key={i} className="relative h-48 rounded-lg overflow-hidden bg-gray-200 animate-pulse" />
+              ))
+            ) : activeCities.length === 0 ? (
+              <div className="col-span-full text-center py-8">
+                <p className="text-gray-500">Nenhuma cidade disponível no momento</p>
               </div>
-            </Link>
-
-            {/* Benguela */}
-            <Link href="/imoveis?city=benguela" className="group">
-              <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
-                  alt="Benguela"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
-                  <span className="text-white font-bold text-xl">Benguela</span>
-                </div>
-              </div>
-            </Link>
-
-            {/* Lobito */}
-            <Link href="/imoveis?city=lobito" className="group">
-              <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
-                  alt="Lobito"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
-                  <span className="text-white font-bold text-xl">Lobito</span>
-                </div>
-              </div>
-            </Link>
-
-            {/* Huambo */}
-            <Link href="/imoveis?city=huambo" className="group">
-              <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
-                  alt="Huambo"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
-                  <span className="text-white font-bold text-xl">Huambo</span>
-                </div>
-              </div>
-            </Link>
+            ) : (
+              activeCities.map((city) => (
+                <Link key={city.id} href={`/imoveis?city=${city.slug}`} className="group">
+                  <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
+                    <img
+                      src={city.imageUrl}
+                      alt={city.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center pb-6">
+                      <span className="text-white font-bold text-xl">{city.name}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </section>
