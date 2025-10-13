@@ -490,7 +490,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/database/test", async (req, res) => {
     try {
-      // Test database connection by trying to fetch properties
       await storage.getProperties();
       res.json({ 
         success: true, 
@@ -503,108 +502,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false, 
         message: "Database connection failed",
         error: error instanceof Error ? error.message : "Unknown error"
-      });
-    }
-  });
-
-  // Supabase configuration routes
-  app.post("/api/database/test-supabase", async (req, res) => {
-    try {
-      const { supabaseUrl, supabaseAnonKey, databaseUrl } = req.body;
-
-      if (!supabaseUrl || !supabaseAnonKey || !databaseUrl) {
-        return res.status(400).json({
-          success: false,
-          message: "Todos os campos são obrigatórios: supabaseUrl, supabaseAnonKey, databaseUrl"
-        });
-      }
-
-      // Validar formato da URL
-      try {
-        new URL(supabaseUrl);
-        new URL(databaseUrl);
-      } catch (error) {
-        return res.status(400).json({
-          success: false,
-          message: "URLs inválidas. Verifique o formato das URLs fornecidas."
-        });
-      }
-
-      // Testar conexão com PostgreSQL usando a DATABASE_URL do Supabase
-      const { Pool } = await import('@neondatabase/serverless');
-      const testPool = new Pool({ connectionString: databaseUrl });
-      
-      try {
-        const result = await testPool.query('SELECT NOW()');
-        await testPool.end();
-        
-        res.json({
-          success: true,
-          message: "Credenciais do Supabase válidas! Conexão testada com sucesso.",
-          timestamp: result.rows[0].now
-        });
-      } catch (error) {
-        await testPool.end();
-        throw error;
-      }
-    } catch (error) {
-      console.error("Supabase connection test failed:", error);
-      res.status(500).json({
-        success: false,
-        message: "Falha ao conectar com o Supabase",
-        error: error instanceof Error ? error.message : "Erro desconhecido"
-      });
-    }
-  });
-
-  app.post("/api/database/configure-supabase", async (req, res) => {
-    try {
-      const { supabaseUrl, supabaseAnonKey, databaseUrl } = req.body;
-
-      if (!supabaseUrl || !supabaseAnonKey || !databaseUrl) {
-        return res.status(400).json({
-          success: false,
-          message: "Todos os campos são obrigatórios"
-        });
-      }
-
-      // Salvar as variáveis de ambiente
-      // Nota: Em produção, essas variáveis devem ser configuradas no ambiente do servidor
-      // Para desenvolvimento, podemos usar um arquivo .env ou configurar diretamente
-      
-      process.env.SUPABASE_URL = supabaseUrl;
-      process.env.SUPABASE_ANON_KEY = supabaseAnonKey;
-      process.env.DATABASE_URL = databaseUrl;
-
-      res.json({
-        success: true,
-        message: "Configurações do Supabase salvas com sucesso! Reinicie o servidor para aplicar as mudanças.",
-        note: "Em ambiente de produção, configure essas variáveis diretamente no seu provedor de hospedagem (Replit Secrets, Vercel, etc.)"
-      });
-    } catch (error) {
-      console.error("Failed to configure Supabase:", error);
-      res.status(500).json({
-        success: false,
-        message: "Falha ao salvar configurações do Supabase",
-        error: error instanceof Error ? error.message : "Erro desconhecido"
-      });
-    }
-  });
-
-  app.get("/api/database/supabase-config", async (req, res) => {
-    try {
-      const hasConfig = !!(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
-      
-      res.json({
-        configured: hasConfig,
-        supabaseUrl: process.env.SUPABASE_URL ? process.env.SUPABASE_URL.substring(0, 30) + '...' : null,
-        hasDatabaseUrl: !!process.env.DATABASE_URL
-      });
-    } catch (error) {
-      console.error("Failed to get Supabase config:", error);
-      res.status(500).json({
-        success: false,
-        message: "Falha ao obter configurações do Supabase"
       });
     }
   });
