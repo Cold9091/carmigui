@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
-import { Building, Hammer, Mail, TrendingUp } from "lucide-react";
+import { Building, Hammer, Mail, TrendingUp, MapPin } from "lucide-react";
 import AdminLayout from "@/components/admin/admin-layout";
-import type { Property, Project, Contact, Condominium } from "@shared/schema";
+import type { Property, Project, Contact, Condominium, City } from "@shared/schema";
 
 export default function AdminPage() {
 
@@ -23,15 +23,20 @@ export default function AdminPage() {
     queryKey: ["/api/condominiums"],
   });
 
+  const { data: cities = [] } = useQuery<City[]>({
+    queryKey: ["/api/cities"],
+  });
 
   // Statistics calculations
   const totalProperties = properties.length;
   const totalProjects = projects.length;
   const totalContacts = contacts.length;
   const totalCondominiums = condominiums.length;
+  const totalCities = cities.length;
   const featuredProperties = properties.filter(p => p.featured).length;
   const featuredProjects = projects.filter(p => p.featured).length;
   const featuredCondominiums = condominiums.filter(c => c.featured).length;
+  const activeCities = cities.filter(c => c.active).length;
 
 
   return (
@@ -102,7 +107,7 @@ export default function AdminPage() {
         </div>
 
         {/* Featured Items Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -135,6 +140,20 @@ export default function AdminPage() {
                   <p className="text-xl font-bold text-angola-secondary">{featuredCondominiums}</p>
                 </div>
                 <TrendingUp className="text-angola-secondary" size={24} />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Cidades Ativas</p>
+                  <p className="text-xl font-bold text-angola-secondary" data-testid="stats-cities">
+                    {activeCities} / {totalCities}
+                  </p>
+                </div>
+                <MapPin className="text-angola-secondary" size={24} />
               </div>
             </CardContent>
           </Card>
