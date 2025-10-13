@@ -9,7 +9,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Building, Plus, Edit, Trash2 } from "lucide-react";
 import AdminLayout from "@/components/admin/admin-layout";
 import PropertyForm from "@/components/admin/property-form";
-import type { Property } from "@shared/schema";
+import type { Property, PropertyCategory, City } from "@shared/schema";
 
 export default function AdminPropertiesPage() {
   const [isPropertyDialogOpen, setIsPropertyDialogOpen] = useState(false);
@@ -21,6 +21,14 @@ export default function AdminPropertiesPage() {
   // Fetch properties
   const { data: properties = [], isLoading: propertiesLoading } = useQuery<Property[]>({
     queryKey: ["/api/properties"],
+  });
+
+  const { data: categories = [] } = useQuery<PropertyCategory[]>({
+    queryKey: ["/api/property-categories"],
+  });
+
+  const { data: cities = [] } = useQuery<City[]>({
+    queryKey: ["/api/cities"],
   });
 
   // Delete mutation
@@ -134,6 +142,9 @@ export default function AdminPropertiesPage() {
                 ? property.images[0] 
                 : "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600";
               
+              const category = categories.find(c => c.id === property.categoryId);
+              const city = cities.find(c => c.id === property.cityId);
+              
               return (
                 <Card key={property.id} className="admin-triangular-card card-hover bg-white shadow-lg" data-testid={`property-card-${property.id}`}>
                   <div className="relative image-container">
@@ -178,7 +189,7 @@ export default function AdminPropertiesPage() {
                       {property.title}
                     </h3>
                     <p className="text-angola-text mb-2" data-testid="property-location">
-                      {property.location}
+                      {city?.name || 'Cidade não definida'}
                     </p>
                     <p className="text-2xl font-bold text-angola-primary mb-4" data-testid="property-price">
                       {formatPrice(property.price)}
@@ -201,9 +212,9 @@ export default function AdminPropertiesPage() {
                         </div>
                       )}
                     </div>
-                    {property.type && (
-                      <p className="text-sm text-gray-500 mt-2" data-testid="property-type">
-                        <strong>Tipo:</strong> {property.type}
+                    {category && (
+                      <p className="text-sm text-gray-500 mt-2" data-testid="property-category">
+                        <strong>Categoria:</strong> {category.name}
                       </p>
                     )}
                     {property.virtualTourUrl && (

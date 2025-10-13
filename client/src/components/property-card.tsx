@@ -3,13 +3,19 @@ import { MapPin, Bed, Bath, Maximize, Heart } from "lucide-react";
 import { Link } from "wouter";
 import { VirtualTourViewer } from "@/components/virtual-tour-viewer";
 import { Eye } from "lucide-react";
-import type { Property } from "@shared/schema";
+import { useQuery } from "@tanstack/react-query";
+import type { Property, City, PropertyCategory } from "@shared/schema";
 
 interface PropertyCardProps {
   property: Property;
 }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
+  const { data: cities = [] } = useQuery<City[]>({
+    queryKey: ["/api/cities"],
+  });
+
+  const city = cities.find(c => c.id === property.cityId);
   const formatPrice = (price: string) => {
     const numPrice = parseFloat(price);
     if (numPrice >= 1000000) {
@@ -80,7 +86,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         </h3>
         <div className="flex items-center gap-1 text-sm text-gray-600 mb-3" data-testid="property-location">
           <MapPin size={14} className="text-gray-400" />
-          <span>{property.location}</span>
+          <span>{city?.name || 'Cidade não definida'}</span>
         </div>
         
         <div className="flex gap-4 text-sm text-gray-600 mb-4">

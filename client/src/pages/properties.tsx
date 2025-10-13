@@ -2,13 +2,13 @@ import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PropertyCard from "@/components/property-card";
-import type { Property } from "@shared/schema";
+import type { Property, PropertyCategory, City } from "@shared/schema";
 
 export default function PropertiesPage() {
   const [filters, setFilters] = useState({
     bedrooms: "",
-    location: "",
-    type: "",
+    cityId: "",
+    categoryId: "",
   });
 
   // Initialize filters from URL parameters
@@ -16,22 +16,22 @@ export default function PropertiesPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const initialFilters = {
       bedrooms: urlParams.get('bedrooms') || "",
-      location: urlParams.get('location') || "",
-      type: urlParams.get('type') || "",
+      cityId: urlParams.get('cityId') || "",
+      categoryId: urlParams.get('categoryId') || "",
     };
     setFilters(initialFilters);
   }, []);
 
-  const queryParams = new URLSearchParams();
-  if (filters.location) queryParams.append("location", filters.location);
-  if (filters.bedrooms) queryParams.append("bedrooms", filters.bedrooms);
-  if (filters.type) queryParams.append("type", filters.type);
-
-  const queryString = queryParams.toString();
-  const queryKey = queryString ? ["/api/properties", queryString] : ["/api/properties"];
-
   const { data: properties = [], isLoading } = useQuery<Property[]>({
-    queryKey,
+    queryKey: ["/api/properties"],
+  });
+
+  const { data: categories = [] } = useQuery<PropertyCategory[]>({
+    queryKey: ["/api/property-categories"],
+  });
+
+  const { data: cities = [] } = useQuery<City[]>({
+    queryKey: ["/api/cities"],
   });
 
   const handleFilterChange = (key: string, value: string | number[]) => {
@@ -40,13 +40,13 @@ export default function PropertiesPage() {
 
   const filteredProperties = useMemo(() => {
     return (properties || []).filter((property) => {
-      if (filters.type && filters.type !== 'all' && property.type !== filters.type) {
+      if (filters.categoryId && filters.categoryId !== 'all' && property.categoryId !== filters.categoryId) {
         return false;
       }
       if (filters.bedrooms && filters.bedrooms !== 'all' && property.bedrooms?.toString() !== filters.bedrooms) {
         return false;
       }
-      if (filters.location && filters.location !== 'all' && !property.location?.toLowerCase().includes(filters.location.toLowerCase())) {
+      if (filters.cityId && filters.cityId !== 'all' && property.cityId !== filters.cityId) {
         return false;
       }
       return true;
@@ -97,36 +97,36 @@ export default function PropertiesPage() {
               </Select>
 
               <Select
-                value={filters.location}
-                onValueChange={(value) => handleFilterChange("location", value)}
+                value={filters.cityId}
+                onValueChange={(value) => handleFilterChange("cityId", value)}
               >
-                <SelectTrigger data-testid="filter-location" className="bg-white">
-                  <SelectValue placeholder="Selecione a localização" />
+                <SelectTrigger data-testid="filter-city" className="bg-white">
+                  <SelectValue placeholder="Selecione a cidade" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todas as localizações</SelectItem>
-                  <SelectItem value="Luanda">Luanda</SelectItem>
-                  <SelectItem value="Benguela">Benguela</SelectItem>
-                  <SelectItem value="Huambo">Huambo</SelectItem>
-                  <SelectItem value="Lobito">Lobito</SelectItem>
-                  <SelectItem value="Malanje">Malanje</SelectItem>
-                  <SelectItem value="Cabinda">Cabinda</SelectItem>
+                  <SelectItem value="all">Todas as cidades</SelectItem>
+                  {cities.filter(city => city.active).map((city) => (
+                    <SelectItem key={city.id} value={city.id}>
+                      {city.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
 
               <Select
-                value={filters.type}
-                onValueChange={(value) => handleFilterChange("type", value)}
+                value={filters.categoryId}
+                onValueChange={(value) => handleFilterChange("categoryId", value)}
               >
-                <SelectTrigger data-testid="filter-type" className="bg-white">
-                  <SelectValue placeholder="Tipo de imóvel" />
+                <SelectTrigger data-testid="filter-category" className="bg-white">
+                  <SelectValue placeholder="Categoria" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todos os tipos</SelectItem>
-                  <SelectItem value="apartment">Apartamento</SelectItem>
-                  <SelectItem value="house">Casa</SelectItem>
-                  <SelectItem value="office">Escritório</SelectItem>
-                  <SelectItem value="land">Terreno</SelectItem>
+                  <SelectItem value="all">Todas as categorias</SelectItem>
+                  {categories.filter(cat => cat.active).map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
 
