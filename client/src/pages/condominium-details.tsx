@@ -85,6 +85,7 @@ export default function CondominiumDetailsPage() {
             src={(condominium.images && condominium.images[0]) || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600"}
             alt={condominium.name}
             className="w-full h-full object-cover"
+            loading="lazy"
           />
           <div className="absolute inset-0 bg-black/30 flex items-end">
             <div className="p-6 text-white">
@@ -197,6 +198,7 @@ export default function CondominiumDetailsPage() {
                           src={image}
                           alt={`${condominium.name} - Imagem ${index + 2}`}
                           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
                         />
                       </div>
                     ))}

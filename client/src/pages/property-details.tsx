@@ -144,6 +144,7 @@ export default function PropertyDetailsPage() {
                   src={propertyImages[currentImageIndex]}
                   alt={property.title}
                   className="w-full h-96 object-cover"
+                  loading="lazy"
                 />
                 
                 {propertyImages.length > 1 && (
@@ -216,6 +217,7 @@ export default function PropertyDetailsPage() {
                       src={image}
                       alt={`${property.title} - ${index + 2}`}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   </div>
                 ))}
@@ -245,6 +247,7 @@ export default function PropertyDetailsPage() {
                             src={(prop.images && prop.images[0]) || "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"}
                             alt={prop.title}
                             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
                           />
                           <div className="absolute top-3 right-3">
                             <Heart className="h-5 w-5 text-white" />

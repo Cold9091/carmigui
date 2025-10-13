@@ -49,6 +49,7 @@ export default function CondominiumsPage() {
                 src={logoImage} 
                 alt="CM Carmigui" 
                 className="h-16 md:h-20 w-auto"
+                loading="lazy"
               />
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
@@ -173,6 +174,7 @@ function CondominiumCard({ condominium }: { condominium: Condominium }) {
           src={(condominium.images && condominium.images[0]) || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"}
           alt={condominium.name}
           className="w-full h-48 object-cover"
+          loading="lazy"
         />
         <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
           <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

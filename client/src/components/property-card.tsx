@@ -35,6 +35,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           src={mainImage}
           alt={property.title}
           className="w-full h-48 object-cover"
+          loading="lazy"
           data-testid="property-image"
         />
         
