@@ -124,12 +124,9 @@ export default function PropertiesPage() {
                 <SelectContent>
                   <SelectItem value="all">Todos os tipos</SelectItem>
                   <SelectItem value="apartment">Apartamento</SelectItem>
-                  <SelectItem value="loft">Loft</SelectItem>
                   <SelectItem value="house">Casa</SelectItem>
-                  <SelectItem value="fazenda">Fazenda</SelectItem>
-                  <SelectItem value="building">Prédio</SelectItem>
-                  <SelectItem value="office">Comercial</SelectItem>
-                  <SelectItem value="coworking">Coworking</SelectItem>
+                  <SelectItem value="office">Escritório</SelectItem>
+                  <SelectItem value="land">Terreno</SelectItem>
                 </SelectContent>
               </Select>
 
