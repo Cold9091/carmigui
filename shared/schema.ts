@@ -8,8 +8,8 @@ export const properties = pgTable("properties", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   price: decimal("price").notNull(),
-  location: text("location").notNull(),
-  type: text("type").notNull(), // apartment, house, office, land
+  cityId: varchar("city_id").notNull(),
+  categoryId: varchar("category_id").notNull(),
   bedrooms: integer("bedrooms"),
   bathrooms: integer("bathrooms"),
   area: integer("area").notNull(), // in square meters

@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertPropertySchema } from "@shared/schema";
 import { Save } from "lucide-react";
-import type { Property, InsertProperty } from "@shared/schema";
+import type { Property, InsertProperty, PropertyCategory, City } from "@shared/schema";
 
 interface PropertyFormProps {
   property?: Property | null;
@@ -23,14 +23,22 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const { data: categories = [] } = useQuery<PropertyCategory[]>({
+    queryKey: ["/api/property-categories"],
+  });
+
+  const { data: cities = [] } = useQuery<City[]>({
+    queryKey: ["/api/cities"],
+  });
+
   const form = useForm<InsertProperty>({
     resolver: zodResolver(insertPropertySchema),
     defaultValues: {
       title: property?.title || "",
       description: property?.description || "",
       price: property?.price || "",
-      location: property?.location || "",
-      type: property?.type || "",
+      cityId: property?.cityId || "",
+      categoryId: property?.categoryId || "",
       bedrooms: property?.bedrooms || undefined,
       bathrooms: property?.bathrooms || undefined,
       area: property?.area || 0,
@@ -109,21 +117,22 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
 
           <FormField
             control={form.control}
-            name="type"
+            name="categoryId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tipo de Imóvel</FormLabel>
+                <FormLabel>Categoria</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger data-testid="select-property-type">
-                      <SelectValue placeholder="Selecione o tipo" />
+                    <SelectTrigger data-testid="select-property-category">
+                      <SelectValue placeholder="Selecione a categoria" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="apartment">Apartamento</SelectItem>
-                    <SelectItem value="house">Casa</SelectItem>
-                    <SelectItem value="office">Escritório</SelectItem>
-                    <SelectItem value="land">Terreno</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -173,17 +182,24 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
 
           <FormField
             control={form.control}
-            name="location"
+            name="cityId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Localização</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Ex: Talatona, Luanda"
-                    {...field}
-                    data-testid="input-property-location"
-                  />
-                </FormControl>
+                <FormLabel>Cidade</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger data-testid="select-property-city">
+                      <SelectValue placeholder="Selecione a cidade" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {cities.map((city) => (
+                      <SelectItem key={city.id} value={city.id}>
+                        {city.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
