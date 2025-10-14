@@ -213,7 +213,7 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
             name="developmentYear"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Ano de Desenvolvimento</FormLabel>
+                <FormLabel>Ano de Desenvolvimento *</FormLabel>
                 <FormControl>
                   <Input placeholder="Ex: 2024" {...field} data-testid="input-development-year" />
                 </FormControl>
