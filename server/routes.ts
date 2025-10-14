@@ -610,6 +610,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       const tursoDb = drizzle(tursoClient, { schema });
 
+      const dropTablesSQL = `
+        DROP TABLE IF EXISTS properties;
+        DROP TABLE IF EXISTS projects;
+        DROP TABLE IF EXISTS contacts;
+        DROP TABLE IF EXISTS condominiums;
+        DROP TABLE IF EXISTS property_categories;
+        DROP TABLE IF EXISTS hero_settings;
+        DROP TABLE IF EXISTS cities;
+        DROP TABLE IF EXISTS about_us;
+        DROP TABLE IF EXISTS employees;
+      `;
+
+      await tursoClient.executeMultiple(dropTablesSQL);
+
       const createTablesSQL = `
         CREATE TABLE IF NOT EXISTS properties (
           id TEXT PRIMARY KEY,
