@@ -617,8 +617,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await tursoClient.execute('DROP TABLE IF EXISTS property_categories');
       await tursoClient.execute('DROP TABLE IF EXISTS hero_settings');
       await tursoClient.execute('DROP TABLE IF EXISTS cities');
-      await tursoClient.execute('DROP TABLE IF EXISTS about_us');
-      await tursoClient.execute('DROP TABLE IF EXISTS employees');
 
       const createTablesSQL = `
         CREATE TABLE IF NOT EXISTS properties (
@@ -718,35 +716,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           created_at TEXT,
           updated_at TEXT
         );
-        
-        CREATE TABLE IF NOT EXISTS about_us (
-          id TEXT PRIMARY KEY,
-          company_type TEXT NOT NULL,
-          title TEXT NOT NULL,
-          description TEXT NOT NULL,
-          mission TEXT,
-          vision TEXT,
-          values TEXT DEFAULT '[]',
-          images TEXT DEFAULT '[]',
-          display_order INTEGER DEFAULT 0,
-          created_at TEXT,
-          updated_at TEXT
-        );
-        
-        CREATE TABLE IF NOT EXISTS employees (
-          id TEXT PRIMARY KEY,
-          name TEXT NOT NULL,
-          position TEXT NOT NULL,
-          department TEXT NOT NULL,
-          bio TEXT,
-          email TEXT,
-          phone TEXT,
-          image_url TEXT,
-          display_order INTEGER DEFAULT 0,
-          active BOOLEAN DEFAULT TRUE,
-          created_at TEXT,
-          updated_at TEXT
-        );
       `;
 
       await tursoClient.executeMultiple(createTablesSQL);
@@ -806,24 +775,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         migratedTables.push(`cities (${cities.length})`);
         totalRecords += cities.length;
-      }
-
-      const aboutUs = await storage.getAboutUsSections();
-      if (aboutUs.length > 0) {
-        for (const section of aboutUs) {
-          await tursoDb.insert(schema.aboutUs).values(section).onConflictDoNothing();
-        }
-        migratedTables.push(`about_us (${aboutUs.length})`);
-        totalRecords += aboutUs.length;
-      }
-
-      const employees = await storage.getEmployees();
-      if (employees.length > 0) {
-        for (const emp of employees) {
-          await tursoDb.insert(schema.employees).values(emp).onConflictDoNothing();
-        }
-        migratedTables.push(`employees (${employees.length})`);
-        totalRecords += employees.length;
       }
 
       await tursoClient.close();
