@@ -559,14 +559,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({
         success: true,
-        message: "Configurações do Turso salvas! Reinicie o servidor para aplicar as mudanças.",
-        note: "Configure estas variáveis nos Secrets do Replit para persistência: TURSO_DATABASE_URL e TURSO_AUTH_TOKEN"
+        message: "Configurações do Turso salvas temporariamente!",
+        warning: "Para tornar as credenciais permanentes, adicione nos Secrets do Replit:",
+        secrets: {
+          TURSO_DATABASE_URL: databaseUrl,
+          TURSO_AUTH_TOKEN: "***" + authToken.slice(-4)
+        },
+        instructions: [
+          "1. Clique em 'Tools' > 'Secrets' no painel lateral",
+          "2. Adicione TURSO_DATABASE_URL com o valor da URL",
+          "3. Adicione TURSO_AUTH_TOKEN com o valor do token",
+          "4. Reinicie o servidor para aplicar as mudanças"
+        ]
       });
     } catch (error) {
       console.error("Failed to configure Turso:", error);
       res.status(500).json({
         success: false,
         message: "Falha ao salvar configurações do Turso",
+        error: error instanceof Error ? error.message : "Erro desconhecido"
+      });
+    }
+  });
+
+  app.post("/api/database/clear-turso", async (req, res) => {
+    try {
+      delete process.env.TURSO_DATABASE_URL;
+      delete process.env.TURSO_AUTH_TOKEN;
+
+      res.json({
+        success: true,
+        message: "Credenciais do Turso removidas da sessão atual.",
+        warning: "Para remover permanentemente, delete as variáveis TURSO_DATABASE_URL e TURSO_AUTH_TOKEN dos Secrets do Replit e reinicie o servidor."
+      });
+    } catch (error) {
+      console.error("Failed to clear Turso config:", error);
+      res.status(500).json({
+        success: false,
+        message: "Falha ao limpar configurações do Turso",
         error: error instanceof Error ? error.message : "Erro desconhecido"
       });
     }

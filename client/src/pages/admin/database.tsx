@@ -115,6 +115,15 @@ export default function AdminDatabasePage() {
         title: "Configuração salva!",
         description: data.message || "Turso configurado com sucesso.",
       });
+      
+      if (data.instructions) {
+        toast({
+          title: "📋 Instruções para tornar permanente:",
+          description: data.instructions.join("\n"),
+          duration: 10000,
+        });
+      }
+      
       setIsTursoDialogOpen(false);
       queryClient.invalidateQueries({ queryKey: ["/api/database/turso-config"] });
       queryClient.invalidateQueries({ queryKey: ["/api/database/status"] });
@@ -123,6 +132,28 @@ export default function AdminDatabasePage() {
       toast({
         title: "Erro ao salvar",
         description: error.message || "Falha ao salvar as configurações do Turso.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const clearTursoMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("POST", "/api/database/clear-turso", {});
+    },
+    onSuccess: (data: any) => {
+      toast({
+        title: "Credenciais removidas!",
+        description: data.message || "Credenciais do Turso foram limpas.",
+      });
+      setTursoConfig({ databaseUrl: "", authToken: "" });
+      queryClient.invalidateQueries({ queryKey: ["/api/database/turso-config"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/database/status"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao limpar",
+        description: error.message || "Falha ao limpar as credenciais do Turso.",
         variant: "destructive",
       });
     },
@@ -304,7 +335,7 @@ export default function AdminDatabasePage() {
                 </Alert>
               )}
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Button
                   variant={currentTursoConfig?.configured ? "outline" : "default"}
                   onClick={() => setIsTursoDialogOpen(true)}
@@ -314,7 +345,7 @@ export default function AdminDatabasePage() {
                   {currentTursoConfig?.configured ? "Reconfigurar Turso" : "Configurar Turso"}
                 </Button>
                 
-                {dbStatus?.type === "sqlite" && (
+                {dbStatus?.type === "sqlite" && currentTursoConfig?.configured && (
                   <Button
                     variant="outline"
                     onClick={() => setIsTursoDialogOpen(true)}
@@ -324,7 +355,33 @@ export default function AdminDatabasePage() {
                     Migrar para Turso
                   </Button>
                 )}
+
+                {currentTursoConfig?.configured && (
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      if (window.confirm("Tem certeza que deseja limpar as credenciais do Turso? Será necessário reconfigurá-las.")) {
+                        clearTursoMutation.mutate();
+                      }
+                    }}
+                    data-testid="btn-clear-turso"
+                  >
+                    Limpar Credenciais
+                  </Button>
+                )}
               </div>
+              
+              {currentTursoConfig?.configured && (
+                <Alert className="bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800 mt-4">
+                  <Info className="h-4 w-4 text-blue-600" />
+                  <AlertDescription className="text-blue-800 dark:text-blue-200 text-sm">
+                    <strong>Para tornar permanente:</strong> Adicione as credenciais nos Secrets do Replit:<br/>
+                    1. Clique em 'Tools' {'>'} 'Secrets' no painel lateral<br/>
+                    2. Adicione <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">TURSO_DATABASE_URL</code> e <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">TURSO_AUTH_TOKEN</code><br/>
+                    3. Reinicie o servidor para aplicar
+                  </AlertDescription>
+                </Alert>
+              )}
             </div>
           </CardContent>
         </Card>
