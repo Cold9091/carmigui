@@ -70,12 +70,9 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
   });
 
   const onSubmit = (data: InsertCondominium) => {
-    // Convert string inputs to numbers and process arrays
+    // Process arrays
     const processedData = {
       ...data,
-      totalUnits: Number(data.totalUnits),
-      completedUnits: Number(data.completedUnits),
-      availableUnits: Number(data.availableUnits),
       images: typeof data.images === "string" 
         ? (data.images as string).split(",").map((url: string) => url.trim()).filter((url: string) => url.length > 0)
         : (data.images as string[]) || [],
@@ -144,7 +141,7 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
                     type="number" 
                     placeholder="Ex: 120" 
                     {...field}
-                    onChange={(e) => field.onChange(e.target.value)}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
                     data-testid="input-total-units"
                   />
                 </FormControl>
@@ -164,8 +161,8 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
                     type="number" 
                     placeholder="Ex: 75" 
                     {...field}
-                    value={field.value || ""}
-                    onChange={(e) => field.onChange(e.target.value)}
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
                     data-testid="input-completed-units"
                   />
                 </FormControl>
@@ -185,7 +182,7 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
                     type="number" 
                     placeholder="Ex: 45" 
                     {...field}
-                    onChange={(e) => field.onChange(e.target.value)}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
                     data-testid="input-available-units"
                   />
                 </FormControl>
