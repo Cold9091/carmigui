@@ -141,9 +141,15 @@ export default function AdminDatabasePage() {
       return result;
     },
     onSuccess: (data: any) => {
+      const totalRecords = data?.details?.totalRecords || 0;
+      const tables = data?.details?.tables || [];
+      const description = totalRecords > 0 
+        ? `${totalRecords} registros migrados com sucesso.`
+        : "Migração concluída com sucesso!";
+      
       toast({
         title: "Migração concluída!",
-        description: `${data.details.totalRecords} registros migrados com sucesso.`,
+        description,
       });
       setTimeout(() => {
         setMigrationProgress(0);
