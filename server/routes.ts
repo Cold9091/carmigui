@@ -610,19 +610,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       const tursoDb = drizzle(tursoClient, { schema });
 
-      const dropTablesSQL = `
-        DROP TABLE IF EXISTS properties;
-        DROP TABLE IF EXISTS projects;
-        DROP TABLE IF EXISTS contacts;
-        DROP TABLE IF EXISTS condominiums;
-        DROP TABLE IF EXISTS property_categories;
-        DROP TABLE IF EXISTS hero_settings;
-        DROP TABLE IF EXISTS cities;
-        DROP TABLE IF EXISTS about_us;
-        DROP TABLE IF EXISTS employees;
-      `;
-
-      await tursoClient.executeMultiple(dropTablesSQL);
+      await tursoClient.execute('DROP TABLE IF EXISTS properties');
+      await tursoClient.execute('DROP TABLE IF EXISTS projects');
+      await tursoClient.execute('DROP TABLE IF EXISTS contacts');
+      await tursoClient.execute('DROP TABLE IF EXISTS condominiums');
+      await tursoClient.execute('DROP TABLE IF EXISTS property_categories');
+      await tursoClient.execute('DROP TABLE IF EXISTS hero_settings');
+      await tursoClient.execute('DROP TABLE IF EXISTS cities');
+      await tursoClient.execute('DROP TABLE IF EXISTS about_us');
+      await tursoClient.execute('DROP TABLE IF EXISTS employees');
 
       const createTablesSQL = `
         CREATE TABLE IF NOT EXISTS properties (
