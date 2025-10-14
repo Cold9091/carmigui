@@ -132,35 +132,6 @@ export function createDatabaseConnection() {
           created_at TEXT,
           updated_at TEXT
         );
-        
-        CREATE TABLE IF NOT EXISTS about_us (
-          id TEXT PRIMARY KEY,
-          company_type TEXT NOT NULL,
-          title TEXT NOT NULL,
-          description TEXT NOT NULL,
-          mission TEXT,
-          vision TEXT,
-          values TEXT DEFAULT '[]',
-          images TEXT DEFAULT '[]',
-          display_order INTEGER DEFAULT 0,
-          created_at TEXT,
-          updated_at TEXT
-        );
-        
-        CREATE TABLE IF NOT EXISTS employees (
-          id TEXT PRIMARY KEY,
-          name TEXT NOT NULL,
-          position TEXT NOT NULL,
-          department TEXT NOT NULL,
-          bio TEXT,
-          email TEXT,
-          phone TEXT,
-          image_url TEXT,
-          display_order INTEGER DEFAULT 0,
-          active BOOLEAN DEFAULT TRUE,
-          created_at TEXT,
-          updated_at TEXT
-        );
       `);
       return drizzleSqlite(sqlite, { schema });
       
