@@ -70,18 +70,7 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
   });
 
   const onSubmit = (data: InsertCondominium) => {
-    // Process arrays
-    const processedData = {
-      ...data,
-      images: typeof data.images === "string" 
-        ? (data.images as string).split(",").map((url: string) => url.trim()).filter((url: string) => url.length > 0)
-        : (data.images as string[]) || [],
-      amenities: typeof data.amenities === "string" 
-        ? (data.amenities as string).split(",").map((amenity: string) => amenity.trim()).filter((amenity: string) => amenity.length > 0)
-        : (data.amenities as string[]) || [],
-    };
-    
-    condominiumMutation.mutate(processedData);
+    condominiumMutation.mutate(data);
   };
 
   return (
@@ -288,8 +277,12 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
               <FormControl>
                 <Textarea 
                   placeholder="Ex: Piscina, Ginásio, Segurança 24h, Parque infantil (separar por vírgulas)"
-                  {...field}
                   value={Array.isArray(field.value) ? field.value.join(", ") : field.value || ""}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const array = value ? value.split(",").map(item => item.trim()).filter(item => item.length > 0) : [];
+                    field.onChange(array);
+                  }}
                   data-testid="textarea-amenities"
                 />
               </FormControl>
@@ -307,8 +300,12 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
               <FormControl>
                 <Textarea 
                   placeholder="Cole as URLs das imagens (uma por linha ou separadas por vírgulas)"
-                  {...field}
                   value={Array.isArray(field.value) ? field.value.join(", ") : field.value || ""}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const array = value ? value.split(",").map(url => url.trim()).filter(url => url.length > 0) : [];
+                    field.onChange(array);
+                  }}
                   data-testid="textarea-images"
                 />
               </FormControl>
