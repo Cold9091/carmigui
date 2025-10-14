@@ -111,11 +111,12 @@ export function createDatabaseConnection() {
         CREATE TABLE IF NOT EXISTS hero_settings (
           id TEXT PRIMARY KEY,
           images TEXT DEFAULT '[]',
-          title_line1 TEXT,
-          title_line2 TEXT,
-          title_line3 TEXT,
-          description TEXT,
-          carousel_enabled BOOLEAN DEFAULT TRUE,
+          title_line_1 TEXT NOT NULL DEFAULT 'BEM-VINDO',
+          title_line_2 TEXT NOT NULL DEFAULT 'AO SEU NOVO',
+          title_line_3 TEXT NOT NULL DEFAULT 'COMEÇO !',
+          description TEXT NOT NULL DEFAULT 'Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário.',
+          carousel_enabled BOOLEAN DEFAULT FALSE,
+          carousel_interval INTEGER DEFAULT 5000,
           active BOOLEAN DEFAULT TRUE,
           created_at TEXT,
           updated_at TEXT
@@ -123,7 +124,7 @@ export function createDatabaseConnection() {
         
         CREATE TABLE IF NOT EXISTS cities (
           id TEXT PRIMARY KEY,
-          name TEXT NOT NULL UNIQUE,
+          name TEXT NOT NULL,
           slug TEXT NOT NULL UNIQUE,
           image_url TEXT NOT NULL,
           display_order INTEGER DEFAULT 0,
@@ -134,9 +135,13 @@ export function createDatabaseConnection() {
         
         CREATE TABLE IF NOT EXISTS about_us (
           id TEXT PRIMARY KEY,
+          company_type TEXT NOT NULL,
           title TEXT NOT NULL,
-          content TEXT NOT NULL,
-          image_url TEXT,
+          description TEXT NOT NULL,
+          mission TEXT,
+          vision TEXT,
+          values TEXT DEFAULT '[]',
+          images TEXT DEFAULT '[]',
           display_order INTEGER DEFAULT 0,
           created_at TEXT,
           updated_at TEXT
@@ -146,7 +151,7 @@ export function createDatabaseConnection() {
           id TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           position TEXT NOT NULL,
-          department TEXT,
+          department TEXT NOT NULL,
           bio TEXT,
           email TEXT,
           phone TEXT,
