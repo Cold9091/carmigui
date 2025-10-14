@@ -241,6 +241,10 @@ export class MemoryStorage implements IStorage {
       amenities: condominium.amenities ?? [],
       featured: condominium.featured ?? false,
       status: condominium.status ?? "in-development",
+      saleConditions: condominium.saleConditions ?? null,
+      totalValue: condominium.totalValue ?? null,
+      initialPayment: condominium.initialPayment ?? null,
+      paymentPeriod: condominium.paymentPeriod ?? null,
       createdAt: new Date(),
       updatedAt: new Date()
     };

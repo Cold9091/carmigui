@@ -61,6 +61,10 @@ export const condominiums = pgTable("condominiums", {
   amenities: text("amenities").array().default([]), // piscina, academia, playground, etc
   featured: boolean("featured").default(false),
   developmentYear: text("development_year").notNull(),
+  saleConditions: text("sale_conditions"), // e.g., "Casas inacabadas – termine ao seu gosto e estilo"
+  totalValue: text("total_value"), // e.g., "8.500.000 Kz"
+  initialPayment: text("initial_payment"), // e.g., "4.000.000 Kz"
+  paymentPeriod: text("payment_period"), // e.g., "Até 6 meses com total tranquilidade"
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
