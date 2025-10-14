@@ -38,6 +38,10 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
       images: condominium?.images || [],
       amenities: condominium?.amenities || [],
       featured: condominium?.featured || false,
+      saleConditions: condominium?.saleConditions || "",
+      totalValue: condominium?.totalValue || "",
+      initialPayment: condominium?.initialPayment || "",
+      paymentPeriod: condominium?.paymentPeriod || "",
     },
   });
 
@@ -313,6 +317,90 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
             </FormItem>
           )}
         />
+
+        <div className="border-t pt-6">
+          <h3 className="text-lg font-semibold mb-4">Condições de Venda (Opcional)</h3>
+          
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="saleConditions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descrição das Condições</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Ex: Casas inacabadas – termine ao seu gosto e estilo"
+                      {...field}
+                      value={field.value || ""}
+                      data-testid="input-sale-conditions"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="totalValue"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Valor Total</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Ex: 8.500.000 Kz"
+                        {...field}
+                        value={field.value || ""}
+                        data-testid="input-total-value"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="initialPayment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Entrada Inicial</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Ex: 4.000.000 Kz"
+                        {...field}
+                        value={field.value || ""}
+                        data-testid="input-initial-payment"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="paymentPeriod"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Prazo de Amortização</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Ex: Até 6 meses com total tranquilidade"
+                        {...field}
+                        value={field.value || ""}
+                        data-testid="input-payment-period"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+        </div>
 
         <div className="flex justify-end">
           <Button 
