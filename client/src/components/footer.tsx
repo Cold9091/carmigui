@@ -1,6 +1,7 @@
 import { Facebook, Instagram } from "lucide-react";
 import { SiTiktok } from "react-icons/si";
 import { Link, useLocation } from "wouter";
+import footerLogo from "@assets/Component 2 2_1760555279434.png";
 
 export default function Footer() {
   const [location] = useLocation();
@@ -23,11 +24,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="md:col-span-1">
-            <div className="flex items-center mb-4">
-              <div className="w-8 h-8 bg-green-600 text-white rounded-lg flex items-center justify-center mr-2 font-semibold">
-                CM
-              </div>
-              <span className="text-xl text-gray-800">CARMIGUI</span>
+            <div className="mb-4">
+              <img 
+                src={footerLogo} 
+                alt="CARMIGUI Logo" 
+                className="h-12 w-auto"
+                data-testid="footer-logo"
+              />
             </div>
             <p className="text-gray-600 text-sm leading-relaxed">
               A CARMIGUI usa tecnologia e design para tornar a experiência de busca de 
