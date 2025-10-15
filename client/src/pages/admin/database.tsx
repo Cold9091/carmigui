@@ -777,6 +777,7 @@ export default function AdminDatabasePage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div>
       </>
       )}
       </>
