@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,6 +35,9 @@ interface TursoConfig {
 
 export default function AdminDatabasePage() {
   const { toast } = useToast();
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [accessCode, setAccessCode] = useState("");
+  const [isAccessDialogOpen, setIsAccessDialogOpen] = useState(true);
   const [isTursoDialogOpen, setIsTursoDialogOpen] = useState(false);
   const [tursoConfig, setTursoConfig] = useState({
     databaseUrl: "",
@@ -42,13 +45,44 @@ export default function AdminDatabasePage() {
   });
   const [migrationProgress, setMigrationProgress] = useState(0);
   const [migrationStatus, setMigrationStatus] = useState("");
+
+  const DATABASE_ACCESS_CODE = "909192";
+
+  useEffect(() => {
+    const hasAccess = sessionStorage.getItem("database_access");
+    if (hasAccess === "granted") {
+      setIsUnlocked(true);
+      setIsAccessDialogOpen(false);
+    }
+  }, []);
+
+  const handleAccessSubmit = () => {
+    if (accessCode === DATABASE_ACCESS_CODE) {
+      setIsUnlocked(true);
+      setIsAccessDialogOpen(false);
+      sessionStorage.setItem("database_access", "granted");
+      toast({
+        title: "Acesso concedido",
+        description: "Bem-vindo à área de configuração do banco de dados.",
+      });
+    } else {
+      toast({
+        title: "Acesso negado",
+        description: "Credencial incorreta. Tente novamente.",
+        variant: "destructive",
+      });
+      setAccessCode("");
+    }
+  };
   
   const { data: dbStatus, isLoading: statusLoading, refetch } = useQuery<DatabaseStatus>({
     queryKey: ["/api/database/status"],
+    enabled: isUnlocked,
   });
 
   const { data: currentTursoConfig } = useQuery<TursoConfig>({
     queryKey: ["/api/database/turso-config"],
+    enabled: isUnlocked,
   });
 
   const getDatabaseTypeBadge = (type: string) => {
@@ -240,7 +274,78 @@ export default function AdminDatabasePage() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <>
+      {/* Access Control Dialog */}
+      <Dialog open={isAccessDialogOpen} onOpenChange={(open) => {
+        if (!open && !isUnlocked) {
+          window.history.back();
+        }
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Database className="text-green-600" />
+              Acesso Restrito
+            </DialogTitle>
+            <DialogDescription>
+              Esta área contém configurações sensíveis do banco de dados. Por favor, insira a credencial de acesso.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="access-code">Credencial de Acesso</Label>
+              <Input
+                id="access-code"
+                type="password"
+                placeholder="Digite a credencial"
+                value={accessCode}
+                onChange={(e) => setAccessCode(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAccessSubmit();
+                  }
+                }}
+                data-testid="input-access-code"
+                autoFocus
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => window.history.back()}
+              data-testid="btn-cancel-access"
+            >
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleAccessSubmit}
+              data-testid="btn-submit-access"
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {!isUnlocked ? (
+        <div className="flex items-center justify-center h-[60vh]">
+          <Card className="w-full max-w-md">
+            <CardContent className="pt-6 text-center">
+              <Database className="mx-auto text-gray-400 mb-4" size={64} />
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                Área Protegida
+              </h3>
+              <p className="text-gray-500">
+                É necessário autenticação para acessar as configurações do banco de dados.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+      <>
+        <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-angola-primary mb-2">Gestão do Banco de Dados</h1>
@@ -460,7 +565,6 @@ export default function AdminDatabasePage() {
             </div>
           </CardContent>
         </Card>
-      </div>
 
       <Dialog open={isTursoDialogOpen} onOpenChange={setIsTursoDialogOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -673,6 +777,9 @@ export default function AdminDatabasePage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </>
+      )}
+      </>
     </AdminLayout>
   );
 }
