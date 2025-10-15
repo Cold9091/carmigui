@@ -8,7 +8,8 @@ import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowL
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
 import type { Property, Project, Condominium, PropertyCategory, HeroSettings, City } from "@shared/schema";
-import heroImage from "@assets/hero-banner.webp";
+
+const DEFAULT_HERO_IMAGE = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=720";
 
 export default function HomePage() {
   // Estados para carrossel
@@ -23,7 +24,7 @@ export default function HomePage() {
 
   const heroImages = heroSettings?.images && heroSettings.images.length > 0 
     ? heroSettings.images 
-    : [heroImage];
+    : [DEFAULT_HERO_IMAGE];
   
   const carouselEnabled = heroSettings?.carouselEnabled && heroImages.length > 1;
   const carouselInterval = heroSettings?.carouselInterval || 5000;

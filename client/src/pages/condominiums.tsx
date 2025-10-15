@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Building2, MapPin, Users, Home, CheckCircle, Calendar, ArrowRight } from "lucide-react";
 import type { Condominium } from "@shared/schema";
-import logoImage from "@assets/Component 2 1_1760109982800.png";
 
 export default function CondominiumsPage() {
   const { data: condominiums = [], isLoading } = useQuery<Condominium[]>({
@@ -45,12 +44,13 @@ export default function CondominiumsPage() {
         <div className="relative max-w-7xl mx-auto container-padding py-20">
           <div className="text-center max-w-4xl mx-auto">
             <div className="flex items-center justify-center mb-8">
-              <img 
-                src={logoImage} 
-                alt="CM Carmigui" 
-                className="h-16 md:h-20 w-auto"
-                loading="lazy"
-              />
+              <div className="flex items-center gap-3">
+                <Building2 className="h-10 w-10 md:h-12 md:w-12 text-yellow-400" />
+                <div className="flex flex-col">
+                  <span className="text-3xl md:text-4xl font-bold text-white leading-none">CARMIGUI</span>
+                  <span className="text-sm md:text-base text-yellow-400 leading-none">Comercial, Lda</span>
+                </div>
+              </div>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
               Descubra Condomínios <br />de Excelência

@@ -3,7 +3,6 @@ import { Building2, Home, Users, Target, Eye, Heart, Phone, Mail, Award } from "
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { AboutUs, Employee } from "@shared/schema";
-import logoImage from "@assets/Component 2 1_1760109982800.png";
 
 export default function SobreNosPage() {
   const { data: aboutUsSections = [], isLoading: isLoadingAbout } = useQuery<AboutUs[]>({
@@ -29,11 +28,13 @@ export default function SobreNosPage() {
         <div className="relative max-w-7xl mx-auto container-padding py-20">
           <div className="text-center max-w-4xl mx-auto">
             <div className="flex items-center justify-center mb-8">
-              <img 
-                src={logoImage} 
-                alt="CM Carmigui" 
-                className="h-16 md:h-20 w-auto"
-              />
+              <div className="flex items-center gap-3">
+                <Building2 className="h-10 w-10 md:h-12 md:w-12 text-yellow-400" />
+                <div className="flex flex-col">
+                  <span className="text-3xl md:text-4xl font-bold text-white leading-none">CARMIGUI</span>
+                  <span className="text-sm md:text-base text-yellow-400 leading-none">Comercial, Lda</span>
+                </div>
+              </div>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight" data-testid="text-hero-title">
               SOBRE NÓS
