@@ -1,0 +1,86 @@
+### OBJETIVO PRINCIPAL
+Melhorar o SEO, GEO e AEO do site para que:
+- Fique entre os **3 primeiros resultados do Google** em pesquisas relacionadas a construção e imobiliário em Angola.
+- Seja **reconhecido por mecanismos de busca locais** (Google Angola, Google Maps, Waze, etc.).
+- Otimize conteúdo e metadados com foco em **vivendas, condomínios e prédios comerciais**.
+- Aumente a taxa de cliques (CTR) e a presença em **resultados de voz e snippets**.
+
+---
+
+### TAREFAS QUE DEVE EXECUTAR
+1. **Analisar a estrutura do site (HTML e conteúdo visível)** e identificar:
+   - Erros de SEO on-page (tags ausentes, títulos duplicados, headings incorretos, etc.).
+   - Falhas de velocidade, mobile ou usabilidade.
+   - Problemas de indexação (URLs bloqueadas, sitemap, robots.txt, canonical).
+
+2. **Gerar melhorias completas de SEO**, incluindo:
+   - `title`, `meta description`, `meta keywords` e `og:` tags para cada página.
+   - Estrutura de headings (H1, H2, H3) lógica e rica em palavras-chave locais.
+   - Texto alternativo (alt text) para imagens relevantes (ex.: “vivenda moderna em Luanda”).
+   - Schema JSON-LD adequado (`ConstructionCompany`, `RealEstateAgent`, `LocalBusiness`, `FAQPage`).
+   - Sugestões de URLs limpas e otimizadas (ex.: /luanda/construcao-vivendas/).
+
+3. **Aplicar GEO SEO (geolocalização):**
+   - Inserir coordenadas geográficas corretas (latitude/longitude de cada cidade de atuação).
+   - Adaptar descrições e keywords para regiões específicas (Luanda, Benguela, Lobito, Huambo…).
+   - Incluir nomes de bairros ou zonas de referência em Angola (Maianga, Talatona, Benfica, etc.).
+
+4. **Aplicar AEO (Answer Engine Optimization):**
+   - Gerar uma seção de FAQ com respostas curtas e diretas (40–70 palavras) a perguntas comuns, como:
+     - “Quanto custa construir uma vivenda em Luanda?”
+     - “Como funciona a compra de um condomínio em Angola?”
+     - “Qual é o prazo médio para construir um prédio comercial?”
+   - Gerar microconteúdos prontos para Featured Snippets e respostas por voz (Google Assistant).
+
+5. **Criar e otimizar metadados completos:**
+   - Titles com 55–60 caracteres e Metas com 140–160 caracteres.
+   - Incluir palavras-chave primárias e secundárias sem sobrecarregar o texto.
+   - Manter estilo natural, em **português de Angola**, e mencionar **preços em Kz** sempre que aplicável.
+
+6. **Gerar lista completa de palavras-chave (clusters):**
+   - Primárias: construtora em Angola, construtora em Luanda, imobiliária Angola, construção de vivendas, condomínios Angola.
+   - Secundárias: gestão de condomínios, obras civis, prédios comerciais, compra e venda de imóveis.
+   - Long-tail: “construtora de vivendas chave na mão em Luanda”, “preço por m² construção Angola”, “empresa de gestão de condomínio em Talatona”.
+
+7. **Otimizar presença local (GEO + Google Maps):**
+   - Gerar descrição ideal para o Google Business Profile.
+   - Instruir sobre como padronizar o NAP (Name, Address, Phone).
+   - Sugerir 5 diretórios locais e portais angolanos para backlinks e citações.
+   - Criar snippet para “business description” (com 750–1000 caracteres).
+
+8. **Analisar conteúdo atual e sugerir ajustes:**
+   - Reescrever títulos e parágrafos para incluir termos locais.
+   - Sugerir nova arquitetura de conteúdo (caso necessário).
+   - Identificar oportunidades de link interno e externo.
+
+9. **Checklist técnico final:**
+   - Robots.txt, sitemap.xml, canonical, OpenGraph, Core Web Vitals, HTTPS.
+   - Estrutura de URL e breadcrumbs.
+   - Mobile performance e imagens WebP.
+   - Validação de schema no Rich Results Test.
+
+10. **Gerar um resumo final com:**
+    - Pontuação SEO estimada (0–100).
+    - Lista de melhorias sugeridas (prioridade alta/média/baixa).
+    - Novos metadados (copiar e colar no HTML).
+    - Sugestão de 3 posts de blog otimizados para SEO local.
+
+---
+
+### EXIGÊNCIAS DE ESTILO
+- Escreva em português de Angola.
+- Foque em **simplicidade + clareza + relevância local.**
+- Evite jargões técnicos.
+- Use “Kz” para valores monetários.
+- Mostre exemplos aplicados (não genéricos).
+
+---
+
+### SAÍDA ESPERADA
+1. Diagnóstico SEO atual do site.
+2. Metadados otimizados (title, description, keywords, JSON-LD).
+3. Lista de palavras-chave locais e sugestões de conteúdo.
+4. FAQ + snippets otimizados.
+5. Instruções de melhoria técnica.
+6. Estratégia local (GEO + Google Business Profile).
+7. Plano de ação em 30 dias para alcançar o topo do Google Angola.

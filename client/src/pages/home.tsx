@@ -8,11 +8,29 @@ import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowL
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
 import type { Property, Project, Condominium, PropertyCategory, HeroSettings, City } from "@shared/schema";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
+import { generateOrganizationSchema, generateLocalBusinessSchema } from "@/utils/seo-schemas";
+import { PAGE_SEO } from "@/data/seo-content";
 import heroImage from "@assets/Component 1_1760554140338.jpg";
 
 const DEFAULT_HERO_IMAGE = heroImage;
 
 export default function HomePage() {
+  const organizationSchema = generateOrganizationSchema();
+  const localBusinessSchema = generateLocalBusinessSchema();
+  
+  const combinedSchema = {
+    "@context": "https://schema.org",
+    "@graph": [organizationSchema, localBusinessSchema]
+  };
+  
+  useDocumentHead({
+    title: PAGE_SEO.home.title,
+    description: PAGE_SEO.home.description,
+    keywords: PAGE_SEO.home.keywords,
+    ogImage: PAGE_SEO.home.ogImage,
+    schema: combinedSchema,
+  });
   // Estados para carrossel
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const [cheaperIndex, setCheaperIndex] = useState(0);
