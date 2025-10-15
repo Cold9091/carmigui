@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Building, Home, Hammer, Phone, Settings, Menu, X, Search } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import logoImage from "@assets/Component 2 1 (1)_1760547951532.png";
 
 export default function Navigation() {
   const [location] = useLocation();
@@ -28,13 +29,11 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center" data-testid="logo-link">
-            <div className="flex items-center gap-2">
-              <Building className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-400" />
-              <div className="flex flex-col">
-                <span className="text-lg sm:text-xl md:text-2xl font-bold text-white leading-none">CARMIGUI</span>
-                <span className="text-[10px] sm:text-xs text-yellow-400 leading-none">Comercial, Lda</span>
-              </div>
-            </div>
+            <img 
+              src={logoImage} 
+              alt="CM Carmigui - Comércio Geral & Prestação de Serviços (SARL)" 
+              className="h-10 sm:h-12 md:h-14 w-auto"
+            />
           </Link>
 
           {/* Search Bar */}
