@@ -8,8 +8,9 @@ import { Building, Hammer, Home, MapPin, Bed, Bath, Maximize, ArrowRight, ArrowL
 import PropertyCard from "@/components/property-card";
 import ProjectCard from "@/components/project-card";
 import type { Property, Project, Condominium, PropertyCategory, HeroSettings, City } from "@shared/schema";
+import heroImage from "@assets/Component 1_1760554140338.jpg";
 
-const DEFAULT_HERO_IMAGE = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=720";
+const DEFAULT_HERO_IMAGE = heroImage;
 
 export default function HomePage() {
   // Estados para carrossel
