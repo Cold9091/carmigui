@@ -65,6 +65,10 @@ sqlite.exec(`
     amenities TEXT DEFAULT '[]',
     featured BOOLEAN DEFAULT FALSE,
     development_year TEXT NOT NULL,
+    sale_conditions TEXT,
+    total_value TEXT,
+    initial_payment TEXT,
+    payment_period TEXT,
     created_at TEXT,
     updated_at TEXT
   );
@@ -134,6 +138,27 @@ sqlite.exec(`
     updated_at TEXT
   );
 `);
+
+// Add missing columns to existing tables if they don't exist
+try {
+  const tableInfo = sqlite.prepare("PRAGMA table_info(condominiums)").all();
+  const columns = tableInfo.map((col: any) => col.name);
+  
+  if (!columns.includes('sale_conditions')) {
+    sqlite.exec('ALTER TABLE condominiums ADD COLUMN sale_conditions TEXT');
+  }
+  if (!columns.includes('total_value')) {
+    sqlite.exec('ALTER TABLE condominiums ADD COLUMN total_value TEXT');
+  }
+  if (!columns.includes('initial_payment')) {
+    sqlite.exec('ALTER TABLE condominiums ADD COLUMN initial_payment TEXT');
+  }
+  if (!columns.includes('payment_period')) {
+    sqlite.exec('ALTER TABLE condominiums ADD COLUMN payment_period TEXT');
+  }
+} catch (error) {
+  console.error("Error adding columns to condominiums table:", error);
+}
 
 export class SimpleSQLiteStorage implements IStorage {
   // Properties
@@ -522,8 +547,8 @@ export class SimpleSQLiteStorage implements IStorage {
         INSERT INTO condominiums (
           id, name, description, location, centrality_or_district, total_units, 
           completed_units, available_units, price_range, status, images, amenities, 
-          featured, development_year, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          featured, development_year, sale_conditions, total_value, initial_payment, payment_period, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
       
       stmt.run(
@@ -541,6 +566,10 @@ export class SimpleSQLiteStorage implements IStorage {
         JSON.stringify(condominium.amenities || []),
         condominium.featured ? 1 : 0,
         condominium.developmentYear,
+        condominium.saleConditions || null,
+        condominium.totalValue || null,
+        condominium.initialPayment || null,
+        condominium.paymentPeriod || null,
         now,
         now
       );
@@ -588,6 +617,18 @@ export class SimpleSQLiteStorage implements IStorage {
             params.push(value);
           } else if (key === 'developmentYear') {
             updates.push('development_year = ?');
+            params.push(value);
+          } else if (key === 'saleConditions') {
+            updates.push('sale_conditions = ?');
+            params.push(value);
+          } else if (key === 'totalValue') {
+            updates.push('total_value = ?');
+            params.push(value);
+          } else if (key === 'initialPayment') {
+            updates.push('initial_payment = ?');
+            params.push(value);
+          } else if (key === 'paymentPeriod') {
+            updates.push('payment_period = ?');
             params.push(value);
           } else {
             updates.push(`${key} = ?`);
@@ -698,6 +739,10 @@ export class SimpleSQLiteStorage implements IStorage {
       amenities: dbCondominium.amenities ? JSON.parse(dbCondominium.amenities) : [],
       featured: Boolean(dbCondominium.featured),
       developmentYear: dbCondominium.development_year,
+      saleConditions: dbCondominium.sale_conditions || null,
+      totalValue: dbCondominium.total_value || null,
+      initialPayment: dbCondominium.initial_payment || null,
+      paymentPeriod: dbCondominium.payment_period || null,
       createdAt: dbCondominium.created_at ? new Date(dbCondominium.created_at) : null,
       updatedAt: dbCondominium.updated_at ? new Date(dbCondominium.updated_at) : null,
     };
