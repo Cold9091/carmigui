@@ -32,7 +32,7 @@ export default function Navigation() {
             <img 
               src={logoImage} 
               alt="CM Carmigui - Comércio Geral & Prestação de Serviços (SARL)" 
-              className="h-10 sm:h-12 md:h-14 w-auto"
+              className="h-7 sm:h-8 md:h-9 w-auto"
             />
           </Link>
 

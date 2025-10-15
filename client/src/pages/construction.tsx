@@ -21,7 +21,7 @@ export default function ConstructionPage() {
               <img 
                 src={logoImage} 
                 alt="CM Carmigui - Comércio Geral & Prestação de Serviços (SARL)" 
-                className="h-16 md:h-20 w-auto"
+                className="h-12 md:h-14 w-auto"
               />
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight" data-testid="text-hero-title">

@@ -48,7 +48,7 @@ export default function CondominiumsPage() {
               <img 
                 src={logoImage} 
                 alt="CM Carmigui - Comércio Geral & Prestação de Serviços (SARL)" 
-                className="h-16 md:h-20 w-auto"
+                className="h-12 md:h-14 w-auto"
                 loading="lazy"
               />
             </div>
