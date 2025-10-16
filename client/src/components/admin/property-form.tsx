@@ -37,8 +37,8 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
       title: property?.title || "",
       description: property?.description || "",
       price: property?.price || "",
-      cityId: property?.cityId || "",
-      categoryId: property?.categoryId || "",
+      cityId: property?.cityId || undefined,
+      categoryId: property?.categoryId || undefined,
       bedrooms: property?.bedrooms || undefined,
       bathrooms: property?.bathrooms || undefined,
       area: property?.area || 0,
@@ -67,10 +67,28 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
       queryClient.invalidateQueries({ queryKey: ["/api/properties"] });
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: async (error: any) => {
+      let errorMessage = "Ocorreu um erro ao guardar o imóvel. Tente novamente.";
+      
+      if (error?.response) {
+        try {
+          const errorData = await error.response.json();
+          if (errorData.errors && errorData.errors.length > 0) {
+            const validationErrors = errorData.errors.map((err: any) => 
+              `${err.path.join('.')}: ${err.message}`
+            ).join(', ');
+            errorMessage = `Erro de validação: ${validationErrors}`;
+          } else if (errorData.message) {
+            errorMessage = errorData.message;
+          }
+        } catch (e) {
+          console.error("Error parsing error response:", e);
+        }
+      }
+      
       toast({
         title: "Erro ao guardar",
-        description: "Ocorreu um erro ao guardar o imóvel. Tente novamente.",
+        description: errorMessage,
         variant: "destructive",
       });
       console.error("Error saving property:", error);
@@ -85,12 +103,14 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
       area: Number(data.area),
       bedrooms: data.bedrooms ? Number(data.bedrooms) : undefined,
       bathrooms: data.bathrooms ? Number(data.bathrooms) : undefined,
+      categoryId: data.categoryId || undefined,
+      cityId: data.cityId || undefined,
       images: typeof data.images === "string" 
         ? (data.images as string).split(",").map((url: string) => url.trim()).filter((url: string) => url.length > 0)
         : (data.images as string[]) || [],
     };
     
-    propertyMutation.mutate(processedData);
+    propertyMutation.mutate(processedData as any);
   };
 
   return (

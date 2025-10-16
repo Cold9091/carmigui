@@ -134,11 +134,27 @@ export const employees = pgTable("employees", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertPropertySchema = createInsertSchema(properties).omit({
+const basePropertySchema = createInsertSchema(properties).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
+
+export const insertPropertySchema = basePropertySchema.refine(
+  (data) => data.categoryId && data.categoryId.length > 0,
+  { message: "Categoria é obrigatória", path: ["categoryId"] }
+).refine(
+  (data) => data.cityId && data.cityId.length > 0,
+  { message: "Cidade é obrigatória", path: ["cityId"] }
+);
+
+export const updatePropertySchema = basePropertySchema.partial().refine(
+  (data) => data.categoryId === undefined || (typeof data.categoryId === 'string' && data.categoryId.trim().length > 0),
+  { message: "Categoria não pode ser vazia", path: ["categoryId"] }
+).refine(
+  (data) => data.cityId === undefined || (typeof data.cityId === 'string' && data.cityId.trim().length > 0),
+  { message: "Cidade não pode ser vazia", path: ["cityId"] }
+);
 
 export const insertProjectSchema = createInsertSchema(projects).omit({
   id: true,

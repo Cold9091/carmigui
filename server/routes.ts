@@ -58,7 +58,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/properties/:id", async (req, res) => {
     try {
-      const updates = insertPropertySchema.partial().parse(req.body);
+      const { updatePropertySchema } = await import("@shared/schema");
+      const updates = updatePropertySchema.parse(req.body);
       const updatedProperty = await storage.updateProperty(req.params.id, updates);
       if (!updatedProperty) {
         return res.status(404).json({ message: "Property not found" });
