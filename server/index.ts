@@ -5,6 +5,8 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
+// Gzip/Deflate compression for development
+// Note: Brotli compression is automatically provided by Replit's CDN when deployed
 app.use(compression({
   filter: (req: Request, res: Response) => {
     if (req.headers['x-no-compression']) {
