@@ -1,14 +1,44 @@
 import express, { type Request, Response, NextFunction } from "express";
+import compression from "compression";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+app.use(compression({
+  filter: (req: Request, res: Response) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+  },
+  level: 6,
+  threshold: 1024,
+}) as any);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Serve uploaded images and attached assets as static files
-app.use('/uploads', express.static('uploads'));
-app.use('/attached_assets', express.static('attached_assets'));
+// Serve uploaded images and attached assets as static files with cache headers
+app.use('/uploads', express.static('uploads', {
+  maxAge: '1y',
+  immutable: true,
+  setHeaders: (res, path) => {
+    if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.webp') || path.endsWith('.svg')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  }
+}));
+
+app.use('/attached_assets', express.static('attached_assets', {
+  maxAge: '1y',
+  immutable: true,
+  setHeaders: (res, path) => {
+    if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.webp') || path.endsWith('.svg')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  }
+}));
 
 app.use((req, res, next) => {
   const start = Date.now();
