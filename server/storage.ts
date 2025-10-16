@@ -2,7 +2,7 @@ import { type Property, type InsertProperty, type Project, type InsertProject, t
 
 export interface IStorage {
   // Properties
-  getProperties(filters?: { type?: string; location?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]>;
+  getProperties(filters?: { categoryId?: string; cityId?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]>;
   getProperty(id: string): Promise<Property | undefined>;
   createProperty(property: InsertProperty): Promise<Property>;
   updateProperty(id: string, property: Partial<InsertProperty>): Promise<Property | undefined>;
@@ -80,15 +80,15 @@ export class MemoryStorage implements IStorage {
   private employees: Employee[] = [];
 
   // Properties
-  async getProperties(filters?: { type?: string; location?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
+  async getProperties(filters?: { categoryId?: string; cityId?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
     let result = [...this.properties];
     
     if (filters) {
-      if (filters.type) {
-        result = result.filter(p => p.type === filters.type);
+      if (filters.categoryId) {
+        result = result.filter(p => p.categoryId === filters.categoryId);
       }
-      if (filters.location) {
-        result = result.filter(p => p.location.toLowerCase().includes(filters.location!.toLowerCase()));
+      if (filters.cityId) {
+        result = result.filter(p => p.cityId === filters.cityId);
       }
       if (filters.minPrice) {
         result = result.filter(p => Number(p.price) >= filters.minPrice!);

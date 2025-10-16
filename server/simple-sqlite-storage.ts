@@ -12,8 +12,8 @@ sqlite.exec(`
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     price TEXT NOT NULL,
-    location TEXT NOT NULL,
-    type TEXT NOT NULL,
+    city_id TEXT NOT NULL,
+    category_id TEXT NOT NULL,
     bedrooms INTEGER,
     bathrooms INTEGER,
     area INTEGER NOT NULL,
@@ -160,21 +160,77 @@ try {
   console.error("Error adding columns to condominiums table:", error);
 }
 
+// Migrate properties table from old schema to new schema if needed
+try {
+  const propertiesTableInfo = sqlite.prepare("PRAGMA table_info(properties)").all();
+  const propertiesColumns = propertiesTableInfo.map((col: any) => col.name);
+  
+  if (propertiesColumns.includes('location') || propertiesColumns.includes('type')) {
+    console.log('Migrating properties table from old schema to new schema...');
+    
+    // Check if there's any data to preserve
+    const existingDataCount = sqlite.prepare('SELECT COUNT(*) as count FROM properties').get() as { count: number };
+    
+    if (existingDataCount.count > 0) {
+      console.error('================================================================================');
+      console.error('CRITICAL: MANUAL DATA MIGRATION REQUIRED');
+      console.error(`Found ${existingDataCount.count} existing properties with old schema.`);
+      console.error('Old schema uses: location, type');
+      console.error('New schema uses: city_id, category_id');
+      console.error('');
+      console.error('To migrate your data:');
+      console.error('1. Backup your database.db file');
+      console.error('2. Map location values to city IDs from the cities table');
+      console.error('3. Map type values to category IDs from the property_categories table');
+      console.error('4. Delete database.db to start fresh, or manually migrate the data');
+      console.error('================================================================================');
+      throw new Error('Database migration required - old properties schema detected with existing data');
+    } else {
+      // Safe to drop and recreate since there's no data
+      sqlite.exec('DROP TABLE IF EXISTS properties');
+      sqlite.exec(`
+        CREATE TABLE properties (
+          id TEXT PRIMARY KEY,
+          title TEXT NOT NULL,
+          description TEXT NOT NULL,
+          price TEXT NOT NULL,
+          city_id TEXT NOT NULL,
+          category_id TEXT NOT NULL,
+          bedrooms INTEGER,
+          bathrooms INTEGER,
+          area INTEGER NOT NULL,
+          images TEXT DEFAULT '[]',
+          virtual_tour_url TEXT,
+          status TEXT NOT NULL DEFAULT 'available',
+          featured BOOLEAN DEFAULT FALSE,
+          created_at TEXT,
+          updated_at TEXT
+        )
+      `);
+      
+      console.log('Properties table migrated successfully (no data to preserve)');
+    }
+  }
+} catch (error) {
+  console.error("Error migrating properties table:", error);
+  throw error; // Re-throw to prevent app from starting with incompatible schema
+}
+
 export class SimpleSQLiteStorage implements IStorage {
   // Properties
-  async getProperties(filters?: { type?: string; location?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
+  async getProperties(filters?: { categoryId?: string; cityId?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
     try {
       let sql = 'SELECT * FROM properties WHERE 1=1';
       const params: any[] = [];
       
       if (filters) {
-        if (filters.type) {
-          sql += ' AND type = ?';
-          params.push(filters.type);
+        if (filters.categoryId) {
+          sql += ' AND category_id = ?';
+          params.push(filters.categoryId);
         }
-        if (filters.location) {
-          sql += ' AND location LIKE ?';
-          params.push(`%${filters.location}%`);
+        if (filters.cityId) {
+          sql += ' AND city_id = ?';
+          params.push(filters.cityId);
         }
         if (filters.minPrice) {
           sql += ' AND CAST(price AS INTEGER) >= ?';
@@ -220,7 +276,7 @@ export class SimpleSQLiteStorage implements IStorage {
       
       const stmt = sqlite.prepare(`
         INSERT INTO properties (
-          id, title, description, price, location, type, bedrooms, bathrooms, 
+          id, title, description, price, city_id, category_id, bedrooms, bathrooms, 
           area, images, virtual_tour_url, status, featured, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
@@ -230,8 +286,8 @@ export class SimpleSQLiteStorage implements IStorage {
         property.title,
         property.description,
         property.price,
-        property.location,
-        property.type,
+        property.cityId,
+        property.categoryId,
         property.bedrooms || null,
         property.bathrooms || null,
         property.area,
@@ -272,13 +328,13 @@ export class SimpleSQLiteStorage implements IStorage {
         updates.push('price = ?');
         params.push(property.price);
       }
-      if (property.location !== undefined) {
-        updates.push('location = ?');
-        params.push(property.location);
+      if (property.cityId !== undefined) {
+        updates.push('city_id = ?');
+        params.push(property.cityId);
       }
-      if (property.type !== undefined) {
-        updates.push('type = ?');
-        params.push(property.type);
+      if (property.categoryId !== undefined) {
+        updates.push('category_id = ?');
+        params.push(property.categoryId);
       }
       if (property.bedrooms !== undefined) {
         updates.push('bedrooms = ?');
@@ -680,8 +736,8 @@ export class SimpleSQLiteStorage implements IStorage {
       title: dbProperty.title,
       description: dbProperty.description,
       price: dbProperty.price,
-      location: dbProperty.location,
-      type: dbProperty.type,
+      cityId: dbProperty.city_id,
+      categoryId: dbProperty.category_id,
       bedrooms: dbProperty.bedrooms,
       bathrooms: dbProperty.bathrooms,
       area: dbProperty.area,
