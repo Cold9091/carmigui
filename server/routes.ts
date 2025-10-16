@@ -7,6 +7,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
+import sharp from "sharp";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Properties routes
@@ -868,14 +869,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'No images uploaded' });
       }
 
-      const uploadedFiles = req.files.map((file: Express.Multer.File) => {
-        return {
-          filename: file.filename,
-          originalName: file.originalname,
-          size: file.size,
-          url: `/uploads/images/${file.filename}`
-        };
-      });
+      const uploadedFiles = await Promise.all(
+        req.files.map(async (file: Express.Multer.File) => {
+          const uploadsDir = path.join(process.cwd(), 'uploads', 'images');
+          const originalPath = file.path;
+          const fileNameWithoutExt = path.parse(file.filename).name;
+          const webpFilename = `${fileNameWithoutExt}.webp`;
+          const webpPath = path.join(uploadsDir, webpFilename);
+
+          try {
+            // Convert to WebP with optimization
+            await sharp(originalPath)
+              .resize(1920, null, { 
+                withoutEnlargement: true,
+                fit: 'inside'
+              })
+              .webp({ 
+                quality: 80,
+                effort: 6
+              })
+              .toFile(webpPath);
+
+            return {
+              filename: file.filename,
+              originalName: file.originalname,
+              size: file.size,
+              url: `/uploads/images/${file.filename}`,
+              webp: {
+                filename: webpFilename,
+                url: `/uploads/images/${webpFilename}`
+              }
+            };
+          } catch (conversionError) {
+            console.error('Error converting image to WebP:', conversionError);
+            // Return without WebP if conversion fails
+            return {
+              filename: file.filename,
+              originalName: file.originalname,
+              size: file.size,
+              url: `/uploads/images/${file.filename}`
+            };
+          }
+        })
+      );
 
       res.json({
         success: true,
@@ -920,7 +956,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       try {
+        // Delete original file
         await fs.unlink(normalizedPath);
+        
+        // Try to delete WebP version if it exists
+        const fileNameWithoutExt = path.parse(filename).name;
+        const webpFilename = `${fileNameWithoutExt}.webp`;
+        const webpPath = path.join(uploadsDir, webpFilename);
+        
+        try {
+          await fs.unlink(webpPath);
+        } catch (webpError) {
+          // Ignore if WebP doesn't exist
+          if ((webpError as any).code !== 'ENOENT') {
+            console.warn('Error deleting WebP version:', webpError);
+          }
+        }
+        
         res.json({ 
           success: true, 
           message: 'Image deleted successfully' 
