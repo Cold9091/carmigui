@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/lib/protected-route";
 
 const Home = lazy(() => import("@/pages/home"));
 const Properties = lazy(() => import("@/pages/properties"));
@@ -16,6 +18,7 @@ const Construction = lazy(() => import("@/pages/construction"));
 const ProjectDetails = lazy(() => import("@/pages/project-details"));
 const SobreNos = lazy(() => import("@/pages/sobre-nos"));
 const FAQ = lazy(() => import("@/pages/faq"));
+const AdminLogin = lazy(() => import("@/pages/admin/login"));
 const Admin = lazy(() => import("@/pages/admin"));
 const AdminProperties = lazy(() => import("@/pages/admin/properties"));
 const AdminProjects = lazy(() => import("@/pages/admin/projects"));
@@ -26,6 +29,7 @@ const AdminCategories = lazy(() => import("@/pages/admin/categories"));
 const AdminHero = lazy(() => import("@/pages/admin/hero"));
 const AdminCities = lazy(() => import("@/pages/admin/cities"));
 const AdminAbout = lazy(() => import("@/pages/admin/about"));
+const AdminSettings = lazy(() => import("@/pages/admin/settings"));
 const Contact = lazy(() => import("@/pages/contact"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
@@ -56,16 +60,18 @@ function Router() {
             <Route path="/construcao/:id" component={ProjectDetails} />
             <Route path="/sobre-nos" component={SobreNos} />
             <Route path="/faq" component={FAQ} />
-            <Route path="/admin" component={Admin} />
-            <Route path="/admin/properties" component={AdminProperties} />
-            <Route path="/admin/projects" component={AdminProjects} />
-            <Route path="/admin/condominiums" component={AdminCondominiums} />
-            <Route path="/admin/contacts" component={AdminContacts} />
-            <Route path="/admin/categories" component={AdminCategories} />
-            <Route path="/admin/hero" component={AdminHero} />
-            <Route path="/admin/cities" component={AdminCities} />
-            <Route path="/admin/about" component={AdminAbout} />
-            <Route path="/admin/database" component={AdminDatabase} />
+            <Route path="/admin/login" component={AdminLogin} />
+            <ProtectedRoute path="/admin" component={Admin} />
+            <ProtectedRoute path="/admin/properties" component={AdminProperties} />
+            <ProtectedRoute path="/admin/projects" component={AdminProjects} />
+            <ProtectedRoute path="/admin/condominiums" component={AdminCondominiums} />
+            <ProtectedRoute path="/admin/contacts" component={AdminContacts} />
+            <ProtectedRoute path="/admin/categories" component={AdminCategories} />
+            <ProtectedRoute path="/admin/hero" component={AdminHero} />
+            <ProtectedRoute path="/admin/cities" component={AdminCities} />
+            <ProtectedRoute path="/admin/about" component={AdminAbout} />
+            <ProtectedRoute path="/admin/database" component={AdminDatabase} />
+            <ProtectedRoute path="/admin/settings" component={AdminSettings} />
             <Route path="/contacto" component={Contact} />
             <Route component={NotFound} />
           </Switch>
@@ -79,10 +85,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

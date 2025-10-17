@@ -1,6 +1,10 @@
-import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity, type AboutUs, type InsertAboutUs, type Employee, type InsertEmployee } from "@shared/schema";
+import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity, type AboutUs, type InsertAboutUs, type Employee, type InsertEmployee, type User, type InsertUser } from "@shared/schema";
 import { IStorage } from "./storage";
 import Database from 'better-sqlite3';
+import session from "express-session";
+import createMemoryStore from "memorystore";
+
+const MemoryStore = createMemoryStore(session);
 
 // Criar conexão SQLite diretamente
 const sqlite = new Database('./database.db');
@@ -137,6 +141,15 @@ sqlite.exec(`
     created_at TEXT,
     updated_at TEXT
   );
+  
+  CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    name TEXT,
+    created_at TEXT,
+    updated_at TEXT
+  );
 `);
 
 // Add missing columns to existing tables if they don't exist
@@ -217,6 +230,85 @@ try {
 }
 
 export class SimpleSQLiteStorage implements IStorage {
+  public sessionStore: session.Store;
+
+  constructor() {
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000,
+    });
+  }
+
+  // Auth
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    try {
+      const stmt = sqlite.prepare('SELECT * FROM users WHERE email = ?');
+      const result = stmt.get(email);
+      return result ? this.convertUserFromDB(result) : undefined;
+    } catch (error) {
+      console.error("Error fetching user by email:", error);
+      return undefined;
+    }
+  }
+
+  async getUser(id: string): Promise<User | undefined> {
+    try {
+      const stmt = sqlite.prepare('SELECT * FROM users WHERE id = ?');
+      const result = stmt.get(id);
+      return result ? this.convertUserFromDB(result) : undefined;
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      return undefined;
+    }
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const id = `user_${Date.now()}`;
+    const now = new Date().toISOString();
+    
+    const stmt = sqlite.prepare(`
+      INSERT INTO users (id, email, password, name, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `);
+    
+    stmt.run(id, user.email, user.password, user.name || null, now, now);
+    
+    return {
+      id,
+      email: user.email,
+      password: user.password,
+      name: user.name || null,
+      createdAt: new Date(now),
+      updatedAt: new Date(now)
+    };
+  }
+
+  async updateUserPassword(id: string, password: string): Promise<User | undefined> {
+    const now = new Date().toISOString();
+    
+    const stmt = sqlite.prepare(`
+      UPDATE users SET password = ?, updated_at = ? WHERE id = ?
+    `);
+    
+    const result = stmt.run(password, now, id);
+    
+    if (result.changes === 0) {
+      return undefined;
+    }
+    
+    return this.getUser(id);
+  }
+
+  private convertUserFromDB(row: any): User {
+    return {
+      id: row.id,
+      email: row.email,
+      password: row.password,
+      name: row.name || null,
+      createdAt: row.created_at ? new Date(row.created_at) : null,
+      updatedAt: row.updated_at ? new Date(row.updated_at) : null,
+    };
+  }
+
   // Properties
   async getProperties(filters?: { categoryId?: string; cityId?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {
     try {

@@ -1,6 +1,13 @@
-import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity, type AboutUs, type InsertAboutUs, type Employee, type InsertEmployee } from "@shared/schema";
+import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity, type AboutUs, type InsertAboutUs, type Employee, type InsertEmployee, type User, type InsertUser } from "@shared/schema";
+import session from "express-session";
 
 export interface IStorage {
+  // Auth
+  getUserByEmail(email: string): Promise<User | undefined>;
+  getUser(id: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  updateUserPassword(id: string, password: string): Promise<User | undefined>;
+  sessionStore: session.Store;
   // Properties
   getProperties(filters?: { categoryId?: string; cityId?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]>;
   getProperty(id: string): Promise<Property | undefined>;
@@ -67,6 +74,10 @@ export interface IStorage {
 // Sistema de armazenamento limpo - sem dados demonstrativos
 // Usa SQLite para desenvolvimento local com possibilidade de migração para Supabase
 
+import createMemoryStore from "memorystore";
+
+const MemoryStore = createMemoryStore(session);
+
 export class MemoryStorage implements IStorage {
   // Arrays vazios - sem dados demonstrativos
   private properties: Property[] = [];
@@ -78,6 +89,48 @@ export class MemoryStorage implements IStorage {
   private cities: City[] = [];
   private aboutUsSections: AboutUs[] = [];
   private employees: Employee[] = [];
+  private users: User[] = [];
+  public sessionStore: session.Store;
+
+  constructor() {
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000,
+    });
+  }
+
+  // Auth
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return this.users.find(u => u.email === email);
+  }
+
+  async getUser(id: string): Promise<User | undefined> {
+    return this.users.find(u => u.id === id);
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const newUser: User = {
+      id: `user_${Date.now()}`,
+      email: user.email,
+      password: user.password,
+      name: user.name || null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.users.push(newUser);
+    return newUser;
+  }
+
+  async updateUserPassword(id: string, password: string): Promise<User | undefined> {
+    const index = this.users.findIndex(u => u.id === id);
+    if (index === -1) return undefined;
+    
+    this.users[index] = {
+      ...this.users[index],
+      password,
+      updatedAt: new Date()
+    };
+    return this.users[index];
+  }
 
   // Properties
   async getProperties(filters?: { categoryId?: string; cityId?: string; minPrice?: number; maxPrice?: number; featured?: boolean }): Promise<Property[]> {

@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/use-auth";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -101,7 +102,8 @@ const adminNavItems = [
 ];
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
+  const { logoutMutation } = useAuth();
 
   return (
     <SidebarProvider>
@@ -150,6 +152,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 className="justify-start" 
                 size="sm"
                 data-testid="btn-settings"
+                onClick={() => navigate("/admin/settings")}
               >
                 <Settings className="w-4 h-4 mr-2" />
                 Configurações
@@ -160,10 +163,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 className="justify-start text-red-600 hover:text-red-700 hover:bg-red-50" 
                 size="sm"
                 data-testid="btn-logout"
-                onClick={() => window.location.href = "/"}
+                onClick={() => logoutMutation.mutate()}
+                disabled={logoutMutation.isPending}
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Sair
+                {logoutMutation.isPending ? "Saindo..." : "Sair"}
               </Button>
             </div>
           </SidebarFooter>

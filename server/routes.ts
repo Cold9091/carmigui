@@ -8,8 +8,10 @@ import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
 import sharp from "sharp";
+import { setupAuth, ensureAuthenticated } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  setupAuth(app);
   // Properties routes
   app.get("/api/properties", async (req, res) => {
     try {
@@ -42,7 +44,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/properties", async (req, res) => {
+  app.post("/api/properties", ensureAuthenticated, async (req, res) => {
     try {
       const property = insertPropertySchema.parse(req.body);
       const newProperty = await storage.createProperty(property);
@@ -56,7 +58,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/properties/:id", async (req, res) => {
+  app.put("/api/properties/:id", ensureAuthenticated, async (req, res) => {
     try {
       const { updatePropertySchema } = await import("@shared/schema");
       const updates = updatePropertySchema.parse(req.body);
@@ -74,7 +76,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/properties/:id", async (req, res) => {
+  app.delete("/api/properties/:id", ensureAuthenticated, async (req, res) => {
     try {
       const deleted = await storage.deleteProperty(req.params.id);
       if (!deleted) {
@@ -112,7 +114,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/projects", async (req, res) => {
+  app.post("/api/projects", ensureAuthenticated, async (req, res) => {
     try {
       const project = insertProjectSchema.parse(req.body);
       const newProject = await storage.createProject(project);
@@ -126,7 +128,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/projects/:id", async (req, res) => {
+  app.put("/api/projects/:id", ensureAuthenticated, async (req, res) => {
     try {
       const updates = insertProjectSchema.partial().parse(req.body);
       const updatedProject = await storage.updateProject(req.params.id, updates);
@@ -143,7 +145,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/projects/:id", async (req, res) => {
+  app.delete("/api/projects/:id", ensureAuthenticated, async (req, res) => {
     try {
       const deleted = await storage.deleteProject(req.params.id);
       if (!deleted) {
@@ -181,7 +183,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/contacts/:id", async (req, res) => {
+  app.delete("/api/contacts/:id", ensureAuthenticated, async (req, res) => {
     try {
       const deleted = await storage.deleteContact(req.params.id);
       if (!deleted) {
@@ -219,7 +221,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/condominiums", async (req, res) => {
+  app.post("/api/condominiums", ensureAuthenticated, async (req, res) => {
     try {
       const condominium = insertCondominiumSchema.parse(req.body);
       const newCondominium = await storage.createCondominium(condominium);
@@ -233,7 +235,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/condominiums/:id", async (req, res) => {
+  app.put("/api/condominiums/:id", ensureAuthenticated, async (req, res) => {
     try {
       const updates = insertCondominiumSchema.partial().parse(req.body);
       const updatedCondominium = await storage.updateCondominium(req.params.id, updates);
@@ -250,7 +252,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/condominiums/:id", async (req, res) => {
+  app.delete("/api/condominiums/:id", ensureAuthenticated, async (req, res) => {
     try {
       const deleted = await storage.deleteCondominium(req.params.id);
       if (!deleted) {
@@ -288,7 +290,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/property-categories", async (req, res) => {
+  app.post("/api/property-categories", ensureAuthenticated, async (req, res) => {
     try {
       const category = insertPropertyCategorySchema.parse(req.body);
       const newCategory = await storage.createPropertyCategory(category);
@@ -302,7 +304,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/property-categories/:id", async (req, res) => {
+  app.put("/api/property-categories/:id", ensureAuthenticated, async (req, res) => {
     try {
       const updates = insertPropertyCategorySchema.partial().parse(req.body);
       const updatedCategory = await storage.updatePropertyCategory(req.params.id, updates);
@@ -319,7 +321,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/property-categories/:id", async (req, res) => {
+  app.delete("/api/property-categories/:id", ensureAuthenticated, async (req, res) => {
     try {
       const deleted = await storage.deletePropertyCategory(req.params.id);
       if (!deleted) {
@@ -366,7 +368,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/hero-settings", async (req, res) => {
+  app.post("/api/hero-settings", ensureAuthenticated, async (req, res) => {
     try {
       const heroSettings = insertHeroSettingsSchema.parse(req.body);
       const newHeroSettings = await storage.createHeroSettings(heroSettings);
@@ -380,7 +382,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/hero-settings/:id", async (req, res) => {
+  app.put("/api/hero-settings/:id", ensureAuthenticated, async (req, res) => {
     try {
       const updates = insertHeroSettingsSchema.partial().parse(req.body);
       const updatedHeroSettings = await storage.updateHeroSettings(req.params.id, updates);
@@ -397,7 +399,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/hero-settings/:id", async (req, res) => {
+  app.delete("/api/hero-settings/:id", ensureAuthenticated, async (req, res) => {
     try {
       const deleted = await storage.deleteHeroSettings(req.params.id);
       if (!deleted) {
@@ -435,7 +437,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/cities", async (req, res) => {
+  app.post("/api/cities", ensureAuthenticated, async (req, res) => {
     try {
       const city = insertCitySchema.parse(req.body);
       const newCity = await storage.createCity(city);
@@ -449,7 +451,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/cities/:id", async (req, res) => {
+  app.put("/api/cities/:id", ensureAuthenticated, async (req, res) => {
     try {
       const updates = insertCitySchema.partial().parse(req.body);
       const updatedCity = await storage.updateCity(req.params.id, updates);
@@ -466,7 +468,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/cities/:id", async (req, res) => {
+  app.delete("/api/cities/:id", ensureAuthenticated, async (req, res) => {
     try {
       const deleted = await storage.deleteCity(req.params.id);
       if (!deleted) {
@@ -490,7 +492,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/database/test", async (req, res) => {
+  app.post("/api/database/test", ensureAuthenticated, async (req, res) => {
     try {
       await storage.getProperties();
       res.json({ 
@@ -509,7 +511,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Turso configuration routes
-  app.post("/api/database/test-turso", async (req, res) => {
+  app.post("/api/database/test-turso", ensureAuthenticated, async (req, res) => {
     try {
       const { databaseUrl, authToken } = req.body;
 
@@ -545,7 +547,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/database/configure-turso", async (req, res) => {
+  app.post("/api/database/configure-turso", ensureAuthenticated, async (req, res) => {
     try {
       const { databaseUrl, authToken } = req.body;
 
@@ -584,7 +586,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/database/clear-turso", async (req, res) => {
+  app.post("/api/database/clear-turso", ensureAuthenticated, async (req, res) => {
     try {
       delete process.env.TURSO_DATABASE_URL;
       delete process.env.TURSO_AUTH_TOKEN;
@@ -621,7 +623,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/database/migrate-to-turso", async (req, res) => {
+  app.post("/api/database/migrate-to-turso", ensureAuthenticated, async (req, res) => {
     try {
       const { databaseUrl, authToken } = req.body;
 
@@ -1021,7 +1023,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/about-us", async (req, res) => {
+  app.post("/api/about-us", ensureAuthenticated, async (req, res) => {
     try {
       const aboutUs = insertAboutUsSchema.parse(req.body);
       const newSection = await storage.createAboutUsSection(aboutUs);
@@ -1035,7 +1037,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/about-us/:id", async (req, res) => {
+  app.put("/api/about-us/:id", ensureAuthenticated, async (req, res) => {
     try {
       const updates = insertAboutUsSchema.partial().parse(req.body);
       const updatedSection = await storage.updateAboutUsSection(req.params.id, updates);
@@ -1052,7 +1054,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/about-us/:id", async (req, res) => {
+  app.delete("/api/about-us/:id", ensureAuthenticated, async (req, res) => {
     try {
       const deleted = await storage.deleteAboutUsSection(req.params.id);
       if (!deleted) {
@@ -1093,7 +1095,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/employees", async (req, res) => {
+  app.post("/api/employees", ensureAuthenticated, async (req, res) => {
     try {
       const employee = insertEmployeeSchema.parse(req.body);
       const newEmployee = await storage.createEmployee(employee);
@@ -1107,7 +1109,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/employees/:id", async (req, res) => {
+  app.put("/api/employees/:id", ensureAuthenticated, async (req, res) => {
     try {
       const updates = insertEmployeeSchema.partial().parse(req.body);
       const updatedEmployee = await storage.updateEmployee(req.params.id, updates);
@@ -1124,7 +1126,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/employees/:id", async (req, res) => {
+  app.delete("/api/employees/:id", ensureAuthenticated, async (req, res) => {
     try {
       const deleted = await storage.deleteEmployee(req.params.id);
       if (!deleted) {

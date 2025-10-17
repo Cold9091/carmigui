@@ -134,6 +134,15 @@ export const employees = pgTable("employees", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  name: text("name"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 const basePropertySchema = createInsertSchema(properties).omit({
   id: true,
   createdAt: true,
@@ -203,6 +212,12 @@ export const insertEmployeeSchema = createInsertSchema(employees).omit({
   updatedAt: true,
 });
 
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type Property = typeof properties.$inferSelect;
 export type InsertProperty = z.infer<typeof insertPropertySchema>;
 export type Project = typeof projects.$inferSelect;
@@ -221,3 +236,5 @@ export type AboutUs = typeof aboutUs.$inferSelect;
 export type InsertAboutUs = z.infer<typeof insertAboutUsSchema>;
 export type Employee = typeof employees.$inferSelect;
 export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
