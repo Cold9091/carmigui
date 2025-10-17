@@ -11,6 +11,8 @@ export default function PropertiesPage() {
     categoryId: "",
   });
 
+  const [sortBy, setSortBy] = useState("");
+
   // Initialize filters from URL parameters
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -20,7 +22,37 @@ export default function PropertiesPage() {
       categoryId: urlParams.get('categoryId') || "",
     };
     setFilters(initialFilters);
+    setSortBy(urlParams.get('sortBy') || "");
   }, []);
+
+  // Update URL when filters change
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentParams = {
+      bedrooms: urlParams.get('bedrooms') || '',
+      cityId: urlParams.get('cityId') || '',
+      categoryId: urlParams.get('categoryId') || '',
+      sortBy: urlParams.get('sortBy') || '',
+    };
+
+    // Only update URL if filters actually changed
+    const filtersChanged = 
+      currentParams.bedrooms !== (filters.bedrooms === 'all' ? '' : filters.bedrooms) ||
+      currentParams.cityId !== (filters.cityId === 'all' ? '' : filters.cityId) ||
+      currentParams.categoryId !== (filters.categoryId === 'all' ? '' : filters.categoryId) ||
+      currentParams.sortBy !== (sortBy === 'all' ? '' : sortBy);
+
+    if (!filtersChanged) return;
+
+    const newUrlParams = new URLSearchParams();
+    if (filters.bedrooms && filters.bedrooms !== 'all') newUrlParams.set('bedrooms', filters.bedrooms);
+    if (filters.cityId && filters.cityId !== 'all') newUrlParams.set('cityId', filters.cityId);
+    if (filters.categoryId && filters.categoryId !== 'all') newUrlParams.set('categoryId', filters.categoryId);
+    if (sortBy && sortBy !== 'all') newUrlParams.set('sortBy', sortBy);
+    
+    const newUrl = newUrlParams.toString() ? `${window.location.pathname}?${newUrlParams.toString()}` : window.location.pathname;
+    window.history.replaceState({}, '', newUrl);
+  }, [filters, sortBy]);
 
   const { data: properties = [], isLoading } = useQuery<Property[]>({
     queryKey: ["/api/properties"],
@@ -39,19 +71,47 @@ export default function PropertiesPage() {
   };
 
   const filteredProperties = useMemo(() => {
-    return (properties || []).filter((property) => {
+    let filtered = (properties || []).filter((property) => {
       if (filters.categoryId && filters.categoryId !== 'all' && property.categoryId !== filters.categoryId) {
         return false;
       }
-      if (filters.bedrooms && filters.bedrooms !== 'all' && property.bedrooms?.toString() !== filters.bedrooms) {
-        return false;
+      if (filters.bedrooms && filters.bedrooms !== 'all') {
+        const propertyBedrooms = property.bedrooms || 0;
+        if (filters.bedrooms === '5') {
+          // Para "5+ quartos", aceitar propriedades com 5 ou mais quartos
+          if (propertyBedrooms < 5) return false;
+        } else {
+          // Para outros valores, comparação exata
+          if (propertyBedrooms.toString() !== filters.bedrooms) return false;
+        }
       }
       if (filters.cityId && filters.cityId !== 'all' && property.cityId !== filters.cityId) {
         return false;
       }
       return true;
     });
-  }, [properties, filters]);
+
+    // Aplicar ordenação
+    if (sortBy && sortBy !== 'all') {
+      filtered = [...filtered].sort((a, b) => {
+        switch(sortBy) {
+          case 'price-asc':
+            return Number(a.price || 0) - Number(b.price || 0);
+          case 'price-desc':
+            return Number(b.price || 0) - Number(a.price || 0);
+          case 'newest':
+            // Ordenar por data de criação (mais recentes primeiro)
+            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return dateB - dateA;
+          default:
+            return 0;
+        }
+      });
+    }
+
+    return filtered;
+  }, [properties, filters, sortBy]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -130,11 +190,15 @@ export default function PropertiesPage() {
                 </SelectContent>
               </Select>
 
-              <Select>
-                <SelectTrigger className="bg-white">
+              <Select
+                value={sortBy}
+                onValueChange={setSortBy}
+              >
+                <SelectTrigger data-testid="filter-sort" className="bg-white">
                   <SelectValue placeholder="Ordenar por" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">Padrão</SelectItem>
                   <SelectItem value="price-asc">Menor preço</SelectItem>
                   <SelectItem value="price-desc">Maior preço</SelectItem>
                   <SelectItem value="newest">Mais recentes</SelectItem>
