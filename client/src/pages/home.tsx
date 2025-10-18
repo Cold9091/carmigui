@@ -119,7 +119,6 @@ export default function HomePage() {
               alt="Banner Carmigui Imobiliária"
               className="w-full h-auto object-contain"
               loading="eager"
-              fetchPriority="high"
               decoding="async"
               data-testid="hero-image"
             />
