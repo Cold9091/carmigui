@@ -34,6 +34,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           alt={project.title}
           className="w-full h-64 object-cover"
           loading="lazy"
+          decoding="async"
           data-testid="project-image"
         />
       </div>

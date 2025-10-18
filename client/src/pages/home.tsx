@@ -11,9 +11,11 @@ import type { Property, Project, Condominium, PropertyCategory, HeroSettings, Ci
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { generateOrganizationSchema, generateLocalBusinessSchema } from "@/utils/seo-schemas";
 import { PAGE_SEO } from "@/data/seo-content";
-import heroImage from "@assets/Component 1_1760554140338.jpg";
+import heroImageWebP from "@assets/Component 1_1760554140338.webp";
+import heroImageJpg from "@assets/Component 1_1760554140338.jpg";
 
-const DEFAULT_HERO_IMAGE = heroImage;
+const DEFAULT_HERO_IMAGE = heroImageWebP;
+const DEFAULT_HERO_IMAGE_FALLBACK = heroImageJpg;
 
 export default function HomePage() {
   const organizationSchema = generateOrganizationSchema();
@@ -110,14 +112,18 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative w-full">
         <div className={`relative w-full transition-opacity duration-500 ${heroImageLoaded ? 'opacity-100' : 'opacity-0'}`}>
-          <img
-            src={heroImages[currentHeroIndex]}
-            alt="Banner Carmigui Imobiliária"
-            className="w-full h-auto object-contain"
-            loading="eager"
-            decoding="async"
-            data-testid="hero-image"
-          />
+          <picture>
+            <source srcSet={heroImages[currentHeroIndex]} type="image/webp" />
+            <img
+              src={DEFAULT_HERO_IMAGE_FALLBACK}
+              alt="Banner Carmigui Imobiliária"
+              className="w-full h-auto object-contain"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              data-testid="hero-image"
+            />
+          </picture>
         </div>
         {!heroImageLoaded && (
           <div className="absolute inset-0 bg-gradient-to-br from-green-900 via-green-800 to-green-700 animate-pulse" style={{ aspectRatio: '16/6' }}>
@@ -207,6 +213,7 @@ export default function HomePage() {
                       alt={category.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
+                      decoding="async"
                     />
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                       <span className="text-white font-semibold text-sm">{category.name}</span>
