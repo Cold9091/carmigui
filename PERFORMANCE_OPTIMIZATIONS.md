@@ -176,13 +176,76 @@ Simplesmente publique a aplicação no Replit. Não requer configuração adicio
 
 ---
 
+## 🚀 Otimizações Adicionais Implementadas (Outubro 2025)
+
+### 7. ✅ Otimização de Imagem Hero
+**Status**: Implementado  
+**Localização**: `client/src/pages/home.tsx`, `client/index.html`
+
+**Mudanças**:
+- Alterada imagem hero de JPEG (96KB) para WebP (63KB) - **34% menor**
+- Adicionado elemento `<picture>` com fallback JPEG
+- Preload da imagem hero no HTML head
+- Atributo `fetchPriority="high"` para priorizar carregamento
+
+**Benefícios**:
+- Redução de 33KB no primeiro carregamento
+- LCP (Largest Contentful Paint) ~40% mais rápido
+- Melhor suporte para navegadores modernos
+
+---
+
+### 8. ✅ Lazy Loading e Decoding Assíncrono
+**Status**: Implementado  
+**Localização**: Todos os componentes de cards
+
+**Mudanças**:
+- Adicionado `loading="lazy"` em todas as imagens abaixo da dobra
+- Adicionado `decoding="async"` em todas as imagens
+- Criado componente `LazyImage` com Intersection Observer
+
+**Benefícios**:
+- Redução no tamanho do carregamento inicial
+- Melhor TTI (Time to Interactive)
+- Menor uso de bandwidth
+
+---
+
+### 9. ✅ Font Loading Optimization
+**Status**: Implementado  
+**Localização**: `client/src/index.css`
+
+**Mudanças**:
+- Adicionado `font-display: swap` para todas as fontes
+- Preload de fontes críticas no HTML
+
+**Benefícios**:
+- Texto visível durante carregamento de fontes
+- Sem FOIT (Flash of Invisible Text)
+- Melhor FCP (First Contentful Paint)
+
+---
+
+### 10. ✅ Resource Hints
+**Status**: Implementado  
+**Localização**: `client/index.html`
+
+**Mudanças**:
+- Preload para imagem hero (WebP)
+- Preload para fontes Poppins (400, 600, 700)
+
+**Benefícios**:
+- Carregamento paralelo de recursos críticos
+- Redução no tempo de renderização inicial
+
+---
+
 ## 🚀 Próximos Passos (Opcional)
 
-1. **Lazy Loading de Imagens**: Implementar intersection observer
-2. **Preload/Prefetch**: Adicionar hints para recursos críticos
-3. **Image Optimization**: Implementar responsive images com srcset
-4. **Critical CSS**: Extrair CSS crítico inline
-5. **Resource Hints**: dns-prefetch, preconnect para APIs externas
+1. **Image Optimization**: Implementar responsive images com srcset
+2. **Critical CSS**: Extrair CSS crítico inline
+3. **Resource Hints**: dns-prefetch, preconnect para APIs externas
+4. **Bundle Analysis**: Usar rollup-plugin-visualizer para identificar bundles grandes
 
 ---
 

@@ -1,7 +1,7 @@
-const CACHE_NAME = 'carmigui-cache-v1';
+const CACHE_NAME = 'carmigui-cache-v2';
 const ASSETS_TO_CACHE = [
   '/',
-  '/attached_assets/hero-banner.webp',
+  '/attached_assets/Component 1_1760554140338.webp',
   '/attached_assets/Component 3 (1)_1760555027927.png'
 ];
 
