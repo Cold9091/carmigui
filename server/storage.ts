@@ -298,6 +298,7 @@ export class MemoryStorage implements IStorage {
       totalValue: condominium.totalValue ?? null,
       initialPayment: condominium.initialPayment ?? null,
       paymentPeriod: condominium.paymentPeriod ?? null,
+      houseCondition: condominium.houseCondition ?? null,
       createdAt: new Date(),
       updatedAt: new Date()
     };

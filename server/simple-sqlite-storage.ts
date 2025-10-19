@@ -73,6 +73,7 @@ sqlite.exec(`
     total_value TEXT,
     initial_payment TEXT,
     payment_period TEXT,
+    house_condition TEXT,
     created_at TEXT,
     updated_at TEXT
   );
@@ -168,6 +169,9 @@ try {
   }
   if (!columns.includes('payment_period')) {
     sqlite.exec('ALTER TABLE condominiums ADD COLUMN payment_period TEXT');
+  }
+  if (!columns.includes('house_condition')) {
+    sqlite.exec('ALTER TABLE condominiums ADD COLUMN house_condition TEXT');
   }
 } catch (error) {
   console.error("Error adding columns to condominiums table:", error);
@@ -695,8 +699,8 @@ export class SimpleSQLiteStorage implements IStorage {
         INSERT INTO condominiums (
           id, name, description, location, centrality_or_district, total_units, 
           completed_units, available_units, price_range, status, images, amenities, 
-          featured, development_year, sale_conditions, total_value, initial_payment, payment_period, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          featured, development_year, sale_conditions, total_value, initial_payment, payment_period, house_condition, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
       
       stmt.run(
@@ -718,6 +722,7 @@ export class SimpleSQLiteStorage implements IStorage {
         condominium.totalValue || null,
         condominium.initialPayment || null,
         condominium.paymentPeriod || null,
+        condominium.houseCondition || null,
         now,
         now
       );
@@ -777,6 +782,9 @@ export class SimpleSQLiteStorage implements IStorage {
             params.push(value);
           } else if (key === 'paymentPeriod') {
             updates.push('payment_period = ?');
+            params.push(value);
+          } else if (key === 'houseCondition') {
+            updates.push('house_condition = ?');
             params.push(value);
           } else {
             updates.push(`${key} = ?`);
@@ -891,6 +899,7 @@ export class SimpleSQLiteStorage implements IStorage {
       totalValue: dbCondominium.total_value || null,
       initialPayment: dbCondominium.initial_payment || null,
       paymentPeriod: dbCondominium.payment_period || null,
+      houseCondition: dbCondominium.house_condition || null,
       createdAt: dbCondominium.created_at ? new Date(dbCondominium.created_at) : null,
       updatedAt: dbCondominium.updated_at ? new Date(dbCondominium.updated_at) : null,
     };
