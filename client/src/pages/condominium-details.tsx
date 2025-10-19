@@ -224,36 +224,49 @@ export default function CondominiumDetailsPage() {
             </Card>
 
             {/* Sale Conditions */}
-            {(condominium.saleConditions || condominium.totalValue || condominium.initialPayment || condominium.paymentPeriod) && (
+            {(condominium.saleConditions || condominium.totalValue || condominium.initialPayment || condominium.paymentPeriod || condominium.houseCondition) && (
               <Card>
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Condições de Venda</h3>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {condominium.saleConditions && (
-                      <div>
+                      <div className="pb-3 border-b border-gray-200">
                         <p className="text-sm font-medium text-gray-700 mb-1">Condições</p>
                         <p className="text-gray-600">{condominium.saleConditions}</p>
                       </div>
                     )}
                     
                     {condominium.totalValue && (
-                      <div>
+                      <div className="pb-3 border-b border-gray-200">
                         <p className="text-sm font-medium text-gray-700 mb-1">Valor Total</p>
-                        <p className="text-lg font-bold text-gray-900">{condominium.totalValue}</p>
+                        <p className="text-lg font-bold text-gray-900" data-testid="text-total-value">{condominium.totalValue}</p>
                       </div>
                     )}
                     
                     {condominium.initialPayment && (
-                      <div>
-                        <p className="text-sm font-medium text-gray-700 mb-1">Entrada Inicial Facilitada</p>
-                        <p className="text-lg font-bold text-green-600">{condominium.initialPayment}</p>
+                      <div className="pb-3 border-b border-gray-200">
+                        <p className="text-sm font-medium text-gray-700 mb-1">Valor de Entrada</p>
+                        <p className="text-lg font-bold text-green-600" data-testid="text-initial-payment">{condominium.initialPayment}</p>
+                      </div>
+                    )}
+                    
+                    {condominium.houseCondition && (
+                      <div className="pb-3 border-b border-gray-200">
+                        <p className="text-sm font-medium text-gray-700 mb-1">Condição da Casa</p>
+                        <Badge className={`${
+                          condominium.houseCondition === 'construida' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-orange-100 text-orange-800'
+                        } border-0`} data-testid="badge-house-condition">
+                          {condominium.houseCondition === 'construida' ? 'Totalmente Construída' : 'Casa Inacabada'}
+                        </Badge>
                       </div>
                     )}
                     
                     {condominium.paymentPeriod && (
                       <div>
                         <p className="text-sm font-medium text-gray-700 mb-1">Prazo de Amortização</p>
-                        <p className="text-gray-600">{condominium.paymentPeriod}</p>
+                        <p className="text-gray-600" data-testid="text-payment-period">{condominium.paymentPeriod}</p>
                       </div>
                     )}
                   </div>
