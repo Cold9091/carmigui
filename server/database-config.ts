@@ -87,12 +87,17 @@ export function createDatabaseConnection() {
           total_units INTEGER NOT NULL,
           completed_units INTEGER DEFAULT 0,
           available_units INTEGER NOT NULL,
-          price_range TEXT NOT NULL,
           status TEXT NOT NULL DEFAULT 'in-development',
           images TEXT DEFAULT '[]',
           amenities TEXT DEFAULT '[]',
           featured BOOLEAN DEFAULT FALSE,
           development_year TEXT NOT NULL,
+          payment_type TEXT NOT NULL DEFAULT 'preco_fixo',
+          price TEXT NOT NULL DEFAULT '',
+          down_payment TEXT,
+          payment_period TEXT,
+          sale_conditions TEXT,
+          house_condition TEXT,
           created_at TEXT,
           updated_at TEXT
         );
