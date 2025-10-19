@@ -62,9 +62,10 @@ export const condominiums = pgTable("condominiums", {
   featured: boolean("featured").default(false),
   developmentYear: text("development_year").notNull(),
   saleConditions: text("sale_conditions"), // e.g., "Casas inacabadas – termine ao seu gosto e estilo"
-  totalValue: text("total_value"), // e.g., "8.500.000 Kz"
-  initialPayment: text("initial_payment"), // e.g., "4.000.000 Kz"
-  paymentPeriod: text("payment_period"), // e.g., "Até 6 meses com total tranquilidade"
+  totalValue: text("total_value"), // e.g., "8.500.000 Kz" - Valor total do imóvel
+  initialPayment: text("initial_payment"), // e.g., "4.000.000 Kz" - Valor de entrada
+  paymentPeriod: text("payment_period"), // e.g., "Até 6 meses com total tranquilidade" - Prazo de amortização
+  houseCondition: text("house_condition"), // "inacabada" ou "construida" - Condição de entrega da casa
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
