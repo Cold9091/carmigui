@@ -32,16 +32,16 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
       totalUnits: condominium?.totalUnits || 0,
       completedUnits: condominium?.completedUnits || 0,
       availableUnits: condominium?.availableUnits || 0,
-      priceRange: condominium?.priceRange || "",
       developmentYear: condominium?.developmentYear || "",
       status: condominium?.status || "in-development",
       images: condominium?.images || [],
       amenities: condominium?.amenities || [],
       featured: condominium?.featured || false,
-      saleConditions: condominium?.saleConditions || "",
-      totalValue: condominium?.totalValue || "",
-      initialPayment: condominium?.initialPayment || "",
+      paymentType: condominium?.paymentType || "preco_fixo",
+      price: condominium?.price || "",
+      downPayment: condominium?.downPayment || "",
       paymentPeriod: condominium?.paymentPeriod || "",
+      saleConditions: condominium?.saleConditions || "",
       houseCondition: condominium?.houseCondition || "",
     },
   });
@@ -187,20 +187,6 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
 
           <FormField
             control={form.control}
-            name="priceRange"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Faixa de Preço *</FormLabel>
-                <FormControl>
-                  <Input placeholder="Ex: 15M - 25M Kz" {...field} data-testid="input-price-range" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="developmentYear"
             render={({ field }) => (
               <FormItem>
@@ -320,21 +306,45 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
         />
 
         <div className="border-t pt-6">
-          <h3 className="text-lg font-semibold mb-4">Condições de Venda (Opcional)</h3>
+          <h3 className="text-lg font-semibold mb-4">Informações de Venda</h3>
           
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="saleConditions"
+              name="paymentType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descrição das Condições</FormLabel>
+                  <FormLabel>Tipo de Modalidade de Pagamento *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value || "preco_fixo"}>
+                    <FormControl>
+                      <SelectTrigger data-testid="select-payment-type">
+                        <SelectValue placeholder="Selecione a modalidade" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="preco_fixo">Preço Fixo</SelectItem>
+                      <SelectItem value="parcelado">Parcelado (Com Entrada)</SelectItem>
+                      <SelectItem value="customizado">Customizado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {form.watch("paymentType") === "preco_fixo" ? "Preço Fixo *" : "Valor Total *"}
+                  </FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Ex: Casas inacabadas – termine ao seu gosto e estilo"
+                      placeholder="Ex: 8.500.000 Kz"
                       {...field}
-                      value={field.value || ""}
-                      data-testid="input-sale-conditions"
+                      data-testid="input-price"
                     />
                   </FormControl>
                   <FormMessage />
@@ -342,86 +352,88 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="totalValue"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Valor Total</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Ex: 8.500.000 Kz"
-                        {...field}
-                        value={field.value || ""}
-                        data-testid="input-total-value"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="initialPayment"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Valor de Entrada</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Ex: 4.000.000 Kz"
-                        {...field}
-                        value={field.value || ""}
-                        data-testid="input-initial-payment"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="paymentPeriod"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Prazo de Amortização</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Ex: Até 6 meses com total tranquilidade"
-                        {...field}
-                        value={field.value || ""}
-                        data-testid="input-payment-period"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="houseCondition"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Condição da Casa</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value || ""}>
+            {form.watch("paymentType") !== "preco_fixo" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="downPayment"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Valor de Entrada</FormLabel>
                       <FormControl>
-                        <SelectTrigger data-testid="select-house-condition">
-                          <SelectValue placeholder="Selecione a condição" />
-                        </SelectTrigger>
+                        <Input 
+                          placeholder="Ex: 4.000.000 Kz"
+                          {...field}
+                          value={field.value || ""}
+                          data-testid="input-down-payment"
+                        />
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="inacabada">Casa Inacabada</SelectItem>
-                        <SelectItem value="construida">Totalmente Construída</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="paymentPeriod"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Prazo de Amortização</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Ex: Até 6 meses com total tranquilidade"
+                          {...field}
+                          value={field.value || ""}
+                          data-testid="input-payment-period"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+
+            <FormField
+              control={form.control}
+              name="saleConditions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Condições de Venda</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="Ex: Casas inacabadas – termine ao seu gosto e estilo"
+                      {...field}
+                      value={field.value || ""}
+                      data-testid="textarea-sale-conditions"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="houseCondition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Condição da Casa</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <FormControl>
+                      <SelectTrigger data-testid="select-house-condition">
+                        <SelectValue placeholder="Selecione a condição" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="inacabada">Casa Inacabada</SelectItem>
+                      <SelectItem value="construida">Totalmente Construída</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </div>
 

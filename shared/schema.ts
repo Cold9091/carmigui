@@ -55,17 +55,17 @@ export const condominiums = pgTable("condominiums", {
   totalUnits: integer("total_units").notNull(),
   completedUnits: integer("completed_units").default(0),
   availableUnits: integer("available_units").notNull(),
-  priceRange: text("price_range").notNull(), // e.g., "50M - 150M AKZ"
   status: text("status").notNull().default("in-development"), // in-development, completed, planning
   images: text("images").array().default([]),
   amenities: text("amenities").array().default([]), // piscina, academia, playground, etc
   featured: boolean("featured").default(false),
   developmentYear: text("development_year").notNull(),
-  saleConditions: text("sale_conditions"), // e.g., "Casas inacabadas – termine ao seu gosto e estilo"
-  totalValue: text("total_value"), // e.g., "8.500.000 Kz" - Valor total do imóvel
-  initialPayment: text("initial_payment"), // e.g., "4.000.000 Kz" - Valor de entrada
-  paymentPeriod: text("payment_period"), // e.g., "Até 6 meses com total tranquilidade" - Prazo de amortização
-  houseCondition: text("house_condition"), // "inacabada" ou "construida" - Condição de entrega da casa
+  paymentType: text("payment_type").notNull().default("preco_fixo"), // preco_fixo, parcelado, customizado
+  price: text("price").notNull(), // Preço fixo ou valor total
+  downPayment: text("down_payment"), // Valor de entrada (opcional)
+  paymentPeriod: text("payment_period"), // Prazo de amortização (opcional)
+  saleConditions: text("sale_conditions"), // Condições gerais de venda
+  houseCondition: text("house_condition"), // "inacabada" ou "construida"
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
