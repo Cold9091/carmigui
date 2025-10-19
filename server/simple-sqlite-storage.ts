@@ -63,15 +63,14 @@ sqlite.exec(`
     total_units INTEGER NOT NULL,
     completed_units INTEGER DEFAULT 0,
     available_units INTEGER NOT NULL,
-    price_range TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'in-development',
     images TEXT DEFAULT '[]',
     amenities TEXT DEFAULT '[]',
     featured BOOLEAN DEFAULT FALSE,
     development_year TEXT NOT NULL,
-    sale_conditions TEXT,
-    total_value TEXT,
-    initial_payment TEXT,
+    payment_type TEXT NOT NULL DEFAULT 'preco_fixo',
+    price TEXT NOT NULL DEFAULT '',
+    down_payment TEXT,
     payment_period TEXT,
     house_condition TEXT,
     created_at TEXT,
@@ -158,14 +157,14 @@ try {
   const tableInfo = sqlite.prepare("PRAGMA table_info(condominiums)").all();
   const columns = tableInfo.map((col: any) => col.name);
   
-  if (!columns.includes('sale_conditions')) {
-    sqlite.exec('ALTER TABLE condominiums ADD COLUMN sale_conditions TEXT');
+  if (!columns.includes('payment_type')) {
+    sqlite.exec('ALTER TABLE condominiums ADD COLUMN payment_type TEXT NOT NULL DEFAULT "preco_fixo"');
   }
-  if (!columns.includes('total_value')) {
-    sqlite.exec('ALTER TABLE condominiums ADD COLUMN total_value TEXT');
+  if (!columns.includes('price')) {
+    sqlite.exec('ALTER TABLE condominiums ADD COLUMN price TEXT NOT NULL DEFAULT ""');
   }
-  if (!columns.includes('initial_payment')) {
-    sqlite.exec('ALTER TABLE condominiums ADD COLUMN initial_payment TEXT');
+  if (!columns.includes('down_payment')) {
+    sqlite.exec('ALTER TABLE condominiums ADD COLUMN down_payment TEXT');
   }
   if (!columns.includes('payment_period')) {
     sqlite.exec('ALTER TABLE condominiums ADD COLUMN payment_period TEXT');
@@ -698,9 +697,9 @@ export class SimpleSQLiteStorage implements IStorage {
       const stmt = sqlite.prepare(`
         INSERT INTO condominiums (
           id, name, description, location, centrality_or_district, total_units, 
-          completed_units, available_units, price_range, status, images, amenities, 
-          featured, development_year, sale_conditions, total_value, initial_payment, payment_period, house_condition, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          completed_units, available_units, status, images, amenities, 
+          featured, development_year, payment_type, price, down_payment, payment_period, house_condition, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
       
       stmt.run(
@@ -712,15 +711,14 @@ export class SimpleSQLiteStorage implements IStorage {
         condominium.totalUnits,
         condominium.completedUnits || 0,
         condominium.availableUnits,
-        condominium.priceRange,
         condominium.status || 'in-development',
         JSON.stringify(condominium.images || []),
         JSON.stringify(condominium.amenities || []),
         condominium.featured ? 1 : 0,
         condominium.developmentYear,
-        condominium.saleConditions || null,
-        condominium.totalValue || null,
-        condominium.initialPayment || null,
+        condominium.paymentType || 'preco_fixo',
+        condominium.price,
+        condominium.downPayment || null,
         condominium.paymentPeriod || null,
         condominium.houseCondition || null,
         now,
@@ -765,20 +763,17 @@ export class SimpleSQLiteStorage implements IStorage {
           } else if (key === 'availableUnits') {
             updates.push('available_units = ?');
             params.push(value);
-          } else if (key === 'priceRange') {
-            updates.push('price_range = ?');
-            params.push(value);
           } else if (key === 'developmentYear') {
             updates.push('development_year = ?');
             params.push(value);
-          } else if (key === 'saleConditions') {
-            updates.push('sale_conditions = ?');
+          } else if (key === 'paymentType') {
+            updates.push('payment_type = ?');
             params.push(value);
-          } else if (key === 'totalValue') {
-            updates.push('total_value = ?');
+          } else if (key === 'price') {
+            updates.push('price = ?');
             params.push(value);
-          } else if (key === 'initialPayment') {
-            updates.push('initial_payment = ?');
+          } else if (key === 'downPayment') {
+            updates.push('down_payment = ?');
             params.push(value);
           } else if (key === 'paymentPeriod') {
             updates.push('payment_period = ?');
@@ -889,15 +884,14 @@ export class SimpleSQLiteStorage implements IStorage {
       totalUnits: dbCondominium.total_units,
       completedUnits: dbCondominium.completed_units,
       availableUnits: dbCondominium.available_units,
-      priceRange: dbCondominium.price_range,
       status: dbCondominium.status,
       images: dbCondominium.images ? JSON.parse(dbCondominium.images) : [],
       amenities: dbCondominium.amenities ? JSON.parse(dbCondominium.amenities) : [],
       featured: Boolean(dbCondominium.featured),
       developmentYear: dbCondominium.development_year,
-      saleConditions: dbCondominium.sale_conditions || null,
-      totalValue: dbCondominium.total_value || null,
-      initialPayment: dbCondominium.initial_payment || null,
+      paymentType: dbCondominium.payment_type || 'preco_fixo',
+      price: dbCondominium.price || '',
+      downPayment: dbCondominium.down_payment || null,
       paymentPeriod: dbCondominium.payment_period || null,
       houseCondition: dbCondominium.house_condition || null,
       createdAt: dbCondominium.created_at ? new Date(dbCondominium.created_at) : null,

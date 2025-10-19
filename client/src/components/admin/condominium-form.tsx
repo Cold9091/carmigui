@@ -41,7 +41,6 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
       price: condominium?.price || "",
       downPayment: condominium?.downPayment || "",
       paymentPeriod: condominium?.paymentPeriod || "",
-      saleConditions: condominium?.saleConditions || "",
       houseCondition: condominium?.houseCondition || "",
     },
   });
@@ -393,25 +392,6 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
                 />
               </>
             )}
-
-            <FormField
-              control={form.control}
-              name="saleConditions"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Condições de Venda</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Ex: Casas inacabadas – termine ao seu gosto e estilo"
-                      {...field}
-                      value={field.value || ""}
-                      data-testid="textarea-sale-conditions"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <FormField
               control={form.control}

@@ -64,7 +64,6 @@ export const condominiums = pgTable("condominiums", {
   price: text("price").notNull(), // Preço fixo ou valor total
   downPayment: text("down_payment"), // Valor de entrada (opcional)
   paymentPeriod: text("payment_period"), // Prazo de amortização (opcional)
-  saleConditions: text("sale_conditions"), // Condições gerais de venda
   houseCondition: text("house_condition"), // "inacabada" ou "construida"
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

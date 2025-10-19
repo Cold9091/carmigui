@@ -250,32 +250,18 @@ export default function CondominiumDetailsPage() {
               </CardContent>
             </Card>
 
-            {/* Sale Conditions */}
-            {(condominium.saleConditions || condominium.houseCondition) && (
+            {/* House Condition */}
+            {condominium.houseCondition && (
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Condições de Venda</h3>
-                  <div className="space-y-4">
-                    {condominium.houseCondition && (
-                      <div className="pb-3 border-b border-gray-200">
-                        <p className="text-sm font-medium text-gray-700 mb-2">Condição da Casa</p>
-                        <Badge className={`${
-                          condominium.houseCondition === 'construida' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-orange-100 text-orange-800'
-                        } border-0`} data-testid="badge-house-condition">
-                          {condominium.houseCondition === 'construida' ? 'Totalmente Construída' : 'Casa Inacabada'}
-                        </Badge>
-                      </div>
-                    )}
-                    
-                    {condominium.saleConditions && (
-                      <div>
-                        <p className="text-sm font-medium text-gray-700 mb-1">Informações Adicionais</p>
-                        <p className="text-gray-600">{condominium.saleConditions}</p>
-                      </div>
-                    )}
-                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Condição da Casa</h3>
+                  <Badge className={`${
+                    condominium.houseCondition === 'construida' 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-orange-100 text-orange-800'
+                  } border-0`} data-testid="badge-house-condition">
+                    {condominium.houseCondition === 'construida' ? 'Totalmente Construída' : 'Casa Inacabada'}
+                  </Badge>
                 </CardContent>
               </Card>
             )}

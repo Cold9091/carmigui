@@ -96,7 +96,6 @@ export function createDatabaseConnection() {
           price TEXT NOT NULL DEFAULT '',
           down_payment TEXT,
           payment_period TEXT,
-          sale_conditions TEXT,
           house_condition TEXT,
           created_at TEXT,
           updated_at TEXT
