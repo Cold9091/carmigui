@@ -210,49 +210,55 @@ export default function CondominiumDetailsPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Price Range */}
+            {/* Pricing */}
             <Card>
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Faixa de Preço</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  {condominium.paymentType === 'preco_fixo' ? 'Preço' : 'Valor Total'}
+                </h3>
                 <p className="text-2xl font-bold text-green-600 mb-4">
-                  {condominium.priceRange}
+                  {condominium.price}
                 </p>
-                <p className="text-sm text-gray-600 mb-6">
-                  Preços variam conforme localização, andar e acabamentos escolhidos.
-                </p>
+                
+                {condominium.paymentType !== 'preco_fixo' && condominium.downPayment && (
+                  <div className="mb-4">
+                    <p className="text-sm font-medium text-gray-700 mb-1">Valor de Entrada</p>
+                    <p className="text-lg font-bold text-gray-900" data-testid="text-down-payment">
+                      {condominium.downPayment}
+                    </p>
+                  </div>
+                )}
+                
+                {condominium.paymentPeriod && (
+                  <div className="mb-4">
+                    <p className="text-sm font-medium text-gray-700 mb-1">Prazo de Amortização</p>
+                    <p className="text-sm text-gray-600" data-testid="text-payment-period">
+                      {condominium.paymentPeriod}
+                    </p>
+                  </div>
+                )}
+                
+                {condominium.paymentType !== 'preco_fixo' && (
+                  <p className="text-sm text-gray-600">
+                    Modalidade: {
+                      condominium.paymentType === 'parcelado' ? 'Parcelado' : 
+                      condominium.paymentType === 'customizado' ? 'Customizado' : 
+                      'Preço Fixo'
+                    }
+                  </p>
+                )}
               </CardContent>
             </Card>
 
             {/* Sale Conditions */}
-            {(condominium.saleConditions || condominium.totalValue || condominium.initialPayment || condominium.paymentPeriod || condominium.houseCondition) && (
+            {(condominium.saleConditions || condominium.houseCondition) && (
               <Card>
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Condições de Venda</h3>
                   <div className="space-y-4">
-                    {condominium.saleConditions && (
-                      <div className="pb-3 border-b border-gray-200">
-                        <p className="text-sm font-medium text-gray-700 mb-1">Condições</p>
-                        <p className="text-gray-600">{condominium.saleConditions}</p>
-                      </div>
-                    )}
-                    
-                    {condominium.totalValue && (
-                      <div className="pb-3 border-b border-gray-200">
-                        <p className="text-sm font-medium text-gray-700 mb-1">Valor Total</p>
-                        <p className="text-lg font-bold text-gray-900" data-testid="text-total-value">{condominium.totalValue}</p>
-                      </div>
-                    )}
-                    
-                    {condominium.initialPayment && (
-                      <div className="pb-3 border-b border-gray-200">
-                        <p className="text-sm font-medium text-gray-700 mb-1">Valor de Entrada</p>
-                        <p className="text-lg font-bold text-green-600" data-testid="text-initial-payment">{condominium.initialPayment}</p>
-                      </div>
-                    )}
-                    
                     {condominium.houseCondition && (
                       <div className="pb-3 border-b border-gray-200">
-                        <p className="text-sm font-medium text-gray-700 mb-1">Condição da Casa</p>
+                        <p className="text-sm font-medium text-gray-700 mb-2">Condição da Casa</p>
                         <Badge className={`${
                           condominium.houseCondition === 'construida' 
                             ? 'bg-green-100 text-green-800' 
@@ -263,10 +269,10 @@ export default function CondominiumDetailsPage() {
                       </div>
                     )}
                     
-                    {condominium.paymentPeriod && (
+                    {condominium.saleConditions && (
                       <div>
-                        <p className="text-sm font-medium text-gray-700 mb-1">Prazo de Amortização</p>
-                        <p className="text-gray-600" data-testid="text-payment-period">{condominium.paymentPeriod}</p>
+                        <p className="text-sm font-medium text-gray-700 mb-1">Informações Adicionais</p>
+                        <p className="text-gray-600">{condominium.saleConditions}</p>
                       </div>
                     )}
                   </div>
