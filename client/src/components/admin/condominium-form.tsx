@@ -42,6 +42,7 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
       totalValue: condominium?.totalValue || "",
       initialPayment: condominium?.initialPayment || "",
       paymentPeriod: condominium?.paymentPeriod || "",
+      houseCondition: condominium?.houseCondition || "",
     },
   });
 
@@ -341,7 +342,7 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="totalValue"
@@ -366,7 +367,7 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
                 name="initialPayment"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Entrada Inicial</FormLabel>
+                    <FormLabel>Valor de Entrada</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Ex: 4.000.000 Kz"
@@ -394,6 +395,28 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
                         data-testid="input-payment-period"
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="houseCondition"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Condição da Casa</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value || ""}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-house-condition">
+                          <SelectValue placeholder="Selecione a condição" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="inacabada">Casa Inacabada</SelectItem>
+                        <SelectItem value="construida">Totalmente Construída</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
