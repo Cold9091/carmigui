@@ -25,6 +25,10 @@ sqlite.exec(`
     virtual_tour_url TEXT,
     status TEXT NOT NULL DEFAULT 'available',
     featured BOOLEAN DEFAULT FALSE,
+    payment_type TEXT NOT NULL DEFAULT 'preco_fixo',
+    down_payment TEXT,
+    payment_period TEXT,
+    house_condition TEXT,
     created_at TEXT,
     updated_at TEXT
   );
@@ -176,6 +180,27 @@ try {
   console.error("Error adding columns to condominiums table:", error);
 }
 
+// Add payment columns to properties table if they don't exist
+try {
+  const propertiesInfo = sqlite.prepare("PRAGMA table_info(properties)").all();
+  const propertiesColumns = propertiesInfo.map((col: any) => col.name);
+  
+  if (!propertiesColumns.includes('payment_type')) {
+    sqlite.exec('ALTER TABLE properties ADD COLUMN payment_type TEXT NOT NULL DEFAULT "preco_fixo"');
+  }
+  if (!propertiesColumns.includes('down_payment')) {
+    sqlite.exec('ALTER TABLE properties ADD COLUMN down_payment TEXT');
+  }
+  if (!propertiesColumns.includes('payment_period')) {
+    sqlite.exec('ALTER TABLE properties ADD COLUMN payment_period TEXT');
+  }
+  if (!propertiesColumns.includes('house_condition')) {
+    sqlite.exec('ALTER TABLE properties ADD COLUMN house_condition TEXT');
+  }
+} catch (error) {
+  console.error("Error adding payment columns to properties table:", error);
+}
+
 // Migrate properties table from old schema to new schema if needed
 try {
   const propertiesTableInfo = sqlite.prepare("PRAGMA table_info(properties)").all();
@@ -219,6 +244,10 @@ try {
           virtual_tour_url TEXT,
           status TEXT NOT NULL DEFAULT 'available',
           featured BOOLEAN DEFAULT FALSE,
+          payment_type TEXT NOT NULL DEFAULT 'preco_fixo',
+          down_payment TEXT,
+          payment_period TEXT,
+          house_condition TEXT,
           created_at TEXT,
           updated_at TEXT
         )
@@ -372,8 +401,9 @@ export class SimpleSQLiteStorage implements IStorage {
       const stmt = sqlite.prepare(`
         INSERT INTO properties (
           id, title, description, price, city_id, category_id, bedrooms, bathrooms, 
-          area, images, virtual_tour_url, status, featured, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          area, images, virtual_tour_url, status, featured, payment_type, down_payment, 
+          payment_period, house_condition, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
       
       stmt.run(
@@ -390,6 +420,10 @@ export class SimpleSQLiteStorage implements IStorage {
         property.virtualTourUrl || null,
         property.status || 'available',
         property.featured ? 1 : 0,
+        property.paymentType || 'preco_fixo',
+        property.downPayment || null,
+        property.paymentPeriod || null,
+        property.houseCondition || null,
         now,
         now
       );
@@ -458,6 +492,22 @@ export class SimpleSQLiteStorage implements IStorage {
       if (property.featured !== undefined) {
         updates.push('featured = ?');
         params.push(property.featured ? 1 : 0);
+      }
+      if (property.paymentType !== undefined) {
+        updates.push('payment_type = ?');
+        params.push(property.paymentType);
+      }
+      if (property.downPayment !== undefined) {
+        updates.push('down_payment = ?');
+        params.push(property.downPayment);
+      }
+      if (property.paymentPeriod !== undefined) {
+        updates.push('payment_period = ?');
+        params.push(property.paymentPeriod);
+      }
+      if (property.houseCondition !== undefined) {
+        updates.push('house_condition = ?');
+        params.push(property.houseCondition);
       }
       
       updates.push('updated_at = ?');
@@ -840,6 +890,10 @@ export class SimpleSQLiteStorage implements IStorage {
       virtualTourUrl: dbProperty.virtual_tour_url,
       status: dbProperty.status,
       featured: Boolean(dbProperty.featured),
+      paymentType: dbProperty.payment_type || 'preco_fixo',
+      downPayment: dbProperty.down_payment || null,
+      paymentPeriod: dbProperty.payment_period || null,
+      houseCondition: dbProperty.house_condition || null,
       createdAt: dbProperty.created_at ? new Date(dbProperty.created_at) : null,
       updatedAt: dbProperty.updated_at ? new Date(dbProperty.updated_at) : null,
     };

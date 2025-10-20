@@ -7,7 +7,7 @@ export const properties = pgTable("properties", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   title: text("title").notNull(),
   description: text("description").notNull(),
-  price: decimal("price").notNull(),
+  price: text("price").notNull(), // Preço fixo ou valor total
   cityId: varchar("city_id").notNull(),
   categoryId: varchar("category_id").notNull(),
   bedrooms: integer("bedrooms"),
@@ -17,6 +17,10 @@ export const properties = pgTable("properties", {
   virtualTourUrl: text("virtual_tour_url"), // URL for 3D/virtual tour
   status: text("status").notNull().default("available"), // available, sold, rented
   featured: boolean("featured").default(false),
+  paymentType: text("payment_type").notNull().default("preco_fixo"), // preco_fixo, parcelado, customizado
+  downPayment: text("down_payment"), // Valor de entrada (opcional)
+  paymentPeriod: text("payment_period"), // Prazo de amortização (opcional)
+  houseCondition: text("house_condition"), // "inacabada" ou "construida"
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

@@ -171,6 +171,10 @@ export class MemoryStorage implements IStorage {
       virtualTourUrl: property.virtualTourUrl ?? null,
       status: property.status ?? "available",
       featured: property.featured ?? false,
+      paymentType: property.paymentType ?? "preco_fixo",
+      downPayment: property.downPayment ?? null,
+      paymentPeriod: property.paymentPeriod ?? null,
+      houseCondition: property.houseCondition ?? null,
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -294,9 +298,8 @@ export class MemoryStorage implements IStorage {
       amenities: condominium.amenities ?? [],
       featured: condominium.featured ?? false,
       status: condominium.status ?? "in-development",
-      saleConditions: condominium.saleConditions ?? null,
-      totalValue: condominium.totalValue ?? null,
-      initialPayment: condominium.initialPayment ?? null,
+      paymentType: condominium.paymentType ?? "preco_fixo",
+      downPayment: condominium.downPayment ?? null,
       paymentPeriod: condominium.paymentPeriod ?? null,
       houseCondition: condominium.houseCondition ?? null,
       createdAt: new Date(),

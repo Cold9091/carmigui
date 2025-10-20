@@ -46,6 +46,10 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
       virtualTourUrl: property?.virtualTourUrl || "",
       status: property?.status || "available",
       featured: property?.featured || false,
+      paymentType: property?.paymentType || "preco_fixo",
+      downPayment: property?.downPayment || "",
+      paymentPeriod: property?.paymentPeriod || "",
+      houseCondition: property?.houseCondition || "",
     },
   });
 
@@ -99,7 +103,7 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
     // Convert string inputs to numbers where needed
     const processedData = {
       ...data,
-      price: data.price.toString(),
+      price: data.price,
       area: Number(data.area),
       bedrooms: data.bedrooms ? Number(data.bedrooms) : undefined,
       bathrooms: data.bathrooms ? Number(data.bathrooms) : undefined,
@@ -181,25 +185,6 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Preço (Kz)</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number"
-                    placeholder="150000000"
-                    {...field}
-                    data-testid="input-property-price"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <FormField
             control={form.control}
             name="cityId"
@@ -382,6 +367,119 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
             </FormItem>
           )}
         />
+
+        <div className="border-t pt-6">
+          <h3 className="text-lg font-semibold mb-4">Informações de Venda</h3>
+          
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="paymentType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tipo de Modalidade de Pagamento *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value || "preco_fixo"}>
+                    <FormControl>
+                      <SelectTrigger data-testid="select-payment-type">
+                        <SelectValue placeholder="Selecione a modalidade" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="preco_fixo">Preço Fixo</SelectItem>
+                      <SelectItem value="parcelado">Parcelado (Com Entrada)</SelectItem>
+                      <SelectItem value="customizado">Customizado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {form.watch("paymentType") === "preco_fixo" ? "Preço Fixo *" : "Valor Total *"}
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Ex: 8.500.000 Kz"
+                      {...field}
+                      data-testid="input-property-price"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {form.watch("paymentType") !== "preco_fixo" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="downPayment"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Valor de Entrada</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Ex: 4.000.000 Kz"
+                          {...field}
+                          value={field.value || ""}
+                          data-testid="input-down-payment"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="paymentPeriod"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Prazo de Amortização</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Ex: Até 6 meses com total tranquilidade"
+                          {...field}
+                          value={field.value || ""}
+                          data-testid="input-payment-period"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+
+            <FormField
+              control={form.control}
+              name="houseCondition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Condição do Imóvel</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <FormControl>
+                      <SelectTrigger data-testid="select-house-condition">
+                        <SelectValue placeholder="Selecione a condição" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="inacabada">Casa Inacabada</SelectItem>
+                      <SelectItem value="construida">Totalmente Construída</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
 
         <div className="flex gap-4">
           <Button
