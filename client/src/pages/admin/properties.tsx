@@ -76,7 +76,11 @@ export default function AdminPropertiesPage() {
   };
 
   const formatPrice = (price: string) => {
-    const numPrice = parseFloat(price);
+    const cleanPrice = price.replace(/[^\d]/g, '');
+    const numPrice = parseFloat(cleanPrice);
+    if (isNaN(numPrice) || numPrice === 0) {
+      return 'Preço sob consulta';
+    }
     if (numPrice >= 1000000) {
       return `${(numPrice / 1000000).toFixed(1)}M Kz`;
     }

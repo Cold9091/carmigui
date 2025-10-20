@@ -17,7 +17,11 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
   const city = cities.find(c => c.id === property.cityId);
   const formatPrice = (price: string) => {
-    const numPrice = parseFloat(price);
+    const cleanPrice = price.replace(/[^\d]/g, '');
+    const numPrice = parseFloat(cleanPrice);
+    if (isNaN(numPrice) || numPrice === 0) {
+      return 'Preço sob consulta';
+    }
     if (numPrice >= 1000000) {
       return `Kz${(numPrice / 1000000).toFixed(0)}.${Math.floor((numPrice % 1000000) / 100000)}M`;
     }
