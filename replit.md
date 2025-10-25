@@ -36,7 +36,7 @@ The server follows a **RESTful API** architecture built with **Express.js** and 
 - **Vite integration** for development hot module replacement
 
 ### Database Design
-The application uses **PostgreSQL** as the primary database with **Drizzle ORM** for type-safe database operations and migrations.
+The application uses **SQLite** (development) and **Turso** (production) with **Drizzle ORM** for type-safe database operations.
 
 **Schema Design:**
 - **Properties table**: Core real estate listings with pricing, location, and property details
@@ -46,15 +46,16 @@ The application uses **PostgreSQL** as the primary database with **Drizzle ORM**
 - **Flexible data types**: JSON arrays for image storage, enums for status fields
 
 **Database Decisions:**
+- **Development**: SQLite with better-sqlite3 for local development (zero configuration)
+- **Production**: Turso Database for distributed SQLite at the edge
 - **Drizzle ORM** chosen over Prisma for better TypeScript integration and SQL-like query building
-- **Neon Database** integration for serverless PostgreSQL hosting
-- **Migration-based schema management** for version control and deployment safety
+- **Unified codebase**: Same schema works for both SQLite and Turso seamlessly
 
 ### Authentication & Authorization
 The application implements secure authentication using **Passport.js** with local strategy:
 - **Password hashing**: Scrypt algorithm with random salt (16 bytes)
 - **Timing-safe comparison**: Protection against timing attacks
-- **Secure sessions**: PostgreSQL-backed sessions with httpOnly and secure cookies
+- **Secure sessions**: Secure session management with httpOnly and secure cookies
 - **Protected routes**: Admin endpoints require authentication
 - **Default admin**: Created automatically on first run (credentials should be changed in production)
 
@@ -122,7 +123,8 @@ The application implements multiple layers of security protection (detailed in `
 - HttpOnly cookies (prevents JavaScript access)
 - Secure flag in production (HTTPS only)
 - 7-day expiration with automatic cleanup
-- PostgreSQL session store for persistence
+- Memory-based session store for development
+- Distributed session management in production
 
 ### Styling & Theming
 The application uses a **design system approach** with:
@@ -136,8 +138,10 @@ The application uses a **design system approach** with:
 ## External Dependencies
 
 ### Database Services
-- **Neon Database** - Serverless PostgreSQL hosting with connection pooling
-- **WebSocket support** for real-time database connections via `@neondatabase/serverless`
+- **SQLite** - Lightweight SQL database engine for development
+- **Turso** - Distributed SQLite for edge computing and production
+- **better-sqlite3** - Synchronous SQLite bindings for Node.js
+- **@libsql/client** - LibSQL client for Turso connections
 
 ### UI & Styling Libraries
 - **Radix UI** - Accessible component primitives for complex UI elements
@@ -152,7 +156,7 @@ The application uses a **design system approach** with:
 - **PostCSS** - CSS processing with Tailwind CSS integration
 
 ### Data Management
-- **Drizzle ORM** - Type-safe database toolkit with PostgreSQL dialect
+- **Drizzle ORM** - Type-safe database toolkit with SQLite support
 - **Drizzle Kit** - Database migration and introspection tools
 - **Zod** - Runtime type validation for API requests and responses
 
@@ -164,7 +168,7 @@ The application uses a **design system approach** with:
 ### Development Environment
 - **Replit** - Cloud development environment with specialized Replit plugins
 - **TSX** - TypeScript execution for development server
-- **Connect-PG-Simple** - PostgreSQL session store for Express sessions
+- **MemoryStore** - In-memory session store for development
 
 ## Deployment & Production
 
@@ -192,9 +196,14 @@ The application is configured for deployment on **Vercel** with the following se
 ### Environment Variables Required for Production
 
 **Critical (Must Have):**
-- `DATABASE_URL` - PostgreSQL connection string (recommend Neon Database)
+- `TURSO_DATABASE_URL` - Turso database URL (format: libsql://database-name.turso.io)
+- `TURSO_AUTH_TOKEN` - Turso authentication token
 - `SESSION_SECRET` - Random secret for sessions (minimum 32 characters, recommended 64+)
 - `NODE_ENV` - Set to `production`
+
+**Development:**
+- `SESSION_SECRET` - Random secret for sessions
+- `SQLITE_FILE` - Path to SQLite database file (default: ./database.db)
 
 **Recommended:**
 - `ADMIN_EMAIL` - Initial admin email
@@ -213,10 +222,10 @@ The application validates all critical environment variables before startup with
 - Entropy checking to ensure randomness
 - Blocks common insecure patterns
 
-**DATABASE_URL Validation (Production):**
-- Must use PostgreSQL protocol (`postgresql://` or `postgres://`)
+**Turso Database Validation (Production):**
+- Must have TURSO_DATABASE_URL and TURSO_AUTH_TOKEN defined
+- Must use libSQL protocol (`libsql://`)
 - Rejects localhost connections in production
-- Warns if SSL is not enabled (`?sslmode=require`)
 
 **Startup Protection:**
 - Application exits immediately if critical validations fail
@@ -230,7 +239,7 @@ The application validates all critical environment variables before startup with
 
 ### Deployment Process
 
-1. **Prepare Database** - Create PostgreSQL database (Neon recommended)
+1. **Prepare Database** - Create Turso database and obtain credentials
 2. **Configure Environment** - Set all required variables in Vercel dashboard
 3. **Deploy** - Push to main branch or use Vercel CLI
 4. **Verify** - Run through deployment checklist
@@ -239,9 +248,10 @@ The application validates all critical environment variables before startup with
 ### Production Considerations
 
 **Database:**
-- Must use PostgreSQL in production (SQLite is development-only)
-- Neon Database recommended for serverless compatibility
-- Automatic migrations via `vercel-build` script
+- Development uses SQLite (local file, zero configuration)
+- Production uses Turso (distributed SQLite at the edge)
+- Turso provides global low-latency access with automatic replication
+- Generous free tier with pay-as-you-grow pricing
 
 **File Uploads:**
 - Vercel is serverless - local uploads don't persist

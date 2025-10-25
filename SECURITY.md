@@ -215,7 +215,7 @@ Implementação robusta de autenticação:
   - `httpOnly: true` - Cookies não acessíveis via JavaScript
   - `secure: true` em produção - Apenas HTTPS
   - `maxAge: 7 dias` - Expiração automática
-  - PostgreSQL session store - Persistente e seguro
+  - Turso session store - Persistente e seguro
 
 #### Benefícios:
 - ✅ Senhas nunca armazenadas em texto plano
@@ -255,7 +255,7 @@ SESSION_SECRET=<strong-random-secret>
 NODE_ENV=production
 
 # Database
-DATABASE_URL=<postgresql-connection-string>
+TURSO_DATABASE_URL=<turso-database-url>
 
 # Opcional
 BASE_URL=https://carmigui.com

@@ -59,28 +59,38 @@ openssl rand -hex 32
 head -c 32 /dev/urandom | base64
 ```
 
-### 2. DATABASE_URL (Obrigatório em Produção)
+### 2. Banco de Dados (Ambiente-Específico)
 
-#### Validações Aplicadas:
-- **Existência**: Deve estar definido em produção
-- **Protocolo**: Deve usar `postgresql://` ou `postgres://`
-- **SSL**: Recomenda-se adicionar `?sslmode=require`
+#### Desenvolvimento: SQLite
+- **Automático**: SQLite é usado automaticamente em desenvolvimento
+- **Arquivo local**: `./database.db`
+- **Sem configuração necessária**
+
+#### Produção: Turso Database (Obrigatório)
+
+**Validações Aplicadas:**
+- **TURSO_DATABASE_URL**: Deve estar definido em produção
+- **TURSO_AUTH_TOKEN**: Deve estar definido em produção
+- **Protocolo**: Deve usar `libsql://`
 - **Localhost**: Rejeita conexões localhost em produção
 
-#### Formato Correto:
+**Formato Correto:**
 ```bash
-✅ postgresql://user:pass@host.neon.tech/db?sslmode=require
-❌ postgresql://localhost:5432/db
-❌ sqlite:///database.db (não permitido em produção)
+✅ libsql://carmigui-db.turso.io
+✅ TURSO_AUTH_TOKEN=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...
+
+❌ libsql://localhost:8080
+❌ postgresql://... (não suportado - apenas SQLite/Turso)
 ```
 
 ### 3. NODE_ENV
 
 #### Valores Válidos:
-- `development` - Desenvolvimento local
-- `production` - Produção/Deploy
+- `development` - Desenvolvimento local (SQLite)
+- `production` - Produção/Deploy (Turso)
 
 #### Impacto no Comportamento:
+- **Banco de Dados**: SQLite (dev) vs Turso (prod)
 - **CORS**: Origins permitidos
 - **Cookies**: Secure flag habilitado em produção
 - **Logs**: Nível de detalhamento
@@ -108,13 +118,28 @@ cp .env.example .env
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-### Passo 3: Editar .env
+### Passo 3: Configurar Turso (Produção)
+```bash
+# Instalar Turso CLI
+curl -sSfL https://get.tur.so/install.sh | bash
+
+# Login
+turso auth login
+
+# Criar database
+turso db create carmigui
+
+# Obter credenciais
+turso db show carmigui
+```
+
+### Passo 4: Editar .env
 ```bash
 # Abra o arquivo .env e substitua os valores:
 nano .env  # ou use seu editor favorito
 ```
 
-### Passo 4: Validar Configuração
+### Passo 5: Validar Configuração
 ```bash
 npm run dev
 ```
@@ -122,7 +147,7 @@ npm run dev
 Se houver erros, você verá mensagens claras:
 ```
 ❌ ERRO [SESSION_SECRET]: SESSION_SECRET deve ter no mínimo 32 caracteres (atual: 16)
-❌ ERRO [DATABASE_URL]: DATABASE_URL é obrigatório em produção
+❌ ERRO [TURSO_DATABASE_URL / TURSO_AUTH_TOKEN]: Turso Database é obrigatório em produção
 ```
 
 ---
@@ -135,9 +160,12 @@ Se houver erros, você verá mensagens claras:
    ```bash
    # .env.development
    SESSION_SECRET=dev_secret_here_32_chars_minimum_required
+   # SQLite é usado automaticamente
    
    # .env.production
    SESSION_SECRET=prod_secret_here_different_from_dev_32chars
+   TURSO_DATABASE_URL=libsql://carmigui.turso.io
+   TURSO_AUTH_TOKEN=eyJ...
    ```
 
 2. **Mantenha .env fora do Git**
@@ -191,15 +219,6 @@ Se houver erros, você verá mensagens claras:
    console.log('SESSION_SECRET:', '***');
    ```
 
-5. **Nunca use SQLite em produção**
-   ```bash
-   # ERRADO ❌ (em produção)
-   DATABASE_URL=sqlite:///database.db
-   
-   # CORRETO ✅
-   DATABASE_URL=postgresql://user:pass@host/db?sslmode=require
-   ```
-
 ---
 
 ## 🚨 Troubleshooting
@@ -226,13 +245,24 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-### Erro: "DATABASE_URL deve usar PostgreSQL em produção"
+### Erro: "Turso Database é obrigatório em produção"
 ```bash
-# Configure um banco PostgreSQL:
-# 1. Crie conta no Neon (recomendado): https://neon.tech
-# 2. Copie a connection string
-# 3. Adicione no .env:
-DATABASE_URL=postgresql://user:pass@host.neon.tech/db?sslmode=require
+# Configure Turso Database:
+# 1. Instale CLI:
+curl -sSfL https://get.tur.so/install.sh | bash
+
+# 2. Login:
+turso auth login
+
+# 3. Crie database:
+turso db create carmigui
+
+# 4. Obtenha credenciais:
+turso db show carmigui
+
+# 5. Adicione no .env ou secrets do provedor:
+TURSO_DATABASE_URL=libsql://seu-db.turso.io
+TURSO_AUTH_TOKEN=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...
 ```
 
 ### Aviso: "SESSION_SECRET tem baixa entropia"
@@ -248,7 +278,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 - [OWASP Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html)
 - [Node.js Crypto Documentation](https://nodejs.org/api/crypto.html)
-- [Neon Database Documentation](https://neon.tech/docs)
+- [Turso Database Documentation](https://docs.turso.tech)
 - [Express Session Best Practices](https://expressjs.com/en/advanced/best-practice-security.html)
 
 ---
@@ -263,5 +293,5 @@ Se você encontrar problemas de segurança:
 
 ---
 
-**Última Atualização**: 25 de Outubro de 2025
-**Versão**: 1.0.0
+**Última Atualização**: 25 de Outubro de 2025  
+**Versão**: 2.0.0 - SQLite + Turso

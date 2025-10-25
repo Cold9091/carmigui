@@ -6,14 +6,27 @@ Guia rápido para deploy em 10 minutos.
 
 ## ⚡ Passos Rápidos
 
-### 1️⃣ Preparar Banco de Dados (5 min)
+### 1️⃣ Preparar Banco de Dados Turso (5 min)
 
-1. Crie conta em [neon.tech](https://neon.tech)
-2. Crie novo projeto: `carmigui-production`
-3. Copie a Connection String
-   - Exemplo: `postgresql://user:pass@ep-xxx.region.aws.neon.tech/neondb?sslmode=require`
+```bash
+# 1. Instalar Turso CLI
+curl -sSfL https://get.tur.so/install.sh | bash
 
-### 2️⃣ Gerar Secrets (2 min)
+# 2. Fazer login
+turso auth login
+
+# 3. Criar database
+turso db create carmigui
+
+# 4. Obter credenciais
+turso db show carmigui
+```
+
+Anote:
+- **TURSO_DATABASE_URL**: `libsql://carmigui-xxx.turso.io`
+- **TURSO_AUTH_TOKEN**: `eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...`
+
+### 2️⃣ Gerar SESSION_SECRET (1 min)
 
 Execute no terminal:
 
@@ -30,11 +43,13 @@ Copie o resultado - será seu `SESSION_SECRET`
 3. Configure variáveis de ambiente:
 
 ```
-DATABASE_URL = sua_connection_string_aqui
+TURSO_DATABASE_URL = libsql://carmigui-xxx.turso.io
+TURSO_AUTH_TOKEN = eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9...
 SESSION_SECRET = resultado_do_comando_acima
 NODE_ENV = production
 ADMIN_EMAIL = admin@carmigui.com
 ADMIN_PASSWORD = SuaSenhaForte123!
+BASE_URL = https://seu-dominio.vercel.app
 ```
 
 4. Clique em **Deploy**
@@ -54,14 +69,28 @@ ADMIN_PASSWORD = SuaSenhaForte123!
 
 ```json
 "scripts": {
-  "db:migrate": "node scripts/db-migrate.js",
-  "validate:env": "node scripts/validate:env.js",
+  "db:push": "drizzle-kit push:sqlite",
+  "validate:env": "node scripts/validate-env.js",
   "predeploy": "npm run validate:env && npm run check",
-  "vercel-build": "npm run db:push && npm run build"
+  "vercel-build": "npm run build"
 }
 ```
 
 Ver detalhes em: `SCRIPTS-PACKAGE.md`
+
+---
+
+## 🗄️ Sobre o Banco de Dados
+
+**Desenvolvimento**: SQLite (automático, arquivo local)  
+**Produção**: Turso Database (SQLite distribuído, edge computing)
+
+**Por que Turso?**
+- ✅ Baixa latência global
+- ✅ Compatível com SQLite
+- ✅ Tier gratuito generoso
+- ✅ Replicação automática
+- ✅ Perfeito para edge computing
 
 ---
 
@@ -87,10 +116,13 @@ Após deploy, teste estas URLs:
 ## 🆘 Problemas Comuns
 
 ### Build Falha
-➡️ Verifique se `DATABASE_URL` está configurada no Vercel
+➡️ Verifique se `TURSO_DATABASE_URL` e `TURSO_AUTH_TOKEN` estão configurados no Vercel
 
 ### Login Não Funciona
 ➡️ Verifique se `ADMIN_EMAIL` e `ADMIN_PASSWORD` estão configurados
+
+### Erro de Conexão com Banco
+➡️ Verifique se as credenciais Turso estão corretas (execute `turso db show carmigui`)
 
 ### Imagens Não Carregam
 ➡️ Configure Vercel Blob Storage (ver `DEPLOY.md`)

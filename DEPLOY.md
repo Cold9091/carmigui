@@ -21,7 +21,7 @@ Este documento fornece instruções detalhadas para fazer deploy da aplicação 
 Antes de iniciar o deploy, certifique-se de ter:
 
 - [ ] Conta no [Vercel](https://vercel.com)
-- [ ] Conta no [Neon Database](https://neon.tech) (recomendado) ou outro provedor PostgreSQL
+- [ ] Conta no [Turso Database](https://turso.tech) (recomendado) ou outro provedor Turso
 - [ ] CLI do Vercel instalado (opcional): `npm i -g vercel`
 - [ ] Repositório Git configurado (GitHub, GitLab ou Bitbucket)
 - [ ] Node.js 18+ instalado localmente
@@ -30,24 +30,24 @@ Antes de iniciar o deploy, certifique-se de ter:
 
 ## 💾 Configuração do Banco de Dados
 
-### Opção 1: Neon Database (Recomendado)
+### Opção 1: Turso Database (Recomendado)
 
-1. **Criar conta no Neon**
-   - Acesse [neon.tech](https://neon.tech)
+1. **Criar conta no Turso**
+   - Acesse [turso.tech](https://turso.tech)
    - Faça login ou crie uma conta gratuita
 
 2. **Criar novo projeto**
    - Clique em "New Project"
    - Nome: `carmigui-production`
    - Região: Escolha a mais próxima de Angola (ex: Frankfurt/eu-central-1)
-   - PostgreSQL version: 16
+   - Turso version: 16
 
 3. **Obter string de conexão**
    - No dashboard do projeto, copie a Connection String
-   - Formato: `postgresql://user:pass@ep-xxxx.region.aws.neon.tech/neondb?sslmode=require`
+   - Formato: `libsql://user:pass@nome-do-database.turso.io?sslmode=require`
    - Guarde esta string - você vai precisar dela!
 
-### Opção 2: Outro Provedor PostgreSQL
+### Opção 2: Outro Provedor Turso
 
 Alternativas compatíveis:
 - **Supabase**: [supabase.com](https://supabase.com)
@@ -84,7 +84,7 @@ Escolha um email e senha forte para o administrador inicial:
 
 | Variável | Obrigatória | Descrição | Exemplo |
 |----------|-------------|-----------|---------|
-| `DATABASE_URL` | ✅ Sim | String de conexão PostgreSQL | `postgresql://user:pass@host/db` |
+| `TURSO_DATABASE_URL` | ✅ Sim | URL do database Turso | `libsql://user:pass@host/db` |
 | `SESSION_SECRET` | ✅ Sim | Chave secreta para sessões (32+ chars) | `a1b2c3d4e5...` |
 | `NODE_ENV` | ✅ Sim | Ambiente de execução | `production` |
 | `ADMIN_EMAIL` | 🟡 Recomendado | Email do admin inicial | `admin@carmigui.com` |
@@ -114,7 +114,7 @@ Escolha um email e senha forte para o administrador inicial:
    - Na seção "Environment Variables", adicione:
 
    ```
-   DATABASE_URL = postgresql://seu_usuario:sua_senha@seu_host/seu_banco
+   TURSO_DATABASE_URL = libsql://nome-do-database.turso.io
    SESSION_SECRET = sua_chave_secreta_gerada
    NODE_ENV = production
    ADMIN_EMAIL = admin@carmigui.com
@@ -142,7 +142,8 @@ vercel login
 vercel link
 
 # 4. Adicionar variáveis de ambiente
-vercel env add DATABASE_URL
+vercel env add TURSO_DATABASE_URL
+vercel env add TURSO_AUTH_TOKEN
 vercel env add SESSION_SECRET
 vercel env add NODE_ENV
 vercel env add ADMIN_EMAIL
@@ -271,7 +272,7 @@ Acesse logs em tempo real:
 
 **Solução**:
 1. Verifique logs no Vercel
-2. Comum: Falta variável `DATABASE_URL`
+2. Comum: Falta variável `TURSO_DATABASE_URL`
 3. Adicione manualmente no dashboard
 
 ### Problema: Database Connection Error
@@ -279,11 +280,11 @@ Acesse logs em tempo real:
 **Erro**: `Failed to connect to database`
 
 **Solução**:
-1. Verifique `DATABASE_URL` está correta
+1. Verifique `TURSO_DATABASE_URL` está correta
 2. Confirme que SSL está habilitado: `?sslmode=require`
 3. Teste conexão localmente:
    ```bash
-   psql "sua_database_url_aqui"
+   turso db shell carmigui
    ```
 
 ### Problema: Session Secret Error
@@ -336,8 +337,8 @@ Acesse logs em tempo real:
 ### Antes do Deploy
 
 - [ ] Código em repositório Git
-- [ ] Banco de dados PostgreSQL criado
-- [ ] `DATABASE_URL` obtida
+- [ ] Banco de dados Turso criado
+- [ ] `TURSO_DATABASE_URL` obtida
 - [ ] `SESSION_SECRET` gerada (32+ chars)
 - [ ] Credenciais admin definidas
 - [ ] `.env.example` revisado
@@ -381,7 +382,7 @@ Se encontrar problemas:
 
 1. **Logs do Vercel**: Verifique primeiro os logs de build e runtime
 2. **Documentação Vercel**: [vercel.com/docs](https://vercel.com/docs)
-3. **Documentação Neon**: [neon.tech/docs](https://neon.tech/docs)
+3. **Documentação Turso**: [turso.tech/docs](https://turso.tech/docs)
 4. **Suporte**: Contate a equipe CARMIGUI
 
 ---

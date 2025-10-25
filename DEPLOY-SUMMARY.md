@@ -1,7 +1,8 @@
 # 📦 Resumo da Configuração de Deploy - CARMIGUI
 
 **Data**: 25 de Outubro de 2025  
-**Objetivo**: Preparar aplicação CARMIGUI para deploy em produção no Vercel
+**Objetivo**: Preparar aplicação CARMIGUI para deploy em produção  
+**Banco de Dados**: SQLite (desenvolvimento) + Turso (produção)
 
 ---
 
@@ -12,6 +13,7 @@
    - Documentação completa de todas as variáveis de ambiente
    - Valores de exemplo e instruções
    - Separado por categoria (ambiente, banco, segurança, etc.)
+   - **Atualizado**: Foco em SQLite/Turso, sem PostgreSQL
 
 2. **`vercel.json`**
    - Configuração específica para Vercel
@@ -24,20 +26,21 @@
 3. **`scripts/validate-env.js`**
    - Validação de variáveis de ambiente obrigatórias
    - Verifica força do SESSION_SECRET
-   - Valida formato do DATABASE_URL
+   - Valida formato das credenciais Turso
    - Avisos para variáveis recomendadas
+   - **Atualizado**: Valida TURSO_DATABASE_URL e TURSO_AUTH_TOKEN
 
-4. **`scripts/db-migrate.js`**
-   - Execução segura de migrações
-   - Validação de ambiente antes de migrar
-   - Tratamento de erros
-   - Suporte a flags (--force)
+4. **`server/env-validator.ts`**
+   - Validação em runtime no startup
+   - Verifica SESSION_SECRET (comprimento, entropia, valores fracos)
+   - Valida configuração Turso em produção
+   - **Novo**: Sistema robusto de validação
 
 ### Documentação
 5. **`DEPLOY.md`** (Completo)
    - Guia passo-a-passo detalhado
    - Pré-requisitos
-   - Configuração de banco
+   - Configuração de Turso Database
    - Deploy no Vercel
    - Pós-deploy
    - Troubleshooting extenso
@@ -47,6 +50,7 @@
    - Guia rápido de 10 minutos
    - Apenas passos essenciais
    - Solução de problemas comuns
+   - **Atualizado**: Instruções Turso ao invés de Neon
 
 7. **`DEPLOY-CHECKLIST.md`**
    - Checklist completo pré-deploy
@@ -60,15 +64,23 @@
    - Explicação de cada script
    - Instruções de adição manual
 
-9. **`DEPLOY-SUMMARY.md`** (Este arquivo)
-   - Resumo de tudo que foi feito
+9. **`SECURITY-ENV.md`**
+   - Guia completo de segurança de variáveis de ambiente
+   - Práticas recomendadas
+   - Troubleshooting de problemas comuns
+   - **Atualizado**: Foco em SQLite/Turso
+
+10. **`DEPLOY-SUMMARY.md`** (Este arquivo)
+    - Resumo de tudo que foi feito
+    - **Atualizado**: Reflete mudança para SQLite/Turso
 
 ### Atualização de Documentação
-10. **`replit.md`** (Atualizado)
+11. **`replit.md`** (Atualizado)
     - Adicionada seção "Deployment & Production"
     - Documentação de variáveis de ambiente
     - Processo de deployment
     - Considerações de produção
+    - **Atualizado**: SQLite/Turso ao invés de PostgreSQL
 
 ---
 
@@ -77,10 +89,10 @@
 ⚠️ **IMPORTANTE**: Você precisa adicionar manualmente estes scripts ao `package.json`:
 
 ```json
-"db:migrate": "node scripts/db-migrate.js",
+"db:push": "drizzle-kit push:sqlite",
 "validate:env": "node scripts/validate-env.js",
 "predeploy": "npm run validate:env && npm run check",
-"vercel-build": "npm run db:push && npm run build"
+"vercel-build": "npm run build"
 ```
 
 **Ver instruções completas em**: `SCRIPTS-PACKAGE.md`
@@ -89,10 +101,15 @@
 
 ## 🔑 Variáveis de Ambiente Necessárias
 
-### Obrigatórias
-- `DATABASE_URL` - String de conexão PostgreSQL
-- `SESSION_SECRET` - Chave secreta (32+ caracteres)
+### Obrigatórias (Produção)
+- `TURSO_DATABASE_URL` - URL do database Turso (libsql://...)
+- `TURSO_AUTH_TOKEN` - Token de autenticação Turso
+- `SESSION_SECRET` - Chave secreta (32+ caracteres, recomendado 64+)
 - `NODE_ENV` - `production`
+
+### Desenvolvimento
+- `SESSION_SECRET` - Chave secreta (32+ caracteres)
+- `SQLITE_FILE` - Caminho para arquivo SQLite (padrão: `./database.db`)
 
 ### Recomendadas
 - `ADMIN_EMAIL` - Email do administrador inicial
@@ -103,146 +120,123 @@
 
 ---
 
+## 🗄️ Arquitetura de Banco de Dados
+
+### Desenvolvimento
+- **Engine**: SQLite
+- **Arquivo**: `./database.db` (local)
+- **ORM**: Drizzle ORM com better-sqlite3
+- **Vantagens**: Sem configuração, rápido, perfeito para dev
+
+### Produção
+- **Engine**: Turso Database (SQLite distribuído)
+- **Protocolo**: libsql://
+- **ORM**: Drizzle ORM com @libsql/client
+- **Vantagens**: Edge computing, baixa latência, replicação global
+
+### Por que não PostgreSQL?
+- ✅ **Simplicidade**: SQLite é mais simples de configurar e gerenciar
+- ✅ **Performance**: Turso oferece baixa latência global
+- ✅ **Custo**: Tier gratuito Turso é muito generoso
+- ✅ **Compatibilidade**: Mesmo código funciona em dev e prod
+- ✅ **Edge Computing**: Perfeito para deploy serverless/edge
+
+---
+
 ## 🚀 Como Fazer Deploy
 
-### Opção 1: Via Dashboard (Mais Fácil)
+### Passo 1: Configurar Turso
+```bash
+# Instalar CLI
+curl -sSfL https://get.tur.so/install.sh | bash
+
+# Login
+turso auth login
+
+# Criar database
+turso db create carmigui
+
+# Obter credenciais
+turso db show carmigui
+```
+
+### Passo 2: Deploy no Vercel
 1. Abra [vercel.com/new](https://vercel.com/new)
 2. Conecte seu repositório
-3. Adicione variáveis de ambiente
+3. Adicione variáveis de ambiente:
+   - `TURSO_DATABASE_URL`
+   - `TURSO_AUTH_TOKEN`
+   - `SESSION_SECRET`
+   - `NODE_ENV=production`
+   - `ADMIN_EMAIL`
+   - `ADMIN_PASSWORD`
+   - `BASE_URL`
 4. Clique em Deploy
 
 **Guia completo**: `DEPLOY-QUICKSTART.md`
 
-### Opção 2: Via CLI
-```bash
-vercel login
-vercel link
-vercel env add DATABASE_URL
-vercel env add SESSION_SECRET
-vercel env add NODE_ENV
-vercel --prod
-```
+---
 
-**Guia completo**: `DEPLOY.md`
+## 🔒 Segurança
+
+### Validações Implementadas
+1. **SESSION_SECRET**:
+   - Mínimo 32 caracteres (erro)
+   - Recomendado 64+ caracteres (aviso)
+   - Rejeita valores fracos/padrão
+   - Verifica entropia
+
+2. **Turso Credentials**:
+   - Valida formato TURSO_DATABASE_URL (libsql://)
+   - Verifica presença de TURSO_AUTH_TOKEN
+   - Rejeita localhost em produção
+
+3. **Runtime Validation**:
+   - Aplicação não inicia com configuração inválida
+   - Mensagens de erro claras e acionáveis
+   - Orientações de como corrigir
+
+**Detalhes**: `SECURITY-ENV.md`
 
 ---
 
-## 🧪 Validação Pré-Deploy
+## 📝 Próximos Passos
 
-Antes de fazer deploy, execute:
-
-```bash
-# Validar variáveis de ambiente
-npm run validate:env
-
-# Verificar TypeScript
-npm run check
-
-# Executar pré-deploy completo
-npm run predeploy
-```
+1. ✅ Adicionar scripts ao package.json
+2. ✅ Configurar Turso Database
+3. ✅ Gerar SESSION_SECRET forte
+4. ✅ Fazer deploy no Vercel
+5. ✅ Testar aplicação em produção
+6. ✅ Trocar senha de admin
+7. ✅ Configurar domínio customizado (opcional)
+8. ✅ Configurar storage de imagens (Vercel Blob)
 
 ---
 
-## ✅ Checklist Rápido
+## 📚 Documentação de Referência
 
-### Antes do Deploy
-- [ ] Scripts adicionados ao package.json
-- [ ] Banco PostgreSQL criado (Neon)
-- [ ] SESSION_SECRET gerado
-- [ ] Variáveis de ambiente definidas
-- [ ] `npm run predeploy` passou
-
-### Durante Deploy
-- [ ] Build sem erros
-- [ ] Migrações executadas
-- [ ] Função serverless criada
-
-### Após Deploy
-- [ ] Site acessível
-- [ ] Login admin funciona
-- [ ] Senha admin trocada
-- [ ] CRUD funciona
-- [ ] Formulário de contato funciona
-
-**Checklist completo**: `DEPLOY-CHECKLIST.md`
+- **Deploy Rápido**: `DEPLOY-QUICKSTART.md`
+- **Deploy Completo**: `DEPLOY.md`
+- **Checklist**: `DEPLOY-CHECKLIST.md`
+- **Segurança**: `SECURITY.md` e `SECURITY-ENV.md`
+- **Variáveis de Ambiente**: `.env.example`
+- **Scripts**: `SCRIPTS-PACKAGE.md`
+- **SEO**: `SEO-ESTRATEGIA-CARMIGUI.md`
 
 ---
 
-## 🐛 Problemas Comuns
+## ✅ Status
 
-| Problema | Solução Rápida | Doc |
-|----------|----------------|-----|
-| Build falha | Verificar DATABASE_URL | DEPLOY.md |
-| Login não funciona | Verificar ADMIN_EMAIL e ADMIN_PASSWORD | DEPLOY.md |
-| Imagens não carregam | Configurar Vercel Blob Storage | DEPLOY.md |
-| Session error | Verificar SESSION_SECRET (32+ chars) | DEPLOY.md |
-
----
-
-## 📊 O Que Ainda Falta para Produção
-
-### Crítico (Fazer antes do deploy)
-1. ✅ Pipeline de deploy - **RESOLVIDO**
-2. ✅ Documentação de deploy - **RESOLVIDO**
-3. ✅ Scripts de migração - **RESOLVIDO**
-4. ✅ Validação de ambiente - **RESOLVIDO**
-5. ⚠️ Adicionar scripts ao package.json - **PENDENTE (Manual)**
-6. ❌ Remover credenciais admin padrão - **PENDENTE**
-7. ❌ Configurar storage de imagens (Vercel Blob) - **PENDENTE**
-
-### Alto (Fazer logo após deploy)
-8. ❌ Testes automatizados - **PENDENTE**
-9. ❌ Monitoramento (Sentry) - **PENDENTE**
-10. ❌ Backup automático do banco - **PENDENTE**
-
-### Médio (Melhorias)
-11. ❌ CSP condicional para produção - **PENDENTE**
-12. ❌ Alt text completo de imagens - **PENDENTE**
-13. ❌ Refatorar routes.ts - **PENDENTE**
+- [x] Configuração de ambiente documentada
+- [x] Scripts de validação criados
+- [x] Documentação de deploy completa
+- [x] Segurança implementada e documentada
+- [x] Migração de PostgreSQL para SQLite/Turso
+- [x] Dependências PostgreSQL removidas
+- [x] Validadores atualizados
+- [ ] Deploy em produção (aguardando execução)
 
 ---
 
-## 📞 Próximos Passos
-
-### Imediato
-1. Adicionar scripts ao `package.json` (ver `SCRIPTS-PACKAGE.md`)
-2. Criar banco PostgreSQL no Neon
-3. Gerar SESSION_SECRET
-4. Configurar variáveis no Vercel
-5. Fazer primeiro deploy
-
-### Pós-Deploy
-1. Trocar senha admin
-2. Testar todas as funcionalidades
-3. Configurar domínio personalizado (se aplicável)
-4. Configurar storage de imagens
-5. Submeter ao Google Search Console
-
----
-
-## 📚 Documentação Disponível
-
-| Arquivo | Propósito | Quando Usar |
-|---------|-----------|-------------|
-| `DEPLOY-QUICKSTART.md` | Deploy rápido em 10 min | Primeira vez |
-| `DEPLOY.md` | Guia completo | Referência detalhada |
-| `DEPLOY-CHECKLIST.md` | Checklist completo | Durante deploy |
-| `.env.example` | Variáveis de ambiente | Configuração |
-| `SCRIPTS-PACKAGE.md` | Scripts necessários | Setup inicial |
-| `SECURITY.md` | Segurança | Referência técnica |
-| `SEO-ESTRATEGIA-CARMIGUI.md` | SEO | Marketing |
-| `PERFORMANCE_OPTIMIZATIONS.md` | Performance | Otimização |
-
----
-
-## 🎯 Status do Projeto
-
-**Pipeline de Deploy**: ✅ Completo  
-**Documentação**: ✅ Completa  
-**Scripts**: ✅ Criados (pendente adicionar ao package.json)  
-**Pronto para deploy**: 🟡 Quase (falta adicionar scripts manualmente)
-
----
-
-**Conclusão**: A infraestrutura de deploy está completa. Siga o `DEPLOY-QUICKSTART.md` para fazer o primeiro deploy!
+**Versão**: 2.0.0 - SQLite + Turso  
+**Última Atualização**: 25 de Outubro de 2025

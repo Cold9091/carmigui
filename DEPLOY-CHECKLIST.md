@@ -17,7 +17,7 @@ Use este checklist para garantir que nada seja esquecido durante o processo de d
 
 ### Banco de Dados
 
-- [ ] Banco PostgreSQL criado (Neon, Supabase, etc.)
+- [ ] Banco Turso criado (Turso)
 - [ ] Connection string obtida e testada
 - [ ] Schema reviewed em `shared/schema.ts`
 - [ ] Migrations prontas para executar
@@ -25,7 +25,7 @@ Use este checklist para garantir que nada seja esquecido durante o processo de d
 
 ### Variáveis de Ambiente
 
-- [ ] `DATABASE_URL` definida
+- [ ] `TURSO_DATABASE_URL` definida
 - [ ] `SESSION_SECRET` gerada (mínimo 32 caracteres)
 - [ ] `NODE_ENV` = `production`
 - [ ] `ADMIN_EMAIL` definido

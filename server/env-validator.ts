@@ -66,36 +66,28 @@ export function validateEnvironment(): void {
   }
 
   if (isProduction) {
-    if (!process.env.DATABASE_URL) {
+    if (!process.env.TURSO_DATABASE_URL || !process.env.TURSO_AUTH_TOKEN) {
       errors.push({
-        variable: 'DATABASE_URL',
-        message: 'DATABASE_URL é obrigatório em produção',
+        variable: 'TURSO_DATABASE_URL / TURSO_AUTH_TOKEN',
+        message: 'Turso Database é obrigatório em produção. Configure TURSO_DATABASE_URL e TURSO_AUTH_TOKEN',
         severity: 'error'
       });
     } else {
-      const dbUrl = process.env.DATABASE_URL;
+      const tursoUrl = process.env.TURSO_DATABASE_URL;
       
-      if (!dbUrl.startsWith('postgresql://') && !dbUrl.startsWith('postgres://')) {
+      if (!tursoUrl.startsWith('libsql://')) {
         errors.push({
-          variable: 'DATABASE_URL',
-          message: 'DATABASE_URL deve usar PostgreSQL em produção (formato: postgresql://...)',
+          variable: 'TURSO_DATABASE_URL',
+          message: 'TURSO_DATABASE_URL deve usar o protocolo libsql:// (formato: libsql://nome-db.turso.io)',
           severity: 'error'
         });
       }
 
-      if (dbUrl.includes('localhost') || dbUrl.includes('127.0.0.1')) {
+      if (tursoUrl.includes('localhost') || tursoUrl.includes('127.0.0.1')) {
         errors.push({
-          variable: 'DATABASE_URL',
-          message: 'DATABASE_URL não deve apontar para localhost em produção',
+          variable: 'TURSO_DATABASE_URL',
+          message: 'TURSO_DATABASE_URL não deve apontar para localhost em produção',
           severity: 'error'
-        });
-      }
-
-      if (!dbUrl.includes('sslmode=require') && !dbUrl.includes('ssl=true')) {
-        errors.push({
-          variable: 'DATABASE_URL',
-          message: 'DATABASE_URL deve usar SSL em produção (adicione ?sslmode=require)',
-          severity: 'warning'
         });
       }
     }
@@ -134,6 +126,10 @@ export function validateEnvironment(): void {
     console.error('📖 Consulte o arquivo .env.example para referência.\n');
     console.error('🔑 Para gerar um SESSION_SECRET seguro, execute:');
     console.error('   node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"\n');
+    console.error('🗄️  Para configurar Turso Database em produção:');
+    console.error('   1. Crie conta em https://turso.tech');
+    console.error('   2. Crie database: turso db create carmigui');
+    console.error('   3. Obtenha credenciais: turso db show carmigui\n');
     
     process.exit(1);
   }
