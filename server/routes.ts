@@ -19,11 +19,10 @@ import { registerCategoryRoutes } from "./routes/categories";
 import { registerCityRoutes } from "./routes/cities";
 import { registerHeroRoutes } from "./routes/hero";
 import { registerAboutRoutes } from "./routes/about";
-
-// Rotas complexas que permaneceram no arquivo original
-import { registerDatabaseRoutes } from "./routes-backup";
-import { registerUploadRoutes } from "./routes-backup";
-import { registerSitemapRoute } from "./routes-backup";
+import { registerDatabaseRoutes } from "./routes/database";
+import { registerUploadRoutes } from "./routes/uploads";
+import { registerSitemapRoutes } from "./routes/sitemap";
+import { storage } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup de autenticação
@@ -41,10 +40,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   registerHeroRoutes(router);
   registerAboutRoutes(router);
   
-  // Rotas complexas (temporário - manter do arquivo original)
+  // Rotas adicionais (database, upload, sitemap)
   registerDatabaseRoutes(app);
   registerUploadRoutes(app);
-  registerSitemapRoute(app);
+  registerSitemapRoutes(router, storage);
   
   // Aplicar todas as rotas do router
   app.use(router);

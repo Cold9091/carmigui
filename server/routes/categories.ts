@@ -7,11 +7,11 @@ import { createCRUDHandlers } from "../utils/crud-helpers";
 export function registerCategoryRoutes(router: Router) {
   const handlers = createCRUDHandlers({
     storage: {
-      getAll: storage.getPropertyCategories,
-      getById: storage.getPropertyCategory,
-      create: storage.createPropertyCategory,
-      update: storage.updatePropertyCategory,
-      delete: storage.deletePropertyCategory,
+      getAll: (filters) => storage.getPropertyCategories(filters),
+      getById: (id) => storage.getPropertyCategory(id),
+      create: (data) => storage.createPropertyCategory(data),
+      update: (id, data) => storage.updatePropertyCategory(id, data),
+      delete: (id) => storage.deletePropertyCategory(id),
     },
     schemas: {
       insert: insertPropertyCategorySchema,

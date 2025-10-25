@@ -1,7 +1,8 @@
 import { Router } from "express";
-import type { Storage } from "../storage";
+import type { IStorage } from "../storage";
+import type { Property, Project, Condominium } from "@shared/schema";
 
-export function registerSitemapRoutes(app: Router, storage: Storage) {
+export function registerSitemapRoutes(app: Router, storage: IStorage) {
   app.get("/sitemap.xml", async (_req, res) => {
     try {
       const properties = await storage.getProperties();
@@ -40,7 +41,7 @@ export function registerSitemapRoutes(app: Router, storage: Storage) {
 `;
       });
       
-      properties.forEach(property => {
+      properties.forEach((property: Property) => {
         sitemap += `  <url>
     <loc>${baseUrl}/imoveis/${property.id}</loc>
     <lastmod>${property.updatedAt?.toISOString().split('T')[0] || currentDate}</lastmod>
@@ -50,7 +51,7 @@ export function registerSitemapRoutes(app: Router, storage: Storage) {
 `;
       });
       
-      projects.forEach(project => {
+      projects.forEach((project: Project) => {
         sitemap += `  <url>
     <loc>${baseUrl}/construcao/${project.id}</loc>
     <lastmod>${project.updatedAt?.toISOString().split('T')[0] || currentDate}</lastmod>
@@ -60,7 +61,7 @@ export function registerSitemapRoutes(app: Router, storage: Storage) {
 `;
       });
       
-      condominiums.forEach(condominium => {
+      condominiums.forEach((condominium: Condominium) => {
         sitemap += `  <url>
     <loc>${baseUrl}/condominios/${condominium.id}</loc>
     <lastmod>${condominium.updatedAt?.toISOString().split('T')[0] || currentDate}</lastmod>

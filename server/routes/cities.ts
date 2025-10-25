@@ -7,11 +7,11 @@ import { createCRUDHandlers } from "../utils/crud-helpers";
 export function registerCityRoutes(router: Router) {
   const handlers = createCRUDHandlers({
     storage: {
-      getAll: storage.getCities,
-      getById: storage.getCity,
-      create: storage.createCity,
-      update: storage.updateCity,
-      delete: storage.deleteCity,
+      getAll: (filters) => storage.getCities(filters),
+      getById: (id) => storage.getCity(id),
+      create: (data) => storage.createCity(data),
+      update: (id, data) => storage.updateCity(id, data),
+      delete: (id) => storage.deleteCity(id),
     },
     schemas: {
       insert: insertCitySchema,

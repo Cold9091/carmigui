@@ -969,7 +969,7 @@ export class SimpleSQLiteStorage implements IStorage {
       const stmt = sqlite.prepare(sql);
       const results = stmt.all(params);
       
-      return results.map(this.convertPropertyCategoryFromDB);
+      return results.map(row => this.convertPropertyCategoryFromDB(row));
     } catch (error) {
       console.error("Error fetching property categories:", error);
       return [];
