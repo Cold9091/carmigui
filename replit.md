@@ -150,3 +150,83 @@ The application uses a **design system approach** with:
 - **Replit** - Cloud development environment with specialized Replit plugins
 - **TSX** - TypeScript execution for development server
 - **Connect-PG-Simple** - PostgreSQL session store for Express sessions
+
+## Deployment & Production
+
+### Deployment Configuration
+The application is configured for deployment on **Vercel** with the following setup:
+
+**Files Created for Deployment:**
+- `.env.example` - Documentation of all required environment variables
+- `vercel.json` - Vercel-specific configuration for serverless deployment
+- `DEPLOY.md` - Complete deployment documentation with step-by-step instructions
+- `DEPLOY-QUICKSTART.md` - Quick 10-minute deployment guide
+- `DEPLOY-CHECKLIST.md` - Comprehensive pre/post-deployment checklist
+- `SCRIPTS-PACKAGE.md` - Required package.json scripts documentation
+
+**Deployment Scripts:**
+- `scripts/validate-env.js` - Validates all required environment variables
+- `scripts/db-migrate.js` - Safe database migration script
+
+**Required Scripts (to be added to package.json):**
+- `db:migrate` - Execute database migrations safely
+- `validate:env` - Validate environment configuration
+- `predeploy` - Pre-deployment validation (env + TypeScript check)
+- `vercel-build` - Vercel build script (migrations + build)
+
+### Environment Variables Required for Production
+
+**Critical (Must Have):**
+- `DATABASE_URL` - PostgreSQL connection string (recommend Neon Database)
+- `SESSION_SECRET` - Random secret for sessions (minimum 32 characters)
+- `NODE_ENV` - Set to `production`
+
+**Recommended:**
+- `ADMIN_EMAIL` - Initial admin email
+- `ADMIN_PASSWORD` - Initial admin password (change after first login!)
+- `BASE_URL` - Production URL (e.g., https://carmigui.com)
+
+### Deployment Process
+
+1. **Prepare Database** - Create PostgreSQL database (Neon recommended)
+2. **Configure Environment** - Set all required variables in Vercel dashboard
+3. **Deploy** - Push to main branch or use Vercel CLI
+4. **Verify** - Run through deployment checklist
+5. **Secure** - Change default admin password immediately
+
+### Production Considerations
+
+**Database:**
+- Must use PostgreSQL in production (SQLite is development-only)
+- Neon Database recommended for serverless compatibility
+- Automatic migrations via `vercel-build` script
+
+**File Uploads:**
+- Vercel is serverless - local uploads don't persist
+- Configure Vercel Blob Storage, Cloudinary, or AWS S3 for production images
+- See DEPLOY.md for detailed storage configuration
+
+**Security:**
+- All security measures (rate limiting, Helmet, CORS) are production-ready
+- Change default admin credentials immediately after first deploy
+- Use strong SESSION_SECRET (generate with crypto.randomBytes)
+
+**Monitoring:**
+- Logs available in Vercel dashboard
+- Recommended: Configure Sentry for error tracking
+- Recommended: Set up uptime monitoring
+
+### Quick Deploy Commands
+
+```bash
+# Validate environment
+npm run validate:env
+
+# Deploy to Vercel (via CLI)
+vercel --prod
+
+# Check deployment
+vercel logs --follow
+```
+
+For detailed instructions, see `DEPLOY.md` and `DEPLOY-QUICKSTART.md`.
