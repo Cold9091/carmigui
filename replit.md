@@ -51,7 +51,12 @@ The application uses **PostgreSQL** as the primary database with **Drizzle ORM**
 - **Migration-based schema management** for version control and deployment safety
 
 ### Authentication & Authorization
-Currently, the application operates without authentication mechanisms, suggesting it's designed for internal use or will implement authentication in future iterations. The admin interface is accessible without login restrictions.
+The application implements secure authentication using **Passport.js** with local strategy:
+- **Password hashing**: Scrypt algorithm with random salt (16 bytes)
+- **Timing-safe comparison**: Protection against timing attacks
+- **Secure sessions**: PostgreSQL-backed sessions with httpOnly and secure cookies
+- **Protected routes**: Admin endpoints require authentication
+- **Default admin**: Created automatically on first run (credentials should be changed in production)
 
 ### State Management
 **Client-side state** is managed through a combination of:
@@ -73,6 +78,36 @@ The REST API follows conventional HTTP methods and status codes:
 - **Validation middleware** using Zod schemas
 - **Consistent error handling** with structured JSON responses
 - **CORS and security headers** configured for production deployment
+
+### Security Measures
+The application implements multiple layers of security protection (detailed in `SECURITY.md`):
+
+**Rate Limiting:**
+- **Global limiter**: 100 requests per 15 minutes per IP
+- **Auth limiter**: 5 login attempts per 15 minutes per IP (critical for brute force protection)
+- **API limiter**: 30 API requests per minute per IP
+
+**HTTP Security Headers (Helmet.js):**
+- Content Security Policy (CSP) to prevent XSS attacks
+- X-Frame-Options to prevent clickjacking
+- Strict-Transport-Security for HTTPS enforcement
+- X-Content-Type-Options to prevent MIME sniffing
+
+**CORS Protection:**
+- Production: Only `https://carmigui.com` and `https://www.carmigui.com` allowed
+- Development: Localhost access for testing
+- Credentials support for session cookies
+
+**Input Validation:**
+- File upload: Type validation (images only), size limit (5MB), max files (10)
+- Request payload: Limited to 10MB to prevent memory attacks
+- Zod schema validation on all API inputs
+
+**Session Security:**
+- HttpOnly cookies (prevents JavaScript access)
+- Secure flag in production (HTTPS only)
+- 7-day expiration with automatic cleanup
+- PostgreSQL session store for persistence
 
 ### Styling & Theming
 The application uses a **design system approach** with:
