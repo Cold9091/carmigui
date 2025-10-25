@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Worker - Testes de Regressão</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 2rem;
+    }
+
+    .test-section {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+
+    .test-section h2 {
+      color: #333;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+
+    .test-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      background: white;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .test-label {
+      flex: 1;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .test-status {
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      min-width: 100px;
+      text-align: center;
+    }
+
+    .test-status.pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .test-status.pass {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .test-status.fail {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .test-status.warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    button {
+      flex: 1;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    button.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    button.secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    button.secondary:hover {
+      background: #5a6268;
+    }
+
+    button.danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    button.danger:hover {
+      background: #c82333;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .info-box {
+      padding: 1rem;
+      background: #e7f3ff;
+      border-left: 4px solid #2196F3;
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+
+    .info-box h3 {
+      color: #1976D2;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-box p {
+      color: #555;
+      margin: 0.3rem 0;
+    }
+
+    .warning-box {
+      padding: 1rem;
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+
+    .warning-box h3 {
+      color: #856404;
+      margin-bottom: 0.5rem;
+    }
+
+    .error-box {
+      padding: 1rem;
+      background: #f8d7da;
+      border-left: 4px solid #dc3545;
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+
+    .error-box h3 {
+      color: #721c24;
+      margin-bottom: 0.5rem;
+    }
+
+    .log-output {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      max-height: 300px;
+      overflow-y: auto;
+      margin: 1rem 0;
+    }
+
+    .log-entry {
+      margin: 0.3rem 0;
+      padding: 0.2rem 0;
+    }
+
+    .log-entry.info { color: #4fc3f7; }
+    .log-entry.success { color: #81c784; }
+    .log-entry.error { color: #e57373; }
+    .log-entry.warning { color: #ffd54f; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .testing {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🧪 Service Worker - Testes de Regressão</h1>
+      <p>Verificação automática de cache busting e cenários de atualização</p>
+    </div>
+
+    <div class="content">
+      <!-- Test Controls -->
+      <div class="button-group">
+        <button class="primary" onclick="runAllTests()">▶️ Executar Todos os Testes</button>
+        <button class="secondary" onclick="clearLogs()">🗑️ Limpar Logs</button>
+        <button class="danger" onclick="unregisterSW()">❌ Desregistrar SW</button>
+      </div>
+
+      <!-- Service Worker Status -->
+      <div class="test-section">
+        <h2>📊 Status do Service Worker</h2>
+        <div class="test-item">
+          <span class="test-label">Service Worker Suportado</span>
+          <span class="test-status pending" id="sw-support">Aguardando</span>
+        </div>
+        <div class="test-item">
+          <span class="test-label">Service Worker Registrado</span>
+          <span class="test-status pending" id="sw-registered">Aguardando</span>
+        </div>
+        <div class="test-item">
+          <span class="test-label">Service Worker Ativo</span>
+          <span class="test-status pending" id="sw-active">Aguardando</span>
+        </div>
+        <div class="test-item">
+          <span class="test-label">Versão do Cache</span>
+          <span class="test-status pending" id="cache-version">Aguardando</span>
+        </div>
+      </div>
+
+      <!-- Cache Tests -->
+      <div class="test-section">
+        <h2>🗄️ Testes de Cache</h2>
+        <div class="test-item">
+          <span class="test-label">Assets pré-cacheados</span>
+          <span class="test-status pending" id="test-precache">Aguardando</span>
+        </div>
+        <div class="test-item">
+          <span class="test-label">Cache dinâmico funcionando</span>
+          <span class="test-status pending" id="test-dynamic-cache">Aguardando</span>
+        </div>
+        <div class="test-item">
+          <span class="test-label">Limpeza de caches antigos</span>
+          <span class="test-status pending" id="test-cache-cleanup">Aguardando</span>
+        </div>
+      </div>
+
+      <!-- Update Tests -->
+      <div class="test-section">
+        <h2>🔄 Testes de Atualização</h2>
+        <div class="test-item">
+          <span class="test-label">Detectar nova versão</span>
+          <span class="test-status pending" id="test-update-detection">Aguardando</span>
+        </div>
+        <div class="test-item">
+          <span class="test-label">Atualização automática</span>
+          <span class="test-status pending" id="test-auto-update">Aguardando</span>
+        </div>
+        <div class="test-item">
+          <span class="test-label">Cache busting</span>
+          <span class="test-status pending" id="test-cache-busting">Aguardando</span>
+        </div>
+      </div>
+
+      <!-- Warnings & Recommendations -->
+      <div id="warnings-container"></div>
+
+      <!-- Test Logs -->
+      <div class="log-output" id="log-output">
+        <div class="log-entry info">🚀 Aguardando execução dos testes...</div>
+      </div>
+
+      <!-- Information Box -->
+      <div class="info-box">
+        <h3>ℹ️ Sobre este teste</h3>
+        <p><strong>Objetivo:</strong> Verificar se o Service Worker está funcionando corretamente e se há problemas com cache busting.</p>
+        <p><strong>Recomendação:</strong> Execute estes testes após cada deploy ou mudança no Service Worker.</p>
+        <p><strong>Cache Busting:</strong> Certifique-se de atualizar o CACHE_NAME quando houver mudanças críticas no código.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const log = {
+      info: (msg) => addLog(msg, 'info'),
+      success: (msg) => addLog(msg, 'success'),
+      error: (msg) => addLog(msg, 'error'),
+      warning: (msg) => addLog(msg, 'warning')
+    };
+
+    function addLog(message, type = 'info') {
+      const logOutput = document.getElementById('log-output');
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${type}`;
+      const timestamp = new Date().toLocaleTimeString();
+      const icons = { info: 'ℹ️', success: '✅', error: '❌', warning: '⚠️' };
+      entry.textContent = `[${timestamp}] ${icons[type]} ${message}`;
+      logOutput.appendChild(entry);
+      logOutput.scrollTop = logOutput.scrollHeight;
+    }
+
+    function updateStatus(elementId, status, text = null) {
+      const element = document.getElementById(elementId);
+      element.className = `test-status ${status}`;
+      if (text) element.textContent = text;
+      else {
+        const statusText = {
+          'pass': '✅ Passou',
+          'fail': '❌ Falhou',
+          'warning': '⚠️ Aviso',
+          'pending': '⏳ Aguardando'
+        };
+        element.textContent = statusText[status] || status;
+      }
+    }
+
+    function clearLogs() {
+      document.getElementById('log-output').innerHTML = '<div class="log-entry info">🧹 Logs limpos</div>';
+    }
+
+    async function unregisterSW() {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          await registration.unregister();
+        }
+        log.warning('Service Worker desregistrado. Recarregue a página.');
+        updateStatus('sw-registered', 'warning', 'Desregistrado');
+        updateStatus('sw-active', 'warning', 'Inativo');
+      }
+    }
+
+    async function checkSWSupport() {
+      log.info('Verificando suporte ao Service Worker...');
+      if ('serviceWorker' in navigator) {
+        updateStatus('sw-support', 'pass');
+        log.success('Service Worker é suportado neste navegador');
+        return true;
+      } else {
+        updateStatus('sw-support', 'fail');
+        log.error('Service Worker não é suportado neste navegador');
+        return false;
+      }
+    }
+
+    async function checkSWRegistration() {
+      log.info('Verificando registro do Service Worker...');
+      try {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (registration) {
+          updateStatus('sw-registered', 'pass');
+          log.success('Service Worker está registrado');
+          
+          if (registration.active) {
+            updateStatus('sw-active', 'pass');
+            log.success('Service Worker está ativo');
+          } else {
+            updateStatus('sw-active', 'warning', '⏳ Instalando');
+            log.warning('Service Worker está instalando ou aguardando');
+          }
+          return registration;
+        } else {
+          updateStatus('sw-registered', 'fail');
+          updateStatus('sw-active', 'fail');
+          log.error('Service Worker não está registrado');
+          return null;
+        }
+      } catch (error) {
+        log.error(`Erro ao verificar registro: ${error.message}`);
+        return null;
+      }
+    }
+
+    async function checkCacheVersion() {
+      log.info('Verificando versão do cache...');
+      try {
+        const cacheNames = await caches.keys();
+        log.info(`Caches encontrados: ${cacheNames.join(', ')}`);
+        
+        const currentCache = cacheNames.find(name => name.includes('carmigui-cache'));
+        if (currentCache) {
+          updateStatus('cache-version', 'pass', currentCache);
+          log.success(`Cache atual: ${currentCache}`);
+          
+          // Check for old caches
+          const oldCaches = cacheNames.filter(name => 
+            name.includes('carmigui-cache') && name !== currentCache
+          );
+          
+          if (oldCaches.length > 0) {
+            log.warning(`⚠️ Caches antigos encontrados: ${oldCaches.join(', ')}`);
+            addWarning(
+              'Caches Antigos Detectados',
+              `Encontrados ${oldCaches.length} cache(s) antigo(s). O Service Worker deveria limpá-los automaticamente.`,
+              'warning'
+            );
+            return false;
+          }
+          return true;
+        } else {
+          updateStatus('cache-version', 'fail', 'Não encontrado');
+          log.error('Nenhum cache do CARMIGUI encontrado');
+          return false;
+        }
+      } catch (error) {
+        log.error(`Erro ao verificar cache: ${error.message}`);
+        updateStatus('cache-version', 'fail');
+        return false;
+      }
+    }
+
+    async function testPrecache() {
+      log.info('Testando assets pré-cacheados...');
+      try {
+        const cacheNames = await caches.keys();
+        const currentCache = cacheNames.find(name => name.includes('carmigui-cache'));
+        
+        if (!currentCache) {
+          updateStatus('test-precache', 'fail');
+          log.error('Cache não encontrado');
+          return false;
+        }
+
+        const cache = await caches.open(currentCache);
+        const keys = await cache.keys();
+        
+        log.info(`${keys.length} assets no cache`);
+        
+        if (keys.length > 0) {
+          updateStatus('test-precache', 'pass', `${keys.length} assets`);
+          log.success(`${keys.length} assets estão cacheados`);
+          return true;
+        } else {
+          updateStatus('test-precache', 'warning', '0 assets');
+          log.warning('Nenhum asset foi cacheado ainda');
+          return false;
+        }
+      } catch (error) {
+        log.error(`Erro ao testar precache: ${error.message}`);
+        updateStatus('test-precache', 'fail');
+        return false;
+      }
+    }
+
+    async function testDynamicCache() {
+      log.info('Testando cache dinâmico...');
+      try {
+        // Fazer uma requisição para testar o cache dinâmico
+        const testUrl = window.location.origin + '/attached_assets/Component 1_1760554140338.webp';
+        
+        log.info(`Testando cache de: ${testUrl}`);
+        
+        // Primeira requisição (deve ir para a rede)
+        await fetch(testUrl);
+        
+        // Aguardar um momento para o SW cachear
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Verificar se está no cache
+        const cacheNames = await caches.keys();
+        const currentCache = cacheNames.find(name => name.includes('carmigui-cache'));
+        
+        if (currentCache) {
+          const cache = await caches.open(currentCache);
+          const cachedResponse = await cache.match(testUrl);
+          
+          if (cachedResponse) {
+            updateStatus('test-dynamic-cache', 'pass');
+            log.success('Cache dinâmico está funcionando');
+            return true;
+          } else {
+            updateStatus('test-dynamic-cache', 'warning');
+            log.warning('Asset não foi cacheado dinamicamente');
+            return false;
+          }
+        } else {
+          updateStatus('test-dynamic-cache', 'fail');
+          log.error('Cache não encontrado');
+          return false;
+        }
+      } catch (error) {
+        log.error(`Erro ao testar cache dinâmico: ${error.message}`);
+        updateStatus('test-dynamic-cache', 'fail');
+        return false;
+      }
+    }
+
+    async function testCacheCleanup() {
+      log.info('Testando limpeza de caches antigos...');
+      const cacheNames = await caches.keys();
+      const carmiguiCaches = cacheNames.filter(name => name.includes('carmigui-cache'));
+      
+      if (carmiguiCaches.length === 1) {
+        updateStatus('test-cache-cleanup', 'pass');
+        log.success('Apenas 1 cache ativo (limpeza funcionando)');
+        return true;
+      } else if (carmiguiCaches.length > 1) {
+        updateStatus('test-cache-cleanup', 'warning');
+        log.warning(`${carmiguiCaches.length} caches ativos (deveria ser apenas 1)`);
+        addWarning(
+          'Múltiplos Caches Ativos',
+          `Encontrados ${carmiguiCaches.length} caches. Recomenda-se ter apenas 1 cache ativo. O Service Worker pode não estar limpando caches antigos corretamente.`,
+          'warning'
+        );
+        return false;
+      } else {
+        updateStatus('test-cache-cleanup', 'fail');
+        log.error('Nenhum cache encontrado');
+        return false;
+      }
+    }
+
+    async function testUpdateDetection() {
+      log.info('Testando detecção de nova versão...');
+      
+      // Check if there's a waiting SW
+      const registration = await navigator.serviceWorker.getRegistration();
+      
+      if (registration) {
+        if (registration.waiting) {
+          updateStatus('test-update-detection', 'warning', '⚠️ Atualização pendente');
+          log.warning('Nova versão detectada! Mas requer atualização manual.');
+          addWarning(
+            'Atualização Disponível',
+            'Uma nova versão do Service Worker foi detectada, mas está aguardando. Os usuários precisam fechar todas as abas ou usar "skipWaiting" para atualizar.',
+            'warning'
+          );
+          return false;
+        } else if (registration.installing) {
+          updateStatus('test-update-detection', 'warning', '⏳ Instalando');
+          log.warning('Nova versão sendo instalada...');
+          return false;
+        } else {
+          updateStatus('test-update-detection', 'pass');
+          log.success('Sem atualizações pendentes');
+          return true;
+        }
+      } else {
+        updateStatus('test-update-detection', 'fail');
+        log.error('Service Worker não registrado');
+        return false;
+      }
+    }
+
+    async function testAutoUpdate() {
+      log.info('Testando atualização automática...');
+      
+      // Verificar se skipWaiting está implementado
+      const swCode = await fetch('/service-worker.js').then(r => r.text());
+      
+      if (swCode.includes('skipWaiting')) {
+        updateStatus('test-auto-update', 'pass');
+        log.success('skipWaiting() está implementado - atualizações automáticas ativas');
+        return true;
+      } else {
+        updateStatus('test-auto-update', 'warning');
+        log.warning('skipWaiting() não encontrado - atualizações podem precisar de recarga manual');
+        addWarning(
+          'Atualização Manual Requerida',
+          'O Service Worker não usa skipWaiting(), o que significa que os usuários podem precisar fechar todas as abas para receber atualizações.',
+          'warning'
+        );
+        return false;
+      }
+    }
+
+    async function testCacheBusting() {
+      log.info('Testando cache busting...');
+      
+      // Verificar se há versionamento no nome do cache
+      const cacheNames = await caches.keys();
+      const currentCache = cacheNames.find(name => name.includes('carmigui-cache'));
+      
+      if (!currentCache) {
+        updateStatus('test-cache-busting', 'fail');
+        log.error('Cache não encontrado');
+        return false;
+      }
+
+      // Verificar se o nome do cache tem versão
+      const hasVersion = /v\d+/.test(currentCache);
+      
+      if (hasVersion) {
+        updateStatus('test-cache-busting', 'pass');
+        log.success('Cache tem versionamento (cache busting ativo)');
+        return true;
+      } else {
+        updateStatus('test-cache-busting', 'warning');
+        log.warning('Cache sem versionamento explícito');
+        addWarning(
+          'Cache Busting Limitado',
+          'O cache tem uma versão, mas recomenda-se incluir um hash ou timestamp para garantir que atualizações sejam forçadas. Exemplo: "carmigui-cache-v2-1234567890"',
+          'warning'
+        );
+        return false;
+      }
+    }
+
+    function addWarning(title, message, type = 'warning') {
+      const container = document.getElementById('warnings-container');
+      const boxClass = type === 'error' ? 'error-box' : 'warning-box';
+      
+      const warningBox = document.createElement('div');
+      warningBox.className = boxClass;
+      warningBox.innerHTML = `
+        <h3>${title}</h3>
+        <p>${message}</p>
+      `;
+      container.appendChild(warningBox);
+    }
+
+    async function runAllTests() {
+      log.info('═══════════════════════════════════════════');
+      log.info('🚀 Iniciando bateria de testes...');
+      log.info('═══════════════════════════════════════════');
+      
+      // Clear previous warnings
+      document.getElementById('warnings-container').innerHTML = '';
+      
+      // Service Worker Support & Registration
+      const supported = await checkSWSupport();
+      if (!supported) {
+        log.error('Testes abortados: Service Worker não suportado');
+        return;
+      }
+      
+      await checkSWRegistration();
+      await checkCacheVersion();
+      
+      // Cache Tests
+      log.info('─────────────────────────────────────────');
+      log.info('📦 Executando testes de cache...');
+      await testPrecache();
+      await testDynamicCache();
+      await testCacheCleanup();
+      
+      // Update Tests
+      log.info('─────────────────────────────────────────');
+      log.info('🔄 Executando testes de atualização...');
+      await testUpdateDetection();
+      await testAutoUpdate();
+      await testCacheBusting();
+      
+      log.info('═══════════════════════════════════════════');
+      log.success('✅ Testes concluídos!');
+      log.info('═══════════════════════════════════════════');
+    }
+
+    // Auto-run tests on page load
+    window.addEventListener('load', () => {
+      setTimeout(runAllTests, 1000);
+    });
+  </script>
+</body>
+</html>
