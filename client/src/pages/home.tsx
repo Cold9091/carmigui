@@ -649,9 +649,9 @@ function FeaturedCondominiumCard({ condominium }: { condominium: Condominium }) 
         
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs text-gray-500 mb-1">Faixa de preço</p>
+            <p className="text-xs text-gray-500 mb-1">Preço</p>
             <p className="text-lg font-bold text-gray-800">
-              {condominium.priceRange}
+              {condominium.price}
             </p>
             <p className="text-xs text-gray-500">{condominium.developmentYear}</p>
           </div>
