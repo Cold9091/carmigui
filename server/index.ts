@@ -74,10 +74,20 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Security: Rate limiting - Upload rate limiter
+const uploadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 upload requests per 15 minutes
+  message: 'Muitas tentativas de upload, tente novamente após 15 minutos.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Apply rate limiters
 app.use('/api/', globalLimiter);
 app.use('/api/login', authLimiter);
 app.use('/api/', apiLimiter);
+app.use('/api/upload', uploadLimiter);
 
 // Gzip/Deflate compression for development
 // Note: Brotli compression is automatically provided by Replit's CDN when deployed

@@ -39,7 +39,7 @@ Implementamos o Helmet.js que configura automaticamente headers HTTP seguros par
 
 **Localização:** `server/index.ts`
 
-Implementamos três níveis de rate limiting usando `express-rate-limit`:
+Implementamos quatro níveis de rate limiting usando `express-rate-limit`:
 
 #### a) **Global Limiter**
 ```typescript
@@ -70,10 +70,20 @@ max: 30 requisições por IP
 - Previne abuso da API
 - Mensagem: "Muitas requisições à API, tente novamente em breve."
 
+#### d) **Upload Limiter**
+```typescript
+windowMs: 15 minutos
+max: 10 uploads por IP
+```
+- Aplica-se especificamente a `/api/upload`
+- Previne abuso de uploads e ataques DoS via uploads
+- Mensagem: "Muitas tentativas de upload, tente novamente após 15 minutos."
+
 #### Benefícios:
 - ✅ Proteção contra ataques de força bruta no login
 - ✅ Proteção contra DDoS (negação de serviço)
 - ✅ Previne abuso da API
+- ✅ Previne abuso de uploads (DoS via upload)
 - ✅ Headers padrão de rate limit informam ao cliente
 
 ---
@@ -129,11 +139,11 @@ app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
 **Localização:** `server/routes.ts`
 
-Sistema de upload com múltiplas camadas de segurança:
+Sistema de upload com múltiplas camadas de segurança contra arquivos maliciosos:
 
 #### Validações Implementadas:
 ```typescript
-// Tipos de arquivo permitidos
+// Tipos de arquivo permitidos (Multer)
 allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
 
 // Tamanho máximo
@@ -141,13 +151,53 @@ fileSize: 5 MB por arquivo
 
 // Máximo de arquivos
 maxFiles: 10 arquivos por upload
+
+// Rate Limiting
+uploadLimiter: 10 uploads por IP a cada 15 minutos
+```
+
+#### Validação Profunda de Segurança:
+
+##### a) **Validação de Magic Bytes**
+Verifica a assinatura binária do arquivo para detectar arquivos maliciosos disfarçados:
+
+- **JPEG**: `FF D8 FF`
+- **PNG**: `89 50 4E 47 0D 0A 1A 0A`
+- **GIF**: `47 49 46 38` (GIF8)
+- **WebP**: `52 49 46 46 ... 57 45 42 50` (RIFF...WEBP)
+
+**Benefício:** Previne upload de executáveis ou scripts disfarçados com extensão `.jpg`
+
+##### b) **Validação com Sharp**
+Processa o arquivo usando `sharp` para garantir que é uma imagem válida:
+
+- Verifica dimensões válidas
+- Rejeita dimensões suspeitas (< 1px ou > 20.000px)
+- Confirma formato de imagem legítimo
+- Falha automaticamente se o arquivo estiver corrompido
+
+**Benefício:** Garante que apenas imagens legítimas sejam processadas
+
+##### c) **Cleanup Automático**
+Arquivos que falham em qualquer validação são deletados automaticamente:
+
+```typescript
+// Se validação falhar
+- Adiciona arquivo à lista de cleanup
+- Deleta arquivo imediatamente
+- Retorna erro descritivo ao cliente
 ```
 
 #### Processamento Seguro:
+- ✅ Validação de MIME type (camada 1)
+- ✅ Validação de magic bytes (camada 2)
+- ✅ Validação usando sharp (camada 3)
 - ✅ Conversão automática para WebP (formato seguro)
 - ✅ Redimensionamento para máximo 1920px
 - ✅ Nomes únicos gerados (timestamp + random)
 - ✅ Armazenamento em diretório isolado
+- ✅ Cleanup automático de arquivos inválidos
+- ✅ Rate limiting por IP (10 uploads/15min)
 
 ---
 
@@ -184,9 +234,12 @@ Implementação robusta de autenticação:
 | SQL Injection | Drizzle ORM + Prepared Statements | ✅ |
 | Força Bruta (Login) | Rate Limiting (5 tentativas/15min) | ✅ |
 | DDoS | Rate Limiting (100 req/15min) | ✅ |
+| DDoS via Upload | Rate Limiting (10 uploads/15min) | ✅ |
 | Clickjacking | X-Frame-Options (DENY) | ✅ |
 | MIME Sniffing | X-Content-Type-Options | ✅ |
-| Upload Malicioso | Validação Tipo + Conversão WebP | ✅ |
+| Upload Malicioso | Magic Bytes + Sharp + Conversão WebP | ✅ |
+| Arquivo Disfarçado | Validação Magic Bytes (3 camadas) | ✅ |
+| Arquivo Corrompido | Validação Sharp + Cleanup | ✅ |
 | Man-in-the-Middle | HTTPS + HSTS | ✅ |
 | Session Hijacking | HttpOnly + Secure Cookies | ✅ |
 
