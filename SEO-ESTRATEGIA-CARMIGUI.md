@@ -13,7 +13,8 @@
 ✅ **Schema JSON-LD Inexistente** - IMPLEMENTADO  
 ✅ **Sem Sitemap.xml** - CRIADO  
 ✅ **Robots.txt Ausente** - CRIADO  
-✅ **Alt Text Genérico** - EM PROGRESSO  
+✅ **Alt Text Genérico** - IMPLEMENTADO  
+✅ **Validação SEO Automatizada** - IMPLEMENTADO  
 ✅ **Sem FAQ otimizada para AEO** - IMPLEMENTADO  
 ✅ **Geolocalização Não Configurada** - IMPLEMENTADO  
 
@@ -208,7 +209,8 @@ https://carmigui.com/sitemap.xml (Sitemap)
 - [x] Atualizar index.html com lang="pt-AO"
 
 ### Semana 2 (Dias 8-14): Conteúdo e Otimização
-- [ ] Otimizar alt text de todas as imagens com palavras-chave locais
+- [x] Otimizar alt text de todas as imagens com palavras-chave locais
+- [x] Implementar validação automatizada de SEO no build
 - [ ] Criar 3 posts de blog otimizados para SEO:
   - "Guia Completo: Quanto Custa Construir uma Vivenda em Luanda 2025"
   - "Top 10 Melhores Zonas para Comprar Imóveis em Luanda"
@@ -308,7 +310,8 @@ https://carmigui.com/sitemap.xml (Sitemap)
 - [x] Meta Descriptions (140-160 caracteres)
 - [x] Meta Keywords
 - [x] Headings (H1, H2, H3) estruturados
-- [ ] Alt text em imagens (EM PROGRESSO)
+- [x] Alt text em imagens (100% com alt, 92% adequado)
+- [x] Validação SEO automatizada (scripts/validate-seo.js)
 - [x] URLs amigáveis
 - [x] Internal linking
 - [x] Canonical tags
@@ -346,11 +349,12 @@ https://carmigui.com/sitemap.xml (Sitemap)
 
 ### Ações Prioritárias (Esta Semana)
 1. ✅ Finalizar implementação técnica do SEO
-2. [ ] Criar e otimizar Google Business Profile
-3. [ ] Otimizar alt text de todas as imagens
-4. [ ] Cadastrar em diretórios angolanos (Yaka.ao, Angola-Online)
-5. [ ] Configurar Google Search Console e Analytics
-6. [ ] Solicitar primeiras reviews de clientes
+2. ✅ Otimizar alt text de todas as imagens
+3. ✅ Implementar validação automatizada de SEO
+4. [ ] Criar e otimizar Google Business Profile
+5. [ ] Cadastrar em diretórios angolanos (Yaka.ao, Angola-Online)
+6. [ ] Configurar Google Search Console e Analytics
+7. [ ] Solicitar primeiras reviews de clientes
 
 ### Conteúdo para Criar (Próximas 2 Semanas)
 1. **Blog Post 1:** "Quanto Custa Construir uma Casa em Luanda em 2025?"
