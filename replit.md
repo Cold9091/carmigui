@@ -66,18 +66,33 @@ The application implements secure authentication using **Passport.js** with loca
 - **URL state** for filters and navigation
 
 ### API Design
-The REST API follows conventional HTTP methods and status codes:
-- **GET** `/api/properties` - Property listings with filtering
-- **POST** `/api/properties` - Create new property
-- **PUT** `/api/properties/:id` - Update existing property
-- **DELETE** `/api/properties/:id` - Remove property
-- Similar patterns for projects and contacts endpoints
+The REST API follows conventional HTTP methods and status codes with **58 fully implemented routes** covering all application features:
+
+**Route Categories:**
+- **Authentication** (4 routes): Login, logout, user info, password change
+- **Properties** (5 routes): CRUD operations for real estate listings
+- **Projects** (5 routes): Construction project portfolio management
+- **Condominiums** (5 routes): Condominium listings and management
+- **Contacts** (3 routes): Customer inquiry handling
+- **Categories** (5 routes): Property categorization
+- **Cities** (5 routes): Location management
+- **Hero Settings** (6 routes): Homepage banner configuration
+- **About Us** (5 routes): Company information sections
+- **Employees** (5 routes): Staff directory management
+- **Database** (7 routes): Database testing and migration tools
+- **Upload** (2 routes): Image upload and management
+- **SEO** (1 route): Dynamic sitemap generation
 
 **API Features:**
 - **Query parameter filtering** for properties (type, location, price range)
-- **Validation middleware** using Zod schemas
+- **Authentication protection** on all admin routes using Passport.js middleware
+- **Validation middleware** using Zod schemas for type-safe request handling
 - **Consistent error handling** with structured JSON responses
 - **CORS and security headers** configured for production deployment
+- **File upload security** with type validation, size limits, and path traversal protection
+- **Image optimization** with automatic WebP conversion using Sharp
+
+**Route Status**: All routes are fully implemented and production-ready. See `ROUTES-STATUS.md` for complete API documentation.
 
 ### Security Measures
 The application implements multiple layers of security protection (detailed in `SECURITY.md`):
