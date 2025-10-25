@@ -98,7 +98,9 @@ export function ImageUpload({
         });
       }
     } catch (error) {
-      console.error('Erro no upload:', error);
+      if (import.meta.env.DEV) {
+        console.error('Erro no upload:', error);
+      }
       toast({
         title: 'Erro no upload',
         description: 'Falha ao fazer upload das imagens',
@@ -159,7 +161,9 @@ export function ImageUpload({
         });
       }
     } catch (error) {
-      console.error('Erro ao deletar imagem:', error);
+      if (import.meta.env.DEV) {
+        console.error('Erro ao deletar imagem:', error);
+      }
       toast({
         title: 'Erro ao deletar',
         description: error instanceof Error ? error.message : 'Falha ao deletar imagem',

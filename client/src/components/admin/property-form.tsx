@@ -86,7 +86,9 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
             errorMessage = errorData.message;
           }
         } catch (e) {
-          console.error("Error parsing error response:", e);
+          if (import.meta.env.DEV) {
+            console.error("Error parsing error response:", e);
+          }
         }
       }
       
@@ -95,7 +97,9 @@ export default function PropertyForm({ property, onSuccess }: PropertyFormProps)
         description: errorMessage,
         variant: "destructive",
       });
-      console.error("Error saving property:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error saving property:", error);
+      }
     },
   });
 

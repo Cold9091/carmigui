@@ -117,7 +117,9 @@ Enviado através do site CARMIGUI.`;
         description: "Ocorreu um erro. Tente novamente mais tarde.",
         variant: "destructive",
       });
-      console.error("Error sending contact:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error sending contact:", error);
+      }
     },
   });
 

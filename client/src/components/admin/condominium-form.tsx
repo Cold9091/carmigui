@@ -69,7 +69,9 @@ export default function CondominiumForm({ condominium, onSuccess }: CondominiumF
         description: "Ocorreu um erro ao guardar o condomínio. Tente novamente.",
         variant: "destructive",
       });
-      console.error("Error saving condominium:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error saving condominium:", error);
+      }
     },
   });
 

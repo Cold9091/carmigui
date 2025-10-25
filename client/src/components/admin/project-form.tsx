@@ -62,7 +62,9 @@ export default function ProjectForm({ project, onSuccess }: ProjectFormProps) {
         description: "Ocorreu um erro ao guardar o projeto. Tente novamente.",
         variant: "destructive",
       });
-      console.error("Error saving project:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error saving project:", error);
+      }
     },
   });
 
