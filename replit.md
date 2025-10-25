@@ -193,13 +193,40 @@ The application is configured for deployment on **Vercel** with the following se
 
 **Critical (Must Have):**
 - `DATABASE_URL` - PostgreSQL connection string (recommend Neon Database)
-- `SESSION_SECRET` - Random secret for sessions (minimum 32 characters)
+- `SESSION_SECRET` - Random secret for sessions (minimum 32 characters, recommended 64+)
 - `NODE_ENV` - Set to `production`
 
 **Recommended:**
 - `ADMIN_EMAIL` - Initial admin email
 - `ADMIN_PASSWORD` - Initial admin password (change after first login!)
 - `BASE_URL` - Production URL (e.g., https://carmigui.com)
+
+### Environment Security & Validation
+
+**Runtime Validation** (`server/env-validator.ts`):
+The application validates all critical environment variables before startup with multiple security checks:
+
+**SESSION_SECRET Validation:**
+- Minimum 32 characters required (error if less)
+- Recommended 64+ characters (warning if 32-63)
+- Rejects weak/default values (e.g., "secret", "password", example values)
+- Entropy checking to ensure randomness
+- Blocks common insecure patterns
+
+**DATABASE_URL Validation (Production):**
+- Must use PostgreSQL protocol (`postgresql://` or `postgres://`)
+- Rejects localhost connections in production
+- Warns if SSL is not enabled (`?sslmode=require`)
+
+**Startup Protection:**
+- Application exits immediately if critical validations fail
+- Clear error messages guide configuration fixes
+- Prevents deployment with insecure configurations
+
+**Security Files:**
+- `.env.example` - Comprehensive template with security best practices
+- `SECURITY-ENV.md` - Complete security documentation for environment variables
+- `.gitignore` - Prevents accidental commit of `.env` files
 
 ### Deployment Process
 
