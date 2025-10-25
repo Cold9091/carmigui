@@ -72,9 +72,9 @@ function validateImageAltText() {
   let imagesWithAlt = 0;
   let imagesWithGoodAlt = 0;
   
-  const imagePattern = /<img\s+([^>]*?)>/g;
-  const altPattern = /alt=["']([^"']*)["']/;
-  const srcPattern = /src=["']([^"']*)["']/;
+  const imagePattern = /<img[\s\S]*?(?:>|\/>)/g;
+  const altPattern = /alt=(?:["']([^"']*)["']|{[^}]+})/;
+  const srcPattern = /src=(?:["']([^"']*)["']|{[^}]*})/;
   
   files.forEach(file => {
     const content = fs.readFileSync(file, 'utf-8');
@@ -82,18 +82,16 @@ function validateImageAltText() {
     
     let match;
     let lineNumber = 0;
-    const lines = content.split('\n');
     
     while ((match = imagePattern.exec(content)) !== null) {
       totalImages++;
       const imgTag = match[0];
-      const imgAttributes = match[1];
       
       lineNumber = content.substring(0, match.index).split('\n').length;
       
       const altMatch = imgTag.match(altPattern);
       const srcMatch = imgTag.match(srcPattern);
-      const src = srcMatch ? srcMatch[1] : 'unknown';
+      const src = srcMatch ? (srcMatch[1] || 'dynamic source') : 'unknown';
       
       if (!altMatch) {
         errors.push({
@@ -106,7 +104,9 @@ function validateImageAltText() {
         const altText = altMatch[1];
         imagesWithAlt++;
         
-        if (!altText || altText.trim() === '') {
+        if (altText === undefined) {
+          imagesWithGoodAlt++;
+        } else if (!altText || altText.trim() === '') {
           errors.push({
             file: relativePath,
             line: lineNumber,
