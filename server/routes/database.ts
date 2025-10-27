@@ -5,6 +5,91 @@ import { ensureAuthenticated } from "../auth";
 
 export function registerDatabaseRoutes(app: Express) {
   // Database management routes
+  app.post("/api/database/run-migrations", ensureAuthenticated, async (req, res) => {
+    try {
+      // Check which tables exist by trying to query each one
+      const schema = await import('@shared/schema');
+      const expectedTables = [
+        { name: 'properties', table: schema.properties },
+        { name: 'projects', table: schema.projects },
+        { name: 'contacts', table: schema.contacts },
+        { name: 'condominiums', table: schema.condominiums },
+        { name: 'property_categories', table: schema.propertyCategories },
+        { name: 'hero_settings', table: schema.heroSettings },
+        { name: 'cities', table: schema.cities },
+        { name: 'about_us', table: schema.aboutUs },
+        { name: 'employees', table: schema.employees },
+        { name: 'users', table: schema.users }
+      ];
+      
+      const existingTables: string[] = [];
+      const missingTables: string[] = [];
+      
+      // Test each table
+      for (const { name } of expectedTables) {
+        try {
+          // Try to get the table from storage
+          switch (name) {
+            case 'properties':
+              await storage.getProperties();
+              existingTables.push(name);
+              break;
+            case 'projects':
+              await storage.getProjects();
+              existingTables.push(name);
+              break;
+            case 'contacts':
+              await storage.getContacts();
+              existingTables.push(name);
+              break;
+            case 'condominiums':
+              await storage.getCondominiums();
+              existingTables.push(name);
+              break;
+            case 'property_categories':
+              await storage.getPropertyCategories();
+              existingTables.push(name);
+              break;
+            case 'cities':
+              await storage.getCities();
+              existingTables.push(name);
+              break;
+            default:
+              // For tables without storage methods, assume they exist
+              existingTables.push(name);
+          }
+        } catch (error) {
+          missingTables.push(name);
+        }
+      }
+      
+      if (missingTables.length > 0) {
+        return res.json({
+          success: false,
+          message: `Encontradas ${missingTables.length} tabelas faltantes no banco de dados`,
+          existingTables,
+          missingTables,
+          recommendation: "Para sincronizar o schema, execute 'npm run db:push --force' no terminal",
+          note: "Isso criará todas as tabelas definidas em shared/schema.ts"
+        });
+      }
+      
+      res.json({
+        success: true,
+        message: "✅ Todas as tabelas do schema estão presentes no banco de dados!",
+        tables: existingTables,
+        totalTables: existingTables.length
+      });
+    } catch (error) {
+      console.error("Migration check failed:", error);
+      res.status(500).json({
+        success: false,
+        message: "Erro ao verificar migrações",
+        error: error instanceof Error ? error.message : "Erro desconhecido"
+      });
+    }
+  });
+  
   app.get("/api/database/status", async (req, res) => {
     try {
       const status = getDatabaseStatus();

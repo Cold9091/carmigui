@@ -491,6 +491,67 @@ export default function AdminDatabasePage() {
           </CardContent>
         </Card>
 
+        <Card data-testid="database-migrations-card">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings size={20} />
+              Migrações do Banco de Dados
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <Alert>
+                <Info size={16} />
+                <AlertDescription>
+                  As migrações garantem que todas as tabelas do schema estejam criadas no banco de dados.
+                </AlertDescription>
+              </Alert>
+              
+              <Button
+                onClick={async () => {
+                  try {
+                    const response = await apiRequest("POST", "/api/database/run-migrations", {});
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                      toast({
+                        title: "Verificação concluída",
+                        description: data.message,
+                      });
+                    } else {
+                      toast({
+                        title: "Tabelas faltantes",
+                        description: `${data.message}. ${data.recommendation}`,
+                        variant: "destructive",
+                      });
+                    }
+                  } catch (error) {
+                    toast({
+                      title: "Erro",
+                      description: "Falha ao verificar migrações",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+                data-testid="btn-check-migrations"
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <CheckCircle className="mr-2" size={16} />
+                Verificar Migrações
+              </Button>
+              
+              <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+                <p><strong>Tabelas esperadas:</strong></p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>properties, projects, contacts</li>
+                  <li>condominiums, property_categories, cities</li>
+                  <li>hero_settings, about_us, employees, users</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card data-testid="database-info-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

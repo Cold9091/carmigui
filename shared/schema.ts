@@ -3,13 +3,36 @@ import { pgTable, text, varchar, integer, decimal, timestamp, boolean } from "dr
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Note: Define propertyCategories and cities before properties to allow forward references
+export const propertyCategories = pgTable("property_categories", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull().unique(),
+  slug: text("slug").notNull().unique(),
+  imageUrl: text("image_url").notNull(),
+  displayOrder: integer("display_order").default(0),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const cities = pgTable("cities", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  imageUrl: text("image_url").notNull(),
+  displayOrder: integer("display_order").default(0),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const properties = pgTable("properties", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   title: text("title").notNull(),
   description: text("description").notNull(),
   price: text("price").notNull(), // Preço fixo ou valor total
-  cityId: varchar("city_id").notNull(),
-  categoryId: varchar("category_id").notNull(),
+  cityId: varchar("city_id").notNull().references(() => cities.id),
+  categoryId: varchar("category_id").notNull().references(() => propertyCategories.id),
   bedrooms: integer("bedrooms"),
   bathrooms: integer("bathrooms"),
   area: integer("area").notNull(), // in square meters
@@ -73,17 +96,6 @@ export const condominiums = pgTable("condominiums", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const propertyCategories = pgTable("property_categories", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  name: text("name").notNull().unique(),
-  slug: text("slug").notNull().unique(),
-  imageUrl: text("image_url").notNull(),
-  displayOrder: integer("display_order").default(0),
-  active: boolean("active").default(true),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
 export const heroSettings = pgTable("hero_settings", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   images: text("images").array().default([]),
@@ -93,17 +105,6 @@ export const heroSettings = pgTable("hero_settings", {
   description: text("description").notNull().default("Especialistas em imóveis que conectam você aos melhores espaços para viver ou investir. Confiança, transparência e soluções sob medida para cada etapa do seu caminho imobiliário."),
   carouselEnabled: boolean("carousel_enabled").default(false),
   carouselInterval: integer("carousel_interval").default(5000),
-  active: boolean("active").default(true),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-export const cities = pgTable("cities", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  name: text("name").notNull(),
-  slug: text("slug").notNull().unique(),
-  imageUrl: text("image_url").notNull(),
-  displayOrder: integer("display_order").default(0),
   active: boolean("active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -146,6 +147,26 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+// Relations - Define database relationships for type safety and joins
+export const propertiesRelations = relations(properties, ({ one }) => ({
+  city: one(cities, {
+    fields: [properties.cityId],
+    references: [cities.id],
+  }),
+  category: one(propertyCategories, {
+    fields: [properties.categoryId],
+    references: [propertyCategories.id],
+  }),
+}));
+
+export const citiesRelations = relations(cities, ({ many }) => ({
+  properties: many(properties),
+}));
+
+export const categoriesRelations = relations(propertyCategories, ({ many }) => ({
+  properties: many(properties),
+}));
 
 const basePropertySchema = createInsertSchema(properties).omit({
   id: true,
