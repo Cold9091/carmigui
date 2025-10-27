@@ -5,7 +5,7 @@ import { ensureAuthenticated } from "../auth";
 import { z } from "zod";
 
 export function registerContactRoutes(router: Router) {
-  router.get("/api/contacts", async (req, res) => {
+  router.get("/api/contacts", ensureAuthenticated, async (req, res) => {
     try {
       const contacts = await storage.getContacts();
       res.json(contacts);

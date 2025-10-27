@@ -27,11 +27,11 @@ export function registerPropertyRoutes(router: Router) {
   // Handlers CRUD padrão
   const handlers = createCRUDHandlers({
     storage: {
-      getAll: storage.getProperties,
-      getById: storage.getProperty,
-      create: storage.createProperty,
-      update: storage.updateProperty,
-      delete: storage.deleteProperty,
+      getAll: (filters) => storage.getProperties(filters),
+      getById: (id) => storage.getProperty(id),
+      create: (data) => storage.createProperty(data),
+      update: (id, data) => storage.updateProperty(id, data),
+      delete: (id) => storage.deleteProperty(id),
     },
     schemas: {
       insert: insertPropertySchema,

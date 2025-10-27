@@ -178,6 +178,8 @@ export const insertProjectSchema = createInsertSchema(projects).omit({
 export const insertContactSchema = createInsertSchema(contacts).omit({
   id: true,
   createdAt: true,
+}).extend({
+  email: z.string().email("Email inválido"),
 });
 
 export const insertCondominiumSchema = createInsertSchema(condominiums).omit({

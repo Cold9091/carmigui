@@ -3,6 +3,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
 import sharp from "sharp";
+import { ensureAuthenticated } from "../auth";
 
 // Security: Validate file magic bytes (file signatures) to detect disguised malicious files
 async function validateImageMagicBytes(filePath: string): Promise<boolean> {
@@ -106,7 +107,7 @@ export function registerUploadRoutes(app: Express) {
   });
 
   // Image upload routes with comprehensive security validation
-  app.post('/api/upload/images', upload.array('images', 10), async (req, res) => {
+  app.post('/api/upload/images', ensureAuthenticated, upload.array('images', 10), async (req, res) => {
     const filesToCleanup: string[] = [];
     
     try {
