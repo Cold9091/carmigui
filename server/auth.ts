@@ -28,21 +28,6 @@ async function comparePasswords(supplied: string, stored: string) {
   return timingSafeEqual(hashedBuf, suppliedBuf);
 }
 
-async function initializeDefaultUser() {
-  const defaultEmail = "carmigui@site.ao";
-  const existingUser = await storage.getUserByEmail(defaultEmail);
-  
-  if (!existingUser) {
-    const hashedPassword = await hashPassword("Teste123");
-    await storage.createUser({
-      email: defaultEmail,
-      password: hashedPassword,
-      name: "Administrador CARMIGUI"
-    });
-    console.log("✅ Default admin user created:", defaultEmail);
-  }
-}
-
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET!,
@@ -159,8 +144,6 @@ export function setupAuth(app: Express) {
       res.status(500).json({ message: "Erro ao alterar senha" });
     }
   });
-
-  initializeDefaultUser();
 }
 
 export function ensureAuthenticated(req: any, res: any, next: any) {
