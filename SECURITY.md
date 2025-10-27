@@ -16,11 +16,29 @@ Implementamos o Helmet.js que configura automaticamente headers HTTP seguros par
 
 #### Headers Configurados:
 - **Content Security Policy (CSP)**: Previne ataques XSS (Cross-Site Scripting)
-  - `defaultSrc: ["'self']` - Apenas recursos do próprio domínio
-  - `scriptSrc` - Scripts apenas do domínio e Replit (necessário para desenvolvimento)
-  - `styleSrc` - Estilos inline permitidos (necessário para Tailwind CSS)
-  - `imgSrc` - Imagens de qualquer origem HTTPS (necessário para URLs externas)
-  - `connectSrc` - WebSocket permitido (necessário para Vite HMR)
+  - **Configuração Condicional por Ambiente**:
+    - **Desenvolvimento**: Permite `unsafe-inline` e `unsafe-eval` (necessário para Vite HMR)
+    - **Produção**: Remove todas as diretivas `unsafe-*` para máxima segurança
+  
+  - **Diretivas Comuns**:
+    - `defaultSrc: ["'self']` - Apenas recursos do próprio domínio
+    - `imgSrc: ["'self'", "data:", "https:", "blob:"]` - Imagens de origens HTTPS
+    - `fontSrc: ["'self'", "data:"]` - Fontes do próprio domínio
+    - `objectSrc: ["'none']` - Bloqueia plugins (Flash, etc.)
+    - `mediaSrc: ["'self']` - Apenas mídia do próprio domínio
+    - `frameSrc: ["'none']` - Bloqueia iframes
+    - `baseUri: ["'self']` - Previne injeção de base tag
+    - `formAction: ["'self']` - Apenas submissões para o próprio domínio
+  
+  - **Diretivas de Desenvolvimento**:
+    - `styleSrc: ["'self'", "'unsafe-inline'"]` - Estilos inline para Tailwind CSS
+    - `scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://replit.com"]` - Scripts inline para Vite HMR
+    - `connectSrc: ["'self'", "wss:", "ws:"]` - WebSocket para Vite HMR
+  
+  - **Diretivas de Produção**:
+    - `styleSrc: ["'self']` - ❌ Sem `unsafe-inline`
+    - `scriptSrc: ["'self'", "https://replit.com"]` - ❌ Sem `unsafe-inline` ou `unsafe-eval`
+    - `connectSrc: ["'self'", "wss:"]` - Apenas WebSocket seguro
 
 - **X-Content-Type-Options**: Previne MIME type sniffing
 - **X-Frame-Options**: Protege contra clickjacking
@@ -29,8 +47,11 @@ Implementamos o Helmet.js que configura automaticamente headers HTTP seguros par
 
 #### Benefícios:
 - ✅ Proteção contra XSS (Cross-Site Scripting)
+- ✅ **CSP Seguro em Produção** - Sem `unsafe-inline` ou `unsafe-eval`
+- ✅ **CSP Flexível em Desenvolvimento** - Suporte completo para Vite HMR
 - ✅ Proteção contra clickjacking
 - ✅ Proteção contra MIME type sniffing
+- ✅ Proteção contra injeção de base tag
 - ✅ Força conexão HTTPS em produção
 
 ---
@@ -332,6 +353,6 @@ Para reportar vulnerabilidades de segurança:
 
 ---
 
-**Última Atualização**: 25 de Outubro de 2025  
-**Versão do Documento**: 1.0  
+**Última Atualização**: 27 de Outubro de 2025  
+**Versão do Documento**: 1.1  
 **Responsável**: Equipe de Desenvolvimento CARMIGUI
