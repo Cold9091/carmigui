@@ -1,0 +1,15 @@
+node_modules
+dist
+build
+coverage
+*.min.js
+.next
+.cache
+public
+uploads
+migrations
+database.db
+vite.config.ts
+postcss.config.js
+tailwind.config.ts
+drizzle.config.ts
