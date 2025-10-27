@@ -33,6 +33,7 @@ async function analyzeBundle() {
       build: {
         outDir: path.resolve(__dirname, "..", "dist/public"),
         emptyOutDir: true,
+        reportCompressedSize: true,
         rollupOptions: {
           output: {
             manualChunks: {
@@ -50,6 +51,9 @@ async function analyzeBundle() {
     console.log('\n💡 Tamanhos incluem:');
     console.log('   - Gzip compression');
     console.log('   - Brotli compression');
+    console.log('\n📋 Próximos passos:');
+    console.log('   1. Abra ./dist/stats.html no navegador para visualização interativa');
+    console.log('   2. Execute "node scripts/check-bundle-size.js" para validar limites');
   } catch (error) {
     console.error('❌ Erro na análise:', error);
     process.exit(1);
