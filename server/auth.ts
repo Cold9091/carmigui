@@ -6,6 +6,7 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User } from "@shared/schema";
+import { z } from "zod";
 
 declare global {
   namespace Express {
@@ -14,6 +15,13 @@ declare global {
 }
 
 const scryptAsync = promisify(scrypt);
+
+const strongPasswordSchema = z.string()
+  .min(8, "Senha deve ter no mínimo 8 caracteres")
+  .regex(/[a-z]/, "Senha deve conter pelo menos uma letra minúscula")
+  .regex(/[A-Z]/, "Senha deve conter pelo menos uma letra maiúscula")
+  .regex(/[0-9]/, "Senha deve conter pelo menos um número")
+  .regex(/[!@#$%^&*(),.?":{}|<>]/, "Senha deve conter pelo menos um caractere especial");
 
 export async function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
@@ -123,6 +131,15 @@ export function setupAuth(app: Express) {
     
     if (!currentPassword || !newPassword) {
       return res.status(400).json({ message: "Senha atual e nova senha são obrigatórias" });
+    }
+
+    const passwordValidation = strongPasswordSchema.safeParse(newPassword);
+    if (!passwordValidation.success) {
+      const errorMessages = passwordValidation.error.errors.map(e => e.message);
+      return res.status(400).json({ 
+        message: "A nova senha não atende aos requisitos de segurança", 
+        errors: errorMessages 
+      });
     }
 
     try {
