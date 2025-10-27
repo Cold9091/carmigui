@@ -22,6 +22,7 @@ import { registerAboutRoutes } from "./routes/about";
 import { registerDatabaseRoutes } from "./routes/database";
 import { registerUploadRoutes } from "./routes/uploads";
 import { registerSitemapRoutes } from "./routes/sitemap";
+import { monitoringRouter } from "./routes/monitoring";
 import { storage } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -40,10 +41,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   registerHeroRoutes(router);
   registerAboutRoutes(router);
   
-  // Rotas adicionais (database, upload, sitemap)
+  // Rotas adicionais (database, upload, sitemap, monitoring)
   registerDatabaseRoutes(app);
   registerUploadRoutes(app);
   registerSitemapRoutes(router, storage);
+  
+  // Monitoring routes (health check is public, logs/metrics require auth)
+  app.use(monitoringRouter);
   
   // Aplicar todas as rotas do router
   app.use(router);

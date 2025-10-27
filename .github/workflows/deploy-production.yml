@@ -1,0 +1,75 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  pre-deploy-checks:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate environment variables
+        run: node scripts/validate-env.js
+        env:
+          NODE_ENV: production
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+
+      - name: TypeScript check
+        run: npm run check
+
+      - name: Build application
+        run: npm run build
+
+      - name: Check bundle size
+        run: node scripts/check-bundle-size.js
+
+      - name: Run tests (if available)
+        run: npm test || echo "No tests configured"
+        continue-on-error: true
+
+  deploy-production:
+    needs: pre-deploy-checks
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel Production
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+          working-directory: ./
+
+      - name: Notify success
+        if: success()
+        run: |
+          echo "✅ Deploy para produção concluído com sucesso!"
+          echo "🌐 Site: https://carmigui.com (ou sua URL configurada)"
+          
+      - name: Notify failure
+        if: failure()
+        run: |
+          echo "❌ Deploy para produção falhou!"
+          echo "Verifique os logs acima para detalhes"

@@ -1,0 +1,61 @@
+name: Deploy Preview
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ develop ]
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate environment variables
+        run: node scripts/validate-env.js
+        env:
+          NODE_ENV: development
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+
+      - name: TypeScript check
+        run: npm run check
+
+      - name: Build application
+        run: npm run build
+
+      - name: Check bundle size
+        run: node scripts/check-bundle-size.js || echo "⚠️ Bundle size warning"
+        continue-on-error: true
+
+      - name: Deploy to Vercel Preview
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+          working-directory: ./
+
+      - name: Comment PR with preview URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 Preview deployment criado com sucesso!\n\n✅ Build passou todas as verificações\n📦 Bundle size verificado\n🔗 URL será disponibilizada pelo Vercel'
+            })

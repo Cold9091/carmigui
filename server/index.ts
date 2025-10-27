@@ -5,6 +5,7 @@ import rateLimit from "express-rate-limit";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { validateEnvironment } from "./env-validator";
+import { requestLogger, errorLogger } from "./middleware/logger.js";
 
 validateEnvironment();
 
@@ -108,6 +109,9 @@ app.use(compression({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
+// Request logger middleware for monitoring
+app.use(requestLogger);
+
 // Serve uploaded images and attached assets as static files with cache headers
 app.use('/uploads', express.static('uploads', {
   maxAge: '1y',
@@ -162,11 +166,14 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
-    res.status(status).json({ message });
+    res.status(status);
+    errorLogger(err, req, res, () => {});
+
+    res.json({ message });
     throw err;
   });
 
