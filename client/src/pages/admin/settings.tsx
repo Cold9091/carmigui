@@ -16,7 +16,12 @@ import { Badge } from "@/components/ui/badge";
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(1, "Senha atual obrigatória"),
-  newPassword: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
+  newPassword: z.string()
+    .min(8, "Senha deve ter no mínimo 8 caracteres")
+    .regex(/[a-z]/, "Senha deve conter pelo menos uma letra minúscula")
+    .regex(/[A-Z]/, "Senha deve conter pelo menos uma letra maiúscula")
+    .regex(/[0-9]/, "Senha deve conter pelo menos um número")
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, "Senha deve conter pelo menos um caractere especial (!@#$%^&*(),.?\":{}|<>)"),
   confirmPassword: z.string().min(1, "Confirme a nova senha"),
 }).refine((data) => data.newPassword === data.confirmPassword, {
   message: "As senhas não coincidem",
@@ -97,6 +102,16 @@ export default function SettingsPage() {
         </TabsList>
 
         <TabsContent value="password" className="space-y-6">
+          <Alert className="border-red-200 bg-red-50">
+            <Lock className="h-4 w-4 text-red-600" />
+            <AlertTitle className="text-red-900">Segurança Administrativa</AlertTitle>
+            <AlertDescription className="text-red-800">
+              <strong>Importante:</strong> Use uma senha forte e única para proteger o acesso administrativo. 
+              Recomendamos senhas com no mínimo 12 caracteres, combinando letras maiúsculas e minúsculas, 
+              números e símbolos especiais. Nunca compartilhe sua senha com terceiros.
+            </AlertDescription>
+          </Alert>
+          
           <Card>
             <CardHeader>
               <CardTitle>Alterar Senha</CardTitle>
@@ -143,7 +158,7 @@ export default function SettingsPage() {
                           />
                         </FormControl>
                         <FormDescription>
-                          Mínimo de 6 caracteres
+                          Mínimo 8 caracteres, incluindo maiúsculas, minúsculas, números e símbolos especiais
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
