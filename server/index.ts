@@ -11,20 +11,32 @@ validateEnvironment();
 
 const app = express();
 
-// Security: Helmet - Set security HTTP headers
+// Security: Helmet - Set security HTTP headers with conditional CSP
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+const cspDirectives = {
+  defaultSrc: ["'self'"],
+  styleSrc: isDevelopment 
+    ? ["'self'", "'unsafe-inline'"] 
+    : ["'self'"],
+  scriptSrc: isDevelopment 
+    ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://replit.com"]
+    : ["'self'", "https://replit.com"],
+  imgSrc: ["'self'", "data:", "https:", "blob:"],
+  connectSrc: isDevelopment 
+    ? ["'self'", "wss:", "ws:"]
+    : ["'self'", "wss:"],
+  fontSrc: ["'self'", "data:"],
+  objectSrc: ["'none'"],
+  mediaSrc: ["'self'"],
+  frameSrc: ["'none'"],
+  baseUri: ["'self'"],
+  formAction: ["'self'"],
+};
+
 app.use(helmet({
   contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://replit.com"],
-      imgSrc: ["'self'", "data:", "https:", "blob:"],
-      connectSrc: ["'self'", "wss:", "ws:"],
-      fontSrc: ["'self'", "data:"],
-      objectSrc: ["'none'"],
-      mediaSrc: ["'self'"],
-      frameSrc: ["'none'"],
-    },
+    directives: cspDirectives,
   },
   crossOriginEmbedderPolicy: false,
 }));
