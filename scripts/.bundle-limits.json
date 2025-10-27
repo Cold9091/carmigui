@@ -1,0 +1,17 @@
+{
+  "limits": {
+    "maxBundleSize": 512000,
+    "maxChunkSize": 204800,
+    "warnBundleSize": 409600
+  },
+  "description": {
+    "maxBundleSize": "Tamanho máximo total do bundle em bytes (500 KB)",
+    "maxChunkSize": "Tamanho máximo de um chunk individual em bytes (200 KB)",
+    "warnBundleSize": "Tamanho que dispara aviso em bytes (400 KB)"
+  },
+  "lastUpdated": "2025-10-27",
+  "recommendations": {
+    "target": "Mantenha o bundle total abaixo de 400 KB para melhor performance",
+    "optimization": "Use code splitting, lazy loading e tree shaking"
+  }
+}

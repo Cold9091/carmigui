@@ -5,9 +5,53 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const MAX_BUNDLE_SIZE = 500 * 1024;
-const MAX_CHUNK_SIZE = 200 * 1024;
-const WARN_BUNDLE_SIZE = 400 * 1024;
+function loadLimits() {
+  const limitsPath = path.join(__dirname, '.bundle-limits.json');
+  const defaults = {
+    maxBundleSize: 500 * 1024,
+    maxChunkSize: 200 * 1024,
+    warnBundleSize: 400 * 1024,
+  };
+  
+  if (!fs.existsSync(limitsPath)) {
+    return defaults;
+  }
+  
+  try {
+    const config = JSON.parse(fs.readFileSync(limitsPath, 'utf-8'));
+    
+    if (!config.limits || typeof config.limits !== 'object') {
+      console.warn('⚠️  Arquivo .bundle-limits.json inválido (chave "limits" ausente). Usando valores padrão.');
+      return defaults;
+    }
+    
+    const limits = config.limits;
+    
+    if (typeof limits.maxBundleSize !== 'number' || 
+        typeof limits.maxChunkSize !== 'number' || 
+        typeof limits.warnBundleSize !== 'number') {
+      console.warn('⚠️  Limites em .bundle-limits.json devem ser números. Usando valores padrão.');
+      return defaults;
+    }
+    
+    if (limits.maxBundleSize <= 0 || limits.maxChunkSize <= 0 || limits.warnBundleSize <= 0) {
+      console.warn('⚠️  Limites devem ser valores positivos. Usando valores padrão.');
+      return defaults;
+    }
+    
+    if (limits.warnBundleSize > limits.maxBundleSize) {
+      console.warn('⚠️  warnBundleSize deve ser menor que maxBundleSize. Usando valores padrão.');
+      return defaults;
+    }
+    
+    return limits;
+  } catch (error) {
+    console.warn(`⚠️  Erro ao ler .bundle-limits.json: ${error.message}. Usando valores padrão.`);
+    return defaults;
+  }
+}
+
+const { maxBundleSize: MAX_BUNDLE_SIZE, maxChunkSize: MAX_CHUNK_SIZE, warnBundleSize: WARN_BUNDLE_SIZE } = loadLimits();
 
 function formatSize(bytes) {
   return (bytes / 1024).toFixed(2) + ' KB';
