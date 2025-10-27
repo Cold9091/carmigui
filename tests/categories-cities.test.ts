@@ -91,12 +91,13 @@ describe('Categories and Cities API Tests', () => {
           createdCategoryId = createResponse.body.id;
         }
 
+        const updatedName = `Categoria Atualizada ${Date.now()}`;
         const response = await agent
           .put(`/api/property-categories/${createdCategoryId}`)
-          .send({ name: 'Categoria Atualizada' });
+          .send({ name: updatedName });
 
         expect(response.status).toBe(200);
-        expect(response.body.name).toBe('Categoria Atualizada');
+        expect(response.body.name).toBe(updatedName);
       });
     });
 
@@ -179,12 +180,13 @@ describe('Categories and Cities API Tests', () => {
           createdCityId = createResponse.body.id;
         }
 
+        const updatedName = `Cidade Atualizada ${Date.now()}`;
         const response = await agent
           .put(`/api/cities/${createdCityId}`)
-          .send({ name: 'Cidade Atualizada' });
+          .send({ name: updatedName });
 
         expect(response.status).toBe(200);
-        expect(response.body.name).toBe('Cidade Atualizada');
+        expect(response.body.name).toBe(updatedName);
       });
     });
 

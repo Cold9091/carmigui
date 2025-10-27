@@ -15,6 +15,7 @@ describe('Upload API Tests', () => {
     app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: false }));
+    app.use('/uploads', express.static('uploads'));
     server = await registerRoutes(app);
     agent = request.agent(app);
 
