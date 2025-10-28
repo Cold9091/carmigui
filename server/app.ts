@@ -10,9 +10,6 @@ import { autoSetupAdmin } from "./auto-setup-admin";
 
 export async function createApp() {
   validateEnvironment();
-  
-  // Auto-setup admin user from environment variables
-  await autoSetupAdmin();
 
   const app = express();
 
@@ -194,6 +191,14 @@ export async function createApp() {
 
   // Serve static files in production
   serveStatic(app);
+
+  // Auto-setup admin user (non-blocking, after app is ready)
+  // Give storage time to initialize in serverless environment
+  setTimeout(() => {
+    autoSetupAdmin().catch(err => {
+      console.error("⚠️  Auto-setup admin falhou:", err.message);
+    });
+  }, 1000);
 
   return app;
 }
