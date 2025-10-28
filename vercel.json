@@ -8,36 +8,10 @@
   "env": {
     "NODE_ENV": "production"
   },
-  "functions": {
-    "dist/index.js": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  },
   "rewrites": [
     {
-      "source": "/uploads/(.*)",
-      "destination": "/uploads/$1"
-    },
-    {
-      "source": "/attached_assets/(.*)",
-      "destination": "/attached_assets/$1"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/server/public/robots.txt"
-    },
-    {
-      "source": "/sitemap.xml",
-      "destination": "/api/sitemap"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/dist/index.js"
-    },
-    {
       "source": "/(.*)",
-      "destination": "/dist/index.js"
+      "destination": "/api"
     }
   ],
   "regions": ["iad1"],
