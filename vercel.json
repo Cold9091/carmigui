@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "buildCommand": "npm run vercel-build",
+  "buildCommand": "ls -la node_modules/@vitejs/ && npm run vercel-build",
   "devCommand": "npm run dev",
   "installCommand": "rm -rf node_modules package-lock.json && npm install --force",
   "framework": null,
   "outputDirectory": "dist/public",
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "VERCEL_FORCE_NO_BUILD_CACHE": "1"
   },
   "rewrites": [
     {
