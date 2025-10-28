@@ -8,14 +8,6 @@
   "env": {
     "NODE_ENV": "production"
   },
-  "build": {
-    "env": {
-      "DATABASE_URL": "@database_url",
-      "SESSION_SECRET": "@session_secret",
-      "ADMIN_EMAIL": "@admin_email",
-      "ADMIN_PASSWORD": "@admin_password"
-    }
-  },
   "functions": {
     "dist/index.js": {
       "memory": 1024,
