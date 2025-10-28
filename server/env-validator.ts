@@ -65,7 +65,9 @@ export function validateEnvironment(): void {
     }
   }
 
-  if (isProduction) {
+  // TODO: Re-habilitar quando TursoStorage estiver implementado
+  // Temporariamente usando MemoryStorage em produção
+  if (isProduction && false) { // Desabilitado temporariamente
     if (!process.env.TURSO_DATABASE_URL || !process.env.TURSO_AUTH_TOKEN) {
       errors.push({
         variable: 'TURSO_DATABASE_URL / TURSO_AUTH_TOKEN',

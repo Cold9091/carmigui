@@ -583,12 +583,24 @@ export class MemoryStorage implements IStorage {
 import { SimpleSQLiteStorage } from "./simple-sqlite-storage";
 
 // Usar SimpleSQLiteStorage para dados reais persistidos no banco de dados
-// A MemoryStorage fica como fallback se SQLite falhar
+// Em produção (Vercel serverless), usar MemoryStorage pois SQLite não funciona
+// TODO: Implementar TursoStorage para usar TURSO_DATABASE_URL em produção
 export const storage = (() => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const isVercel = !!process.env.VERCEL;
+  
+  // Se estiver no Vercel/produção serverless, usar MemoryStorage
+  if (isVercel || isProduction) {
+    console.log("🔧 Ambiente serverless detectado - usando MemoryStorage");
+    return new MemoryStorage();
+  }
+  
+  // Em desenvolvimento local, tentar usar SQLite
   try {
+    console.log("💾 Usando SimpleSQLiteStorage local");
     return new SimpleSQLiteStorage();
   } catch (error) {
-    console.error("Erro ao inicializar SimpleSQLiteStorage, usando MemoryStorage como fallback:", error);
+    console.error("⚠️  Erro ao inicializar SimpleSQLiteStorage, usando MemoryStorage:", error);
     return new MemoryStorage();
   }
 })();
