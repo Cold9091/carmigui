@@ -22,30 +22,30 @@
       "maxDuration": 10
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/uploads/(.*)",
-      "dest": "/uploads/$1"
+      "source": "/uploads/(.*)",
+      "destination": "/uploads/$1"
     },
     {
-      "src": "/attached_assets/(.*)",
-      "dest": "/attached_assets/$1"
+      "source": "/attached_assets/(.*)",
+      "destination": "/attached_assets/$1"
     },
     {
-      "src": "/robots.txt",
-      "dest": "/server/public/robots.txt"
+      "source": "/robots.txt",
+      "destination": "/server/public/robots.txt"
     },
     {
-      "src": "/sitemap.xml",
-      "dest": "/api/sitemap"
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/dist/index.js"
+      "source": "/api/(.*)",
+      "destination": "/dist/index.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "/dist/index.js"
+      "source": "/(.*)",
+      "destination": "/dist/index.js"
     }
   ],
   "regions": ["iad1"],
