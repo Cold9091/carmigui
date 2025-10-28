@@ -2,7 +2,7 @@
   "version": 2,
   "buildCommand": "npm run vercel-build",
   "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "installCommand": "rm -f package-lock.json && npm install",
   "framework": null,
   "outputDirectory": "dist/client",
   "env": {
