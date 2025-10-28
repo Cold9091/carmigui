@@ -1,20 +1,22 @@
 {
   "version": 2,
-  "buildCommand": "npm run vercel-build",
-  "devCommand": "npm run dev",
-  "installCommand": "rm -rf node_modules package-lock.json && npm install --force",
-  "framework": null,
-  "outputDirectory": "dist/public",
-  "env": {
-    "NODE_ENV": "production",
-    "VERCEL_FORCE_NO_BUILD_CACHE": "1"
-  },
-  "rewrites": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/api"
+      "src": "dist/app.js",
+      "use": "@vercel/node"
     }
   ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/app.js"
+    }
+  ],
+  "buildCommand": "npm run vercel-build",
+  "installCommand": "rm -rf node_modules package-lock.json && npm install --force",
+  "env": {
+    "NODE_ENV": "production"
+  },
   "regions": ["iad1"],
   "headers": [
     {
