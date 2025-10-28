@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "ls -la node_modules/@vitejs/ && npm run vercel-build",
+  "buildCommand": "npm run vercel-build",
   "devCommand": "npm run dev",
   "installCommand": "rm -rf node_modules package-lock.json && npm install --force",
   "framework": null,

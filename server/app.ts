@@ -6,9 +6,13 @@ import { registerRoutes } from "./routes";
 import { serveStatic, log } from "./vite";
 import { validateEnvironment } from "./env-validator";
 import { requestLogger, errorLogger } from "./middleware/logger.js";
+import { autoSetupAdmin } from "./auto-setup-admin";
 
 export async function createApp() {
   validateEnvironment();
+  
+  // Auto-setup admin user from environment variables
+  await autoSetupAdmin();
 
   const app = express();
 
