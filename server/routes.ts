@@ -23,11 +23,15 @@ import { registerDatabaseRoutes } from "./routes/database";
 import { registerUploadRoutes } from "./routes/uploads";
 import { registerSitemapRoutes } from "./routes/sitemap";
 import { monitoringRouter } from "./routes/monitoring";
+import { registerAdminSetup } from "./routes/admin-setup";
 import { storage } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup de autenticação
   setupAuth(app);
+  
+  // Endpoint temporário para criar admin (REMOVER após primeiro login!)
+  registerAdminSetup(app);
   
   const router = Router();
   

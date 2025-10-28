@@ -6,7 +6,7 @@ import { registerRoutes } from "./routes";
 import { serveStatic, log } from "./vite";
 import { validateEnvironment } from "./env-validator";
 import { requestLogger, errorLogger } from "./middleware/logger.js";
-import { autoSetupAdmin } from "./auto-setup-admin";
+// import { autoSetupAdmin } from "./auto-setup-admin"; // Desabilitado temporariamente
 
 export async function createApp() {
   validateEnvironment();
@@ -192,13 +192,13 @@ export async function createApp() {
   // Serve static files in production
   serveStatic(app);
 
-  // Auto-setup admin user (non-blocking, after app is ready)
-  // Give storage time to initialize in serverless environment
-  setTimeout(() => {
-    autoSetupAdmin().catch(err => {
-      console.error("⚠️  Auto-setup admin falhou:", err.message);
-    });
-  }, 1000);
+  // TODO: Auto-setup desabilitado temporariamente - causa crash no Vercel serverless
+  // Usar script setup:admin localmente ou criar usuário manualmente
+  // setTimeout(() => {
+  //   autoSetupAdmin().catch(err => {
+  //     console.error("⚠️  Auto-setup admin falhou:", err.message);
+  //   });
+  // }, 1000);
 
   return app;
 }
