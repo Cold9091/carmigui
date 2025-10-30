@@ -596,157 +596,30 @@ class TursoStorage extends MemoryStorage {
   }
 
   private async initializeTables() {
-    try {
-      // Criar tabelas sequencialmente para evitar erros de parse
-      await this.client.execute(`CREATE TABLE IF NOT EXISTS users (
-        id TEXT PRIMARY KEY,
-        email TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL,
-        name TEXT,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
-      )`);
+    const tables = [
+      { name: 'users', sql: 'CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL, name TEXT, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)' },
+      { name: 'property_categories', sql: 'CREATE TABLE IF NOT EXISTS property_categories (id TEXT PRIMARY KEY, name TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, image_url TEXT NOT NULL, display_order INTEGER DEFAULT 0, active INTEGER DEFAULT 1, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)' },
+      { name: 'cities', sql: 'CREATE TABLE IF NOT EXISTS cities (id TEXT PRIMARY KEY, name TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, image_url TEXT NOT NULL, display_order INTEGER DEFAULT 0, active INTEGER DEFAULT 1, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)' },
+      { name: 'properties', sql: 'CREATE TABLE IF NOT EXISTS properties (id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL, price TEXT NOT NULL, city_id TEXT NOT NULL, category_id TEXT NOT NULL, bedrooms INTEGER, bathrooms INTEGER, area INTEGER NOT NULL, images TEXT, virtual_tour_url TEXT, status TEXT, featured INTEGER DEFAULT 0, payment_type TEXT, down_payment TEXT, payment_period TEXT, house_condition TEXT, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)' },
+      { name: 'projects', sql: 'CREATE TABLE IF NOT EXISTS projects (id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL, area INTEGER NOT NULL, duration TEXT NOT NULL, units TEXT NOT NULL, year TEXT NOT NULL, status TEXT NOT NULL, images TEXT, featured INTEGER DEFAULT 0, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)' },
+      { name: 'contacts', sql: 'CREATE TABLE IF NOT EXISTS contacts (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT, subject TEXT NOT NULL, message TEXT NOT NULL, created_at INTEGER NOT NULL)' },
+      { name: 'condominiums', sql: 'CREATE TABLE IF NOT EXISTS condominiums (id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, location TEXT NOT NULL, centrality_or_district TEXT NOT NULL, total_units INTEGER NOT NULL, completed_units INTEGER DEFAULT 0, available_units INTEGER NOT NULL, status TEXT, images TEXT, amenities TEXT, featured INTEGER DEFAULT 0, development_year TEXT NOT NULL, payment_type TEXT, price TEXT NOT NULL, down_payment TEXT, payment_period TEXT, house_condition TEXT, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)' },
+      { name: 'hero_settings', sql: 'CREATE TABLE IF NOT EXISTS hero_settings (id TEXT PRIMARY KEY, images TEXT, title_line_1 TEXT, title_line_2 TEXT, title_line_3 TEXT, description TEXT NOT NULL, carousel_enabled INTEGER DEFAULT 0, carousel_interval INTEGER DEFAULT 5000, active INTEGER DEFAULT 1, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)' },
+      { name: 'about_us', sql: 'CREATE TABLE IF NOT EXISTS about_us (id TEXT PRIMARY KEY, company_type TEXT NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL, mission TEXT, vision TEXT, values TEXT, images TEXT, display_order INTEGER DEFAULT 0, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)' },
+      { name: 'employees', sql: 'CREATE TABLE IF NOT EXISTS employees (id TEXT PRIMARY KEY, name TEXT NOT NULL, position TEXT NOT NULL, department TEXT NOT NULL, bio TEXT, email TEXT, phone TEXT, image_url TEXT, display_order INTEGER DEFAULT 0, active INTEGER DEFAULT 1, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)' }
+    ];
 
-      await this.client.execute(`CREATE TABLE IF NOT EXISTS property_categories (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        slug TEXT NOT NULL UNIQUE,
-        image_url TEXT NOT NULL,
-        display_order INTEGER DEFAULT 0,
-        active INTEGER DEFAULT 1,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
-      )`);
-
-      await this.client.execute(`CREATE TABLE IF NOT EXISTS cities (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        slug TEXT NOT NULL UNIQUE,
-        image_url TEXT NOT NULL,
-        display_order INTEGER DEFAULT 0,
-        active INTEGER DEFAULT 1,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
-      )`);
-
-      await this.client.execute(`CREATE TABLE IF NOT EXISTS properties (
-        id TEXT PRIMARY KEY,
-        title TEXT NOT NULL,
-        description TEXT NOT NULL,
-        price TEXT NOT NULL,
-        city_id TEXT NOT NULL,
-        category_id TEXT NOT NULL,
-        bedrooms INTEGER,
-        bathrooms INTEGER,
-        area INTEGER NOT NULL,
-        images TEXT,
-        virtual_tour_url TEXT,
-        status TEXT,
-        featured INTEGER DEFAULT 0,
-        payment_type TEXT,
-        down_payment TEXT,
-        payment_period TEXT,
-        house_condition TEXT,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
-      )`);
-
-      await this.client.execute(`CREATE TABLE IF NOT EXISTS projects (
-        id TEXT PRIMARY KEY,
-        title TEXT NOT NULL,
-        description TEXT NOT NULL,
-        area INTEGER NOT NULL,
-        duration TEXT NOT NULL,
-        units TEXT NOT NULL,
-        year TEXT NOT NULL,
-        status TEXT NOT NULL,
-        images TEXT,
-        featured INTEGER DEFAULT 0,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
-      )`);
-
-      await this.client.execute(`CREATE TABLE IF NOT EXISTS contacts (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        email TEXT NOT NULL,
-        phone TEXT,
-        subject TEXT NOT NULL,
-        message TEXT NOT NULL,
-        created_at INTEGER NOT NULL
-      )`);
-
-      await this.client.execute(`CREATE TABLE IF NOT EXISTS condominiums (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        description TEXT NOT NULL,
-        location TEXT NOT NULL,
-        centrality_or_district TEXT NOT NULL,
-        total_units INTEGER NOT NULL,
-        completed_units INTEGER DEFAULT 0,
-        available_units INTEGER NOT NULL,
-        status TEXT,
-        images TEXT,
-        amenities TEXT,
-        featured INTEGER DEFAULT 0,
-        development_year TEXT NOT NULL,
-        payment_type TEXT,
-        price TEXT NOT NULL,
-        down_payment TEXT,
-        payment_period TEXT,
-        house_condition TEXT,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
-      )`);
-
-      await this.client.execute(`CREATE TABLE IF NOT EXISTS hero_settings (
-        id TEXT PRIMARY KEY,
-        images TEXT,
-        title_line_1 TEXT,
-        title_line_2 TEXT,
-        title_line_3 TEXT,
-        description TEXT NOT NULL,
-        carousel_enabled INTEGER DEFAULT 0,
-        carousel_interval INTEGER DEFAULT 5000,
-        active INTEGER DEFAULT 1,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
-      )`);
-
-      await this.client.execute(`CREATE TABLE IF NOT EXISTS about_us (
-        id TEXT PRIMARY KEY,
-        company_type TEXT NOT NULL,
-        title TEXT NOT NULL,
-        description TEXT NOT NULL,
-        mission TEXT,
-        vision TEXT,
-        values TEXT,
-        images TEXT,
-        display_order INTEGER DEFAULT 0,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
-      )`);
-
-      await this.client.execute(`CREATE TABLE IF NOT EXISTS employees (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        position TEXT NOT NULL,
-        department TEXT NOT NULL,
-        bio TEXT,
-        email TEXT,
-        phone TEXT,
-        image_url TEXT,
-        display_order INTEGER DEFAULT 0,
-        active INTEGER DEFAULT 1,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
-      )`);
-
-      console.log("✅ Tabelas Turso criadas/verificadas com sucesso");
-    } catch (error: any) {
-      console.error("❌ Erro ao criar tabelas Turso:", error.message);
-      throw error;
+    for (const table of tables) {
+      try {
+        await this.client.execute(table.sql);
+        console.log(`✅ Tabela ${table.name} criada/verificada`);
+      } catch (error: any) {
+        console.error(`❌ Erro ao criar tabela ${table.name}:`, error.message);
+        // Continua mesmo se uma tabela falhar
+      }
     }
+
+    console.log("✅ Inicialização de tabelas Turso concluída");
   }
 
   private toTimestamp(date: Date): number {
