@@ -579,28 +579,28 @@ export class MemoryStorage implements IStorage {
   }
 }
 
-// Importar SimpleSQLiteStorage para usar banco de dados real
-import { SimpleSQLiteStorage } from "./simple-sqlite-storage";
-
-// Usar SimpleSQLiteStorage para dados reais persistidos no banco de dados
-// Em produção (Vercel serverless), usar MemoryStorage pois SQLite não funciona
+// Usar MemoryStorage em produção (Vercel serverless) pois SQLite não funciona
+// Em desenvolvimento local, tentar usar SimpleSQLiteStorage
 // TODO: Implementar TursoStorage para usar TURSO_DATABASE_URL em produção
 export const storage = (() => {
-  const isProduction = process.env.NODE_ENV === 'production';
+  // Detectar ambiente serverless
   const isVercel = !!process.env.VERCEL;
+  const isProduction = process.env.NODE_ENV === 'production';
   
-  // Se estiver no Vercel/produção serverless, usar MemoryStorage
+  // SEMPRE usar MemoryStorage no Vercel ou produção
   if (isVercel || isProduction) {
-    console.log("🔧 Ambiente serverless detectado - usando MemoryStorage");
+    console.log("🔧 Ambiente serverless/produção - usando MemoryStorage");
     return new MemoryStorage();
   }
   
-  // Em desenvolvimento local, tentar usar SQLite
+  // Em desenvolvimento local, tentar usar SQLite com import dinâmico
   try {
-    console.log("💾 Usando SimpleSQLiteStorage local");
+    console.log("💾 Ambiente local - tentando usar SimpleSQLiteStorage");
+    // Import dinâmico para evitar carregar better-sqlite3 no Vercel
+    const { SimpleSQLiteStorage } = require("./simple-sqlite-storage");
     return new SimpleSQLiteStorage();
   } catch (error) {
-    console.error("⚠️  Erro ao inicializar SimpleSQLiteStorage, usando MemoryStorage:", error);
+    console.warn("⚠️  SimpleSQLiteStorage não disponível, usando MemoryStorage:", error.message);
     return new MemoryStorage();
   }
 })();
