@@ -1,6 +1,5 @@
 {
   "buildCommand": "npm run vercel-build",
-  "installCommand": "rm -rf node_modules package-lock.json && npm install --force",
   "rewrites": [
     {
       "source": "/(.*)",
