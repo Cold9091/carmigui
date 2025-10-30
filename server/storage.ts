@@ -1,5 +1,6 @@
 import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity, type AboutUs, type InsertAboutUs, type Employee, type InsertEmployee, type User, type InsertUser } from "@shared/schema";
 import session from "express-session";
+import { createClient } from "@libsql/client";
 
 export interface IStorage {
   // Auth
@@ -579,27 +580,276 @@ export class MemoryStorage implements IStorage {
   }
 }
 
-// Usar MemoryStorage em produção (Vercel serverless) pois SQLite não funciona
-// Em desenvolvimento local, tentar usar SimpleSQLiteStorage
-// TODO: Implementar TursoStorage para usar TURSO_DATABASE_URL em produção
+// TursoStorage - Implementação com libSQL (Turso Database)
+class TursoStorage extends MemoryStorage {
+  private client: any;
+  private initPromise: Promise<void>;
+
+  constructor() {
+    super();
+    const url = process.env.TURSO_DATABASE_URL!;
+    const authToken = process.env.TURSO_AUTH_TOKEN!;
+    
+    this.client = createClient({ url, authToken });
+    this.initPromise = this.initializeTables();
+    console.log("✅ TursoStorage conectado:", url.substring(0, 35) + "...");
+  }
+
+  private async initializeTables() {
+    try {
+      await this.client.batch([
+        `CREATE TABLE IF NOT EXISTS users (
+          id TEXT PRIMARY KEY,
+          email TEXT NOT NULL UNIQUE,
+          password TEXT NOT NULL,
+          name TEXT,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )`,
+        `CREATE TABLE IF NOT EXISTS property_categories (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          slug TEXT NOT NULL UNIQUE,
+          image_url TEXT NOT NULL,
+          display_order INTEGER DEFAULT 0,
+          active INTEGER DEFAULT 1,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )`,
+        `CREATE TABLE IF NOT EXISTS cities (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          slug TEXT NOT NULL UNIQUE,
+          image_url TEXT NOT NULL,
+          display_order INTEGER DEFAULT 0,
+          active INTEGER DEFAULT 1,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )`,
+        `CREATE TABLE IF NOT EXISTS properties (
+          id TEXT PRIMARY KEY,
+          title TEXT NOT NULL,
+          description TEXT NOT NULL,
+          price TEXT NOT NULL,
+          city_id TEXT NOT NULL,
+          category_id TEXT NOT NULL,
+          bedrooms INTEGER,
+          bathrooms INTEGER,
+          area INTEGER NOT NULL,
+          images TEXT,
+          virtual_tour_url TEXT,
+          status TEXT DEFAULT 'available',
+          featured INTEGER DEFAULT 0,
+          payment_type TEXT DEFAULT 'preco_fixo',
+          down_payment TEXT,
+          payment_period TEXT,
+          house_condition TEXT,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )`,
+        `CREATE TABLE IF NOT EXISTS projects (
+          id TEXT PRIMARY KEY,
+          title TEXT NOT NULL,
+          description TEXT NOT NULL,
+          area INTEGER NOT NULL,
+          duration TEXT NOT NULL,
+          units TEXT NOT NULL,
+          year TEXT NOT NULL,
+          status TEXT NOT NULL,
+          images TEXT,
+          featured INTEGER DEFAULT 0,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )`,
+        `CREATE TABLE IF NOT EXISTS contacts (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL,
+          phone TEXT,
+          subject TEXT NOT NULL,
+          message TEXT NOT NULL,
+          created_at INTEGER NOT NULL
+        )`,
+        `CREATE TABLE IF NOT EXISTS condominiums (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          description TEXT NOT NULL,
+          location TEXT NOT NULL,
+          centrality_or_district TEXT NOT NULL,
+          total_units INTEGER NOT NULL,
+          completed_units INTEGER DEFAULT 0,
+          available_units INTEGER NOT NULL,
+          status TEXT DEFAULT 'in-development',
+          images TEXT,
+          amenities TEXT,
+          featured INTEGER DEFAULT 0,
+          development_year TEXT NOT NULL,
+          payment_type TEXT DEFAULT 'preco_fixo',
+          price TEXT NOT NULL,
+          down_payment TEXT,
+          payment_period TEXT,
+          house_condition TEXT,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )`,
+        `CREATE TABLE IF NOT EXISTS hero_settings (
+          id TEXT PRIMARY KEY,
+          images TEXT,
+          title_line_1 TEXT DEFAULT 'BEM-VINDO',
+          title_line_2 TEXT DEFAULT 'AO SEU NOVO',
+          title_line_3 TEXT DEFAULT 'COMEÇO !',
+          description TEXT NOT NULL,
+          carousel_enabled INTEGER DEFAULT 0,
+          carousel_interval INTEGER DEFAULT 5000,
+          active INTEGER DEFAULT 1,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )`,
+        `CREATE TABLE IF NOT EXISTS about_us (
+          id TEXT PRIMARY KEY,
+          company_type TEXT NOT NULL,
+          title TEXT NOT NULL,
+          description TEXT NOT NULL,
+          mission TEXT,
+          vision TEXT,
+          values TEXT,
+          images TEXT,
+          display_order INTEGER DEFAULT 0,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )`,
+        `CREATE TABLE IF NOT EXISTS employees (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          position TEXT NOT NULL,
+          department TEXT NOT NULL,
+          bio TEXT,
+          email TEXT,
+          phone TEXT,
+          image_url TEXT,
+          display_order INTEGER DEFAULT 0,
+          active INTEGER DEFAULT 1,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )`,
+      ]);
+      console.log("✅ Tabelas Turso criadas/verificadas com sucesso");
+    } catch (error: any) {
+      console.error("❌ Erro ao criar tabelas Turso:", error.message);
+      throw error;
+    }
+  }
+
+  private toTimestamp(date: Date): number {
+    return Math.floor(date.getTime() / 1000);
+  }
+
+  private fromTimestamp(timestamp: number): Date {
+    return new Date(timestamp * 1000);
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    await this.initPromise;
+    try {
+      const result = await this.client.execute({
+        sql: "SELECT * FROM users WHERE email = ?",
+        args: [email]
+      });
+      
+      if (result.rows.length === 0) return undefined;
+      
+      const row = result.rows[0];
+      return {
+        id: row.id as string,
+        email: row.email as string,
+        password: row.password as string,
+        name: row.name as string | null,
+        createdAt: this.fromTimestamp(row.created_at as number),
+        updatedAt: this.fromTimestamp(row.updated_at as number)
+      };
+    } catch (error) {
+      console.error("❌ Erro ao buscar usuário no Turso:", error);
+      return undefined;
+    }
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    await this.initPromise;
+    const id = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const now = this.toTimestamp(new Date());
+
+    await this.client.execute({
+      sql: "INSERT INTO users (id, email, password, name, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+      args: [id, user.email, user.password, user.name || null, now, now]
+    });
+
+    console.log("✅ Usuário criado no Turso:", user.email);
+
+    return {
+      id,
+      email: user.email,
+      password: user.password,
+      name: user.name || null,
+      createdAt: this.fromTimestamp(now),
+      updatedAt: this.fromTimestamp(now)
+    };
+  }
+
+  async updateUserPassword(id: string, password: string): Promise<User | undefined> {
+    await this.initPromise;
+    const now = this.toTimestamp(new Date());
+
+    await this.client.execute({
+      sql: "UPDATE users SET password = ?, updated_at = ? WHERE id = ?",
+      args: [password, now, id]
+    });
+
+    const result = await this.client.execute({
+      sql: "SELECT * FROM users WHERE id = ?",
+      args: [id]
+    });
+
+    if (result.rows.length === 0) return undefined;
+    const row = result.rows[0];
+    return {
+      id: row.id as string,
+      email: row.email as string,
+      password: row.password as string,
+      name: row.name as string | null,
+      createdAt: this.fromTimestamp(row.created_at as number),
+      updatedAt: this.fromTimestamp(row.updated_at as number)
+    };
+  }
+}
+
+// Escolher storage baseado em variáveis de ambiente
 export const storage = (() => {
-  // Detectar ambiente serverless
+  const hasTurso = process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN;
+  
+  if (hasTurso) {
+    try {
+      console.log("🚀 Inicializando TursoStorage (persistência real)...");
+      return new TursoStorage();
+    } catch (error: any) {
+      console.error("❌ Erro ao inicializar TursoStorage:", error.message);
+      console.log("⚠️  Fallback para MemoryStorage");
+      return new MemoryStorage();
+    }
+  }
+  
   const isVercel = !!process.env.VERCEL;
   const isProduction = process.env.NODE_ENV === 'production';
   
-  // SEMPRE usar MemoryStorage no Vercel ou produção
   if (isVercel || isProduction) {
-    console.log("🔧 Ambiente serverless/produção - usando MemoryStorage");
+    console.log("⚠️  Usando MemoryStorage (dados temporários - configure Turso para persistência)");
     return new MemoryStorage();
   }
   
-  // Em desenvolvimento local, tentar usar SQLite com import dinâmico
   try {
     console.log("💾 Ambiente local - tentando usar SimpleSQLiteStorage");
-    // Import dinâmico para evitar carregar better-sqlite3 no Vercel
     const { SimpleSQLiteStorage } = require("./simple-sqlite-storage");
     return new SimpleSQLiteStorage();
-  } catch (error) {
+  } catch (error: any) {
     console.warn("⚠️  SimpleSQLiteStorage não disponível, usando MemoryStorage:", error.message);
     return new MemoryStorage();
   }
