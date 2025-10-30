@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development tsx server/index.ts",
     "build": "vite build && esbuild server/app.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/app.js && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js",
-    "vercel-build": "vite build && node -e \"const fs = require('fs'); fs.cpSync('attached_assets', 'dist/public/attached_assets', {recursive: true}); fs.copyFileSync('attached_assets/Component 3 (1)_1760555027927.png', 'dist/public/favicon.png');\" && esbuild server/app.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/app.js",
+    "vercel-build": "vite build && node -e \"const fs = require('fs'); fs.cpSync('attached_assets', 'dist/public/attached_assets', {recursive: true}); fs.copyFileSync('attached_assets/Component 3 (1)_1760555027927.png', 'dist/public/favicon.png'); fs.copyFileSync('criar-admin.html', 'dist/public/criar-admin.html');\" && esbuild server/app.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/app.js",
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc",
     "db:push": "drizzle-kit push",
