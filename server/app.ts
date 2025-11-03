@@ -74,12 +74,23 @@ export async function createApp() {
 
   // Security: CORS - Allow only specific origins in production
   const allowedOrigins = process.env.NODE_ENV === 'production' 
-    ? ['https://carmigui.com', 'https://www.carmigui.com']
+    ? [
+        'https://carmigui.com', 
+        'https://www.carmigui.com',
+        'https://carmigui.vercel.app',
+        'https://carmigui-git-main-rav-carlos-projects.vercel.app'
+      ]
     : ['http://localhost:5000', 'http://127.0.0.1:5000'];
 
   app.use((req: Request, res: Response, next: NextFunction) => {
     const origin = req.headers.origin;
-    if (!origin || allowedOrigins.includes(origin)) {
+    
+    // Permitir origin se estiver na lista OU se for .vercel.app em produção
+    const isAllowed = !origin || 
+                       allowedOrigins.includes(origin) ||
+                       (process.env.NODE_ENV === 'production' && origin.endsWith('.vercel.app'));
+    
+    if (isAllowed) {
       res.setHeader('Access-Control-Allow-Origin', origin || '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
       res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
