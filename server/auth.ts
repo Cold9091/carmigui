@@ -37,15 +37,19 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+  const isProduction = process.env.NODE_ENV === "production";
+  
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET!,
-    resave: false,
+    resave: true, // True para forçar salvar sessão em serverless
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax', // 'none' necessário para secure cookies
+      domain: isProduction ? '.vercel.app' : undefined, // Compartilhar entre subdomínios
     }
   };
 
