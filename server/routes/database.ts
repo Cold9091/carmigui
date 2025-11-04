@@ -19,6 +19,17 @@ export function registerDatabaseRoutes(app: Express) {
     }
   });
 
+  // Debug: Verificar versão do código deployado
+  app.get("/api/debug/version", (req, res) => {
+    res.json({
+      version: "3.0-WITH-TURSO-SESSION-STORE",
+      timestamp: new Date().toISOString(),
+      hasTursoSessionStore: storage.sessionStore?.constructor?.name === 'TursoSessionStore',
+      sessionStoreType: storage.sessionStore?.constructor?.name || 'unknown',
+      nodeEnv: process.env.NODE_ENV
+    });
+  });
+
   // Database management routes
   app.post("/api/database/run-migrations", ensureAuthenticated, async (req, res) => {
     try {
