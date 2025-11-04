@@ -41,15 +41,14 @@ export function setupAuth(app: Express) {
   
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET!,
-    resave: true, // True para forçar salvar sessão em serverless
+    resave: true, // Forçar salvar sessão (necessário para Turso session store)
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 dias
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax', // 'none' necessário para secure cookies
-      domain: isProduction ? '.vercel.app' : undefined, // Compartilhar entre subdomínios
+      sameSite: isProduction ? 'none' : 'lax', // 'none' permite cookies cross-site em HTTPS
     }
   };
 
