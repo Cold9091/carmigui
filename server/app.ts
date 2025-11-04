@@ -72,6 +72,10 @@ export async function createApp() {
     crossOriginEmbedderPolicy: false,
   }));
 
+  console.log(" Server starting in", process.env.NODE_ENV, "mode");
+  console.log(" DEPLOY TIMESTAMP:", new Date().toISOString());
+  console.log(" TURSO SESSION STORE VERSION: 2.0");
+
   // Security: CORS - Allow only specific origins in production
   const allowedOrigins = process.env.NODE_ENV === 'production' 
     ? [
