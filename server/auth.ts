@@ -106,6 +106,13 @@ export function setupAuth(app: Express) {
         if (err) {
           return next(err);
         }
+        console.log("✅ Login bem-sucedido:", {
+          userId: user.id,
+          email: user.email,
+          sessionID: req.sessionID,
+          cookieSecure: req.session?.cookie?.secure,
+          cookieSameSite: req.session?.cookie?.sameSite
+        });
         res.status(200).json(user);
       });
     })(req, res, next);
@@ -168,7 +175,20 @@ export function setupAuth(app: Express) {
 
 export function ensureAuthenticated(req: any, res: any, next: any) {
   if (!req.isAuthenticated()) {
+    console.log("❌ Acesso negado:", {
+      path: req.path,
+      method: req.method,
+      hasSession: !!req.session,
+      sessionID: req.sessionID,
+      hasCookie: !!req.headers.cookie,
+      passport: req.session?.passport
+    });
     return res.status(401).json({ message: "Não autenticado. Acesso negado." });
   }
+  console.log("✅ Acesso autorizado:", {
+    path: req.path,
+    userId: req.user?.id,
+    sessionID: req.sessionID
+  });
   next();
 }
