@@ -612,7 +612,7 @@ class TursoSessionStore extends session.Store {
       }
       
       const sessionData = JSON.parse(row.data as string);
-      console.log('✅ Sessão encontrada:', sid.substring(0, 8));
+      console.log('✅ Sessão recuperada:', sid.substring(0, 8), '| passport:', JSON.stringify(sessionData.passport));
       callback(null, sessionData);
     } catch (error) {
       console.error('❌ Erro ao ler sessão:', error);
@@ -624,6 +624,8 @@ class TursoSessionStore extends session.Store {
     try {
       const expires = session.cookie?.expires ? new Date(session.cookie.expires).getTime() : Date.now() + (7 * 24 * 60 * 60 * 1000);
       const data = JSON.stringify(session);
+      
+      console.log('💾 Salvando sessão:', sid.substring(0, 8), '| passport:', JSON.stringify(session.passport));
       
       await this.client.execute({
         sql: 'INSERT OR REPLACE INTO sessions (sid, data, expires) VALUES (?, ?, ?)',
