@@ -30,6 +30,41 @@ export function registerDatabaseRoutes(app: Express) {
     });
   });
 
+  // Debug: Verificar sessão diretamente no Turso
+  app.get("/api/debug/turso-session/:sid", async (req, res) => {
+    try {
+      const { createClient } = await import("@libsql/client");
+      const client = createClient({
+        url: process.env.TURSO_DATABASE_URL!,
+        authToken: process.env.TURSO_AUTH_TOKEN!
+      });
+      
+      const result = await client.execute({
+        sql: 'SELECT sid, data, expires FROM sessions WHERE sid LIKE ?',
+        args: [`${req.params.sid}%`]
+      });
+      
+      if (result.rows.length === 0) {
+        return res.json({ found: false, message: "Sessão não encontrada no Turso" });
+      }
+      
+      const row = result.rows[0];
+      const sessionData = JSON.parse(row.data as string);
+      
+      res.json({
+        found: true,
+        sid: row.sid,
+        expires: new Date(row.expires as number).toISOString(),
+        isExpired: (row.expires as number) < Date.now(),
+        rawData: row.data,
+        parsedData: sessionData,
+        passport: sessionData.passport
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Database management routes
   app.post("/api/database/run-migrations", ensureAuthenticated, async (req, res) => {
     try {
