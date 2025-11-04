@@ -4,6 +4,21 @@ import { getDatabaseStatus } from "../db";
 import { ensureAuthenticated } from "../auth";
 
 export function registerDatabaseRoutes(app: Express) {
+  // Debug: Verificar se admin existe
+  app.get("/api/debug/check-admin", async (req, res) => {
+    try {
+      const admin = await storage.getUserByEmail("admin@carmigui.com");
+      res.json({
+        exists: !!admin,
+        email: admin?.email,
+        hasPassword: !!admin?.password,
+        createdAt: admin?.createdAt
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Database management routes
   app.post("/api/database/run-migrations", ensureAuthenticated, async (req, res) => {
     try {
