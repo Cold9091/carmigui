@@ -593,7 +593,8 @@ class TursoSessionStore extends session.Store {
   async get(sid: string, callback: (err: any, session?: SessionData | null) => void): Promise<void> {
     try {
       const shortSid = sid.substring(0, 8);
-      console.log('🔍 [GET] Buscando sessão:', shortSid);
+      const timestamp = new Date().toISOString();
+      console.log(`🔍 [GET] [${timestamp}] Buscando sessão:`, shortSid);
       
       // Stack trace para ver quem está chamando
       const stack = new Error().stack?.split('\n').slice(2, 5).join(' <- ');
@@ -641,7 +642,8 @@ class TursoSessionStore extends session.Store {
       const data = JSON.stringify(session);
       const passportAfter = JSON.stringify(session.passport);
       
-      console.log(`💾 [${count}ª vez] Salvando sessão:`, shortSid, '| passport ANTES:', passportBefore, '| passport DEPOIS:', passportAfter);
+      const timestamp = new Date().toISOString();
+      console.log(`💾 [${count}ª vez] [${timestamp}] Salvando sessão:`, shortSid, '| passport ANTES:', passportBefore, '| passport DEPOIS:', passportAfter);
       console.log('📦 Dados completos a salvar:', data.substring(0, 200));
       
       // Stack trace para ver quem está chamando
