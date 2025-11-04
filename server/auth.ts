@@ -107,8 +107,10 @@ export function setupAuth(app: Express) {
           message: info?.message || "Email ou senha incorretos" 
         });
       }
+      console.log("🔐 Chamando req.login() para usuário:", user.id);
       req.login(user, (err) => {
         if (err) {
+          console.error("❌ Erro no req.login():", err);
           return next(err);
         }
         console.log("✅ Login bem-sucedido:", {
@@ -116,7 +118,8 @@ export function setupAuth(app: Express) {
           email: user.email,
           sessionID: req.sessionID,
           cookieSecure: req.session?.cookie?.secure,
-          cookieSameSite: req.session?.cookie?.sameSite
+          cookieSameSite: req.session?.cookie?.sameSite,
+          sessionPassport: req.session?.passport
         });
         res.status(200).json(user);
       });
