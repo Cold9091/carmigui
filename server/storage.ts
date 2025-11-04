@@ -623,9 +623,14 @@ class TursoSessionStore extends session.Store {
   async set(sid: string, session: SessionData, callback?: (err?: any) => void): Promise<void> {
     try {
       const expires = session.cookie?.expires ? new Date(session.cookie.expires).getTime() : Date.now() + (7 * 24 * 60 * 60 * 1000);
-      const data = JSON.stringify(session);
       
-      console.log('💾 Salvando sessão:', sid.substring(0, 8), '| passport:', JSON.stringify(session.passport));
+      // Log ANTES de stringify para ver se há modificação
+      const passportBefore = JSON.stringify(session.passport);
+      const data = JSON.stringify(session);
+      const passportAfter = JSON.stringify(session.passport);
+      
+      console.log('💾 Salvando sessão:', sid.substring(0, 8), '| passport ANTES:', passportBefore, '| passport DEPOIS:', passportAfter);
+      console.log('📦 Dados completos a salvar:', data.substring(0, 200));
       
       await this.client.execute({
         sql: 'INSERT OR REPLACE INTO sessions (sid, data, expires) VALUES (?, ?, ?)',
