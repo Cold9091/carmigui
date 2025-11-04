@@ -134,9 +134,12 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", (req, res) => {
+    console.log("👤 GET /api/user | sessionID:", req.sessionID?.substring(0, 8), "| passport:", JSON.stringify(req.session?.passport));
     if (!req.isAuthenticated()) {
+      console.log("❌ GET /api/user: Não autenticado");
       return res.status(401).json({ message: "Não autenticado" });
     }
+    console.log("✅ GET /api/user: Autenticado como", req.user?.email);
     res.json(req.user);
   });
 
