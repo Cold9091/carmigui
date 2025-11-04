@@ -583,6 +583,7 @@ export class MemoryStorage implements IStorage {
 // TursoSessionStore - Session store persistente no Turso
 class TursoSessionStore extends session.Store {
   private client: any;
+  private saveCounter: Map<string, number> = new Map();
 
   constructor(client: any) {
     super();
@@ -624,20 +625,29 @@ class TursoSessionStore extends session.Store {
     try {
       const expires = session.cookie?.expires ? new Date(session.cookie.expires).getTime() : Date.now() + (7 * 24 * 60 * 60 * 1000);
       
+      // Incrementar contador
+      const shortSid = sid.substring(0, 8);
+      const count = (this.saveCounter.get(shortSid) || 0) + 1;
+      this.saveCounter.set(shortSid, count);
+      
       // Log ANTES de stringify para ver se há modificação
       const passportBefore = JSON.stringify(session.passport);
       const data = JSON.stringify(session);
       const passportAfter = JSON.stringify(session.passport);
       
-      console.log('💾 Salvando sessão:', sid.substring(0, 8), '| passport ANTES:', passportBefore, '| passport DEPOIS:', passportAfter);
+      console.log(`💾 [${count}ª vez] Salvando sessão:`, shortSid, '| passport ANTES:', passportBefore, '| passport DEPOIS:', passportAfter);
       console.log('📦 Dados completos a salvar:', data.substring(0, 200));
+      
+      // Stack trace para ver quem está chamando
+      const stack = new Error().stack?.split('\n').slice(2, 5).join(' <- ');
+      console.log('📍 Chamado de:', stack);
       
       await this.client.execute({
         sql: 'INSERT OR REPLACE INTO sessions (sid, data, expires) VALUES (?, ?, ?)',
         args: [sid, data, expires]
       });
       
-      console.log('✅ Sessão salva:', sid.substring(0, 8));
+      console.log(`✅ [${count}ª vez] Sessão salva:`, shortSid);
       if (callback) callback();
     } catch (error) {
       console.error('❌ Erro ao salvar sessão:', error);
