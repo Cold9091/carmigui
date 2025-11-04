@@ -76,18 +76,23 @@ export function setupAuth(app: Express) {
   );
 
   passport.serializeUser((user, done) => {
+    console.log("📝 Serializando usuário:", user.id);
     done(null, user.id);
   });
 
   passport.deserializeUser(async (id: string, done) => {
     try {
+      console.log("🔓 Deserializando usuário:", id);
       const user = await storage.getUser(id);
       if (!user) {
+        console.log("❌ Usuário não encontrado no banco:", id);
         return done(null, false);
       }
+      console.log("✅ Usuário deserializado:", user.id, user.email);
       const { password: _, ...userWithoutPassword } = user;
       done(null, userWithoutPassword);
     } catch (error) {
+      console.error("❌ Erro ao deserializar usuário:", error);
       done(error);
     }
   });
