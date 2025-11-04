@@ -642,12 +642,25 @@ class TursoSessionStore extends session.Store {
       const stack = new Error().stack?.split('\n').slice(2, 5).join(' <- ');
       console.log('📍 Chamado de:', stack);
       
-      await this.client.execute({
+      const result = await this.client.execute({
         sql: 'INSERT OR REPLACE INTO sessions (sid, data, expires) VALUES (?, ?, ?)',
         args: [sid, data, expires]
       });
       
-      console.log(`✅ [${count}ª vez] Sessão salva:`, shortSid);
+      console.log(`✅ [${count}ª vez] Sessão salva no Turso:`, shortSid, '| result:', JSON.stringify(result));
+      
+      // Verificar imediatamente se foi salvo
+      const verify = await this.client.execute({
+        sql: 'SELECT data FROM sessions WHERE sid = ?',
+        args: [sid]
+      });
+      if (verify.rows.length > 0) {
+        const savedData = JSON.parse(verify.rows[0].data as string);
+        console.log(`🔍 [${count}ª vez] Verificação imediata:`, shortSid, '| passport salvo:', JSON.stringify(savedData.passport));
+      } else {
+        console.error(`❌ [${count}ª vez] ERRO: Sessão NÃO foi salva no banco!`, shortSid);
+      }
+      
       if (callback) callback();
     } catch (error) {
       console.error('❌ Erro ao salvar sessão:', error);
