@@ -1,5 +1,5 @@
 import { type Property, type InsertProperty, type Project, type InsertProject, type Contact, type InsertContact, type Condominium, type InsertCondominium, type PropertyCategory, type InsertPropertyCategory, type HeroSettings, type InsertHeroSettings, type City, type InsertCity, type AboutUs, type InsertAboutUs, type Employee, type InsertEmployee, type User, type InsertUser } from "@shared/schema";
-import session from "express-session";
+import session, { type SessionData } from "express-session";
 import { createClient } from "@libsql/client";
 
 export interface IStorage {
@@ -580,10 +580,93 @@ export class MemoryStorage implements IStorage {
   }
 }
 
+// TursoSessionStore - Session store persistente no Turso
+class TursoSessionStore extends session.Store {
+  private client: any;
+
+  constructor(client: any) {
+    super();
+    this.client = client;
+  }
+
+  async get(sid: string, callback: (err: any, session?: SessionData | null) => void): Promise<void> {
+    try {
+      const result = await this.client.execute({
+        sql: 'SELECT data, expires FROM sessions WHERE sid = ?',
+        args: [sid]
+      });
+      
+      if (result.rows.length === 0) {
+        return callback(null, null);
+      }
+      
+      const row = result.rows[0];
+      const expires = row.expires as number;
+      
+      if (expires && expires < Date.now()) {
+        await this.destroy(sid, () => {});
+        return callback(null, null);
+      }
+      
+      const sessionData = JSON.parse(row.data as string);
+      callback(null, sessionData);
+    } catch (error) {
+      console.error('❌ Erro ao ler sessão:', error);
+      callback(error);
+    }
+  }
+
+  async set(sid: string, session: SessionData, callback?: (err?: any) => void): Promise<void> {
+    try {
+      const expires = session.cookie?.expires ? new Date(session.cookie.expires).getTime() : Date.now() + (7 * 24 * 60 * 60 * 1000);
+      const data = JSON.stringify(session);
+      
+      await this.client.execute({
+        sql: 'INSERT OR REPLACE INTO sessions (sid, data, expires) VALUES (?, ?, ?)',
+        args: [sid, data, expires]
+      });
+      
+      console.log('✅ Sessão salva:', sid.substring(0, 8));
+      if (callback) callback();
+    } catch (error) {
+      console.error('❌ Erro ao salvar sessão:', error);
+      if (callback) callback(error);
+    }
+  }
+
+  async destroy(sid: string, callback?: (err?: any) => void): Promise<void> {
+    try {
+      await this.client.execute({
+        sql: 'DELETE FROM sessions WHERE sid = ?',
+        args: [sid]
+      });
+      if (callback) callback();
+    } catch (error) {
+      console.error('❌ Erro ao deletar sessão:', error);
+      if (callback) callback(error);
+    }
+  }
+
+  async touch(sid: string, session: SessionData, callback?: (err?: any) => void): Promise<void> {
+    try {
+      const expires = session.cookie?.expires ? new Date(session.cookie.expires).getTime() : Date.now() + (7 * 24 * 60 * 60 * 1000);
+      await this.client.execute({
+        sql: 'UPDATE sessions SET expires = ? WHERE sid = ?',
+        args: [expires, sid]
+      });
+      if (callback) callback();
+    } catch (error) {
+      console.error('❌ Erro ao atualizar sessão:', error);
+      if (callback) callback(error);
+    }
+  }
+}
+
 // TursoStorage - Implementação com libSQL (Turso Database)
 class TursoStorage extends MemoryStorage {
   private client: any;
   private initPromise: Promise<void>;
+  public sessionStore: session.Store;
 
   constructor() {
     super();
@@ -591,12 +674,18 @@ class TursoStorage extends MemoryStorage {
     const authToken = process.env.TURSO_AUTH_TOKEN!;
     
     this.client = createClient({ url, authToken });
+    
+    // Criar session store persistente com Turso
+    this.sessionStore = new TursoSessionStore(this.client);
+    console.log("✅ TursoSessionStore criado (sessões persistentes)");
+    
     this.initPromise = this.initializeTables();
     console.log("✅ TursoStorage conectado:", url.substring(0, 35) + "...");
   }
 
   private async initializeTables() {
     const tables = [
+      { name: 'sessions', sql: 'CREATE TABLE IF NOT EXISTS sessions (sid TEXT PRIMARY KEY, data TEXT NOT NULL, expires INTEGER NOT NULL)' },
       { name: 'users', sql: 'CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL, name TEXT, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)' },
       { name: 'property_categories', sql: 'CREATE TABLE IF NOT EXISTS property_categories (id TEXT PRIMARY KEY, name TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, image_url TEXT NOT NULL, display_order INTEGER DEFAULT 0, active INTEGER DEFAULT 1, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)' },
       { name: 'cities', sql: 'CREATE TABLE IF NOT EXISTS cities (id TEXT PRIMARY KEY, name TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, image_url TEXT NOT NULL, display_order INTEGER DEFAULT 0, active INTEGER DEFAULT 1, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)' },
