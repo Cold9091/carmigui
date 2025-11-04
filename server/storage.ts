@@ -592,14 +592,20 @@ class TursoSessionStore extends session.Store {
 
   async get(sid: string, callback: (err: any, session?: SessionData | null) => void): Promise<void> {
     try {
-      console.log('🔍 Buscando sessão:', sid.substring(0, 8));
+      const shortSid = sid.substring(0, 8);
+      console.log('🔍 [GET] Buscando sessão:', shortSid);
+      
+      // Stack trace para ver quem está chamando
+      const stack = new Error().stack?.split('\n').slice(2, 5).join(' <- ');
+      console.log('📍 [GET] Chamado de:', stack);
+      
       const result = await this.client.execute({
         sql: 'SELECT data, expires FROM sessions WHERE sid = ?',
         args: [sid]
       });
       
       if (result.rows.length === 0) {
-        console.log('⚠️ Sessão não encontrada:', sid.substring(0, 8));
+        console.log('⚠️ [GET] Sessão não encontrada:', shortSid);
         return callback(null, null);
       }
       
@@ -607,16 +613,16 @@ class TursoSessionStore extends session.Store {
       const expires = row.expires as number;
       
       if (expires && expires < Date.now()) {
-        console.log('⏰ Sessão expirada:', sid.substring(0, 8));
+        console.log('⏰ [GET] Sessão expirada:', shortSid);
         await this.destroy(sid, () => {});
         return callback(null, null);
       }
       
       const sessionData = JSON.parse(row.data as string);
-      console.log('✅ Sessão recuperada:', sid.substring(0, 8), '| passport:', JSON.stringify(sessionData.passport));
+      console.log('✅ [GET] Sessão recuperada:', shortSid, '| passport:', JSON.stringify(sessionData.passport), '| expires:', new Date(expires).toISOString());
       callback(null, sessionData);
     } catch (error) {
-      console.error('❌ Erro ao ler sessão:', error);
+      console.error('❌ [GET] Erro ao ler sessão:', error);
       callback(error);
     }
   }
