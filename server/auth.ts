@@ -82,17 +82,21 @@ export function setupAuth(app: Express) {
 
   passport.deserializeUser(async (id: string, done) => {
     try {
-      console.log("🔓 Deserializando usuário:", id);
+      const timestamp = new Date().toISOString();
+      console.log(`🔓 [${timestamp}] Deserializando usuário:`, id);
       const user = await storage.getUser(id);
       if (!user) {
-        console.log("❌ Usuário não encontrado no banco:", id);
-        return done(null, false);
+        console.error(`❌ [${timestamp}] CRÍTICO: Usuário não encontrado no banco:`, id);
+        console.error(`❌ [${timestamp}] Isso vai LIMPAR a sessão! Stack:`, new Error().stack?.split('\n').slice(2, 5).join(' <- '));
+        // NÃO limpar a sessão, apenas retornar erro
+        return done(new Error(`Usuário ${id} não encontrado`));
       }
-      console.log("✅ Usuário deserializado:", user.id, user.email);
+      console.log(`✅ [${timestamp}] Usuário deserializado:`, user.id, user.email);
       const { password: _, ...userWithoutPassword } = user;
       done(null, userWithoutPassword);
     } catch (error) {
-      console.error("❌ Erro ao deserializar usuário:", error);
+      const timestamp = new Date().toISOString();
+      console.error(`❌ [${timestamp}] Erro ao deserializar usuário:`, error);
       done(error);
     }
   });
