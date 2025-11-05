@@ -984,6 +984,600 @@ class TursoStorage extends MemoryStorage {
       return false;
     }
   }
+
+  // Property Categories - Implementação Turso
+  async getPropertyCategories(activeOnly: boolean = false): Promise<PropertyCategory[]> {
+    await this.initPromise;
+    try {
+      const sql = activeOnly 
+        ? "SELECT * FROM property_categories WHERE active = 1 ORDER BY display_order ASC, name ASC"
+        : "SELECT * FROM property_categories ORDER BY display_order ASC, name ASC";
+      const result = await this.client.execute(sql);
+      
+      return result.rows.map((row: any) => ({
+        id: row.id,
+        name: row.name,
+        slug: row.slug,
+        imageUrl: row.image_url,
+        displayOrder: row.display_order,
+        active: row.active === 1,
+        createdAt: this.fromTimestamp(row.created_at),
+        updatedAt: this.fromTimestamp(row.updated_at)
+      }));
+    } catch (error) {
+      console.error("❌ Erro ao buscar property categories no Turso:", error);
+      return [];
+    }
+  }
+
+  async getPropertyCategory(id: string): Promise<PropertyCategory | undefined> {
+    await this.initPromise;
+    try {
+      const result = await this.client.execute({
+        sql: "SELECT * FROM property_categories WHERE id = ?",
+        args: [id]
+      });
+      
+      if (result.rows.length === 0) return undefined;
+      
+      const row = result.rows[0];
+      return {
+        id: row.id as string,
+        name: row.name as string,
+        slug: row.slug as string,
+        imageUrl: row.image_url as string,
+        displayOrder: row.display_order as number,
+        active: row.active === 1,
+        createdAt: this.fromTimestamp(row.created_at as number),
+        updatedAt: this.fromTimestamp(row.updated_at as number)
+      };
+    } catch (error) {
+      console.error("❌ Erro ao buscar property category no Turso:", error);
+      return undefined;
+    }
+  }
+
+  async createPropertyCategory(category: InsertPropertyCategory): Promise<PropertyCategory> {
+    await this.initPromise;
+    const id = `category_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const now = this.toTimestamp(new Date());
+
+    await this.client.execute({
+      sql: "INSERT INTO property_categories (id, name, slug, image_url, display_order, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      args: [id, category.name, category.slug, category.imageUrl, category.displayOrder || 0, category.active ? 1 : 0, now, now]
+    });
+
+    console.log("✅ Property Category criada no Turso:", category.name);
+
+    return {
+      id,
+      name: category.name,
+      slug: category.slug,
+      imageUrl: category.imageUrl,
+      displayOrder: category.displayOrder || 0,
+      active: category.active !== false,
+      createdAt: this.fromTimestamp(now),
+      updatedAt: this.fromTimestamp(now)
+    };
+  }
+
+  async updatePropertyCategory(id: string, category: Partial<InsertPropertyCategory>): Promise<PropertyCategory | undefined> {
+    await this.initPromise;
+    const now = this.toTimestamp(new Date());
+    
+    const updates: string[] = [];
+    const args: any[] = [];
+    
+    if (category.name !== undefined) { updates.push("name = ?"); args.push(category.name); }
+    if (category.slug !== undefined) { updates.push("slug = ?"); args.push(category.slug); }
+    if (category.imageUrl !== undefined) { updates.push("image_url = ?"); args.push(category.imageUrl); }
+    if (category.displayOrder !== undefined) { updates.push("display_order = ?"); args.push(category.displayOrder); }
+    if (category.active !== undefined) { updates.push("active = ?"); args.push(category.active ? 1 : 0); }
+    
+    if (updates.length === 0) return this.getPropertyCategory(id);
+    
+    updates.push("updated_at = ?");
+    args.push(now);
+    args.push(id);
+    
+    await this.client.execute({
+      sql: `UPDATE property_categories SET ${updates.join(", ")} WHERE id = ?`,
+      args
+    });
+    
+    return this.getPropertyCategory(id);
+  }
+
+  async deletePropertyCategory(id: string): Promise<boolean> {
+    await this.initPromise;
+    try {
+      await this.client.execute({
+        sql: "DELETE FROM property_categories WHERE id = ?",
+        args: [id]
+      });
+      console.log("✅ Property Category deletada no Turso:", id);
+      return true;
+    } catch (error) {
+      console.error("❌ Erro ao deletar property category no Turso:", error);
+      return false;
+    }
+  }
+
+  // Properties - Implementação Turso
+  async getProperties(filters?: { cityId?: string; categoryId?: string; featured?: boolean }): Promise<Property[]> {
+    await this.initPromise;
+    try {
+      let sql = "SELECT * FROM properties WHERE 1=1";
+      const args: any[] = [];
+      
+      if (filters?.cityId) {
+        sql += " AND city_id = ?";
+        args.push(filters.cityId);
+      }
+      if (filters?.categoryId) {
+        sql += " AND category_id = ?";
+        args.push(filters.categoryId);
+      }
+      if (filters?.featured !== undefined) {
+        sql += " AND featured = ?";
+        args.push(filters.featured ? 1 : 0);
+      }
+      
+      sql += " ORDER BY created_at DESC";
+      
+      const result = await this.client.execute({ sql, args });
+      
+      return result.rows.map((row: any) => ({
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        price: row.price,
+        cityId: row.city_id,
+        categoryId: row.category_id,
+        bedrooms: row.bedrooms || undefined,
+        bathrooms: row.bathrooms || undefined,
+        area: row.area,
+        images: row.images ? JSON.parse(row.images) : [],
+        virtualTourUrl: row.virtual_tour_url || undefined,
+        status: row.status || undefined,
+        featured: row.featured === 1,
+        paymentType: row.payment_type || undefined,
+        downPayment: row.down_payment || undefined,
+        paymentPeriod: row.payment_period || undefined,
+        houseCondition: row.house_condition || undefined,
+        createdAt: this.fromTimestamp(row.created_at),
+        updatedAt: this.fromTimestamp(row.updated_at)
+      }));
+    } catch (error) {
+      console.error("❌ Erro ao buscar properties no Turso:", error);
+      return [];
+    }
+  }
+
+  async getProperty(id: string): Promise<Property | undefined> {
+    await this.initPromise;
+    try {
+      const result = await this.client.execute({
+        sql: "SELECT * FROM properties WHERE id = ?",
+        args: [id]
+      });
+      
+      if (result.rows.length === 0) return undefined;
+      
+      const row = result.rows[0];
+      return {
+        id: row.id as string,
+        title: row.title as string,
+        description: row.description as string,
+        price: row.price as string,
+        cityId: row.city_id as string,
+        categoryId: row.category_id as string,
+        bedrooms: row.bedrooms as number || undefined,
+        bathrooms: row.bathrooms as number || undefined,
+        area: row.area as number,
+        images: row.images ? JSON.parse(row.images as string) : [],
+        virtualTourUrl: row.virtual_tour_url as string || undefined,
+        status: row.status as string || undefined,
+        featured: row.featured === 1,
+        paymentType: row.payment_type as string || undefined,
+        downPayment: row.down_payment as string || undefined,
+        paymentPeriod: row.payment_period as string || undefined,
+        houseCondition: row.house_condition as string || undefined,
+        createdAt: this.fromTimestamp(row.created_at as number),
+        updatedAt: this.fromTimestamp(row.updated_at as number)
+      };
+    } catch (error) {
+      console.error("❌ Erro ao buscar property no Turso:", error);
+      return undefined;
+    }
+  }
+
+  async createProperty(property: InsertProperty): Promise<Property> {
+    await this.initPromise;
+    const id = `property_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const now = this.toTimestamp(new Date());
+    const images = JSON.stringify(property.images || []);
+
+    await this.client.execute({
+      sql: "INSERT INTO properties (id, title, description, price, city_id, category_id, bedrooms, bathrooms, area, images, virtual_tour_url, status, featured, payment_type, down_payment, payment_period, house_condition, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      args: [
+        id, property.title, property.description, property.price, property.cityId, property.categoryId,
+        property.bedrooms || null, property.bathrooms || null, property.area, images,
+        property.virtualTourUrl || null, property.status || null, property.featured ? 1 : 0,
+        property.paymentType || null, property.downPayment || null, property.paymentPeriod || null,
+        property.houseCondition || null, now, now
+      ]
+    });
+
+    console.log("✅ Property criada no Turso:", property.title);
+
+    return {
+      id,
+      ...property,
+      featured: property.featured !== false,
+      createdAt: this.fromTimestamp(now),
+      updatedAt: this.fromTimestamp(now)
+    };
+  }
+
+  async updateProperty(id: string, property: Partial<InsertProperty>): Promise<Property | undefined> {
+    await this.initPromise;
+    const now = this.toTimestamp(new Date());
+    
+    const updates: string[] = [];
+    const args: any[] = [];
+    
+    if (property.title !== undefined) { updates.push("title = ?"); args.push(property.title); }
+    if (property.description !== undefined) { updates.push("description = ?"); args.push(property.description); }
+    if (property.price !== undefined) { updates.push("price = ?"); args.push(property.price); }
+    if (property.cityId !== undefined) { updates.push("city_id = ?"); args.push(property.cityId); }
+    if (property.categoryId !== undefined) { updates.push("category_id = ?"); args.push(property.categoryId); }
+    if (property.bedrooms !== undefined) { updates.push("bedrooms = ?"); args.push(property.bedrooms); }
+    if (property.bathrooms !== undefined) { updates.push("bathrooms = ?"); args.push(property.bathrooms); }
+    if (property.area !== undefined) { updates.push("area = ?"); args.push(property.area); }
+    if (property.images !== undefined) { updates.push("images = ?"); args.push(JSON.stringify(property.images)); }
+    if (property.virtualTourUrl !== undefined) { updates.push("virtual_tour_url = ?"); args.push(property.virtualTourUrl); }
+    if (property.status !== undefined) { updates.push("status = ?"); args.push(property.status); }
+    if (property.featured !== undefined) { updates.push("featured = ?"); args.push(property.featured ? 1 : 0); }
+    if (property.paymentType !== undefined) { updates.push("payment_type = ?"); args.push(property.paymentType); }
+    if (property.downPayment !== undefined) { updates.push("down_payment = ?"); args.push(property.downPayment); }
+    if (property.paymentPeriod !== undefined) { updates.push("payment_period = ?"); args.push(property.paymentPeriod); }
+    if (property.houseCondition !== undefined) { updates.push("house_condition = ?"); args.push(property.houseCondition); }
+    
+    if (updates.length === 0) return this.getProperty(id);
+    
+    updates.push("updated_at = ?");
+    args.push(now);
+    args.push(id);
+    
+    await this.client.execute({
+      sql: `UPDATE properties SET ${updates.join(", ")} WHERE id = ?`,
+      args
+    });
+    
+    return this.getProperty(id);
+  }
+
+  async deleteProperty(id: string): Promise<boolean> {
+    await this.initPromise;
+    try {
+      await this.client.execute({
+        sql: "DELETE FROM properties WHERE id = ?",
+        args: [id]
+      });
+      console.log("✅ Property deletada no Turso:", id);
+      return true;
+    } catch (error) {
+      console.error("❌ Erro ao deletar property no Turso:", error);
+      return false;
+    }
+  }
+
+  // Projects - Implementação Turso
+  async getProjects(featured?: boolean): Promise<Project[]> {
+    await this.initPromise;
+    try {
+      let sql = "SELECT * FROM projects";
+      const args: any[] = [];
+      
+      if (featured !== undefined) {
+        sql += " WHERE featured = ?";
+        args.push(featured ? 1 : 0);
+      }
+      
+      sql += " ORDER BY created_at DESC";
+      
+      const result = await this.client.execute({ sql, args });
+      
+      return result.rows.map((row: any) => ({
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        area: row.area,
+        duration: row.duration,
+        units: row.units,
+        year: row.year,
+        status: row.status,
+        images: row.images ? JSON.parse(row.images) : [],
+        featured: row.featured === 1,
+        createdAt: this.fromTimestamp(row.created_at),
+        updatedAt: this.fromTimestamp(row.updated_at)
+      }));
+    } catch (error) {
+      console.error("❌ Erro ao buscar projects no Turso:", error);
+      return [];
+    }
+  }
+
+  async getProject(id: string): Promise<Project | undefined> {
+    await this.initPromise;
+    try {
+      const result = await this.client.execute({
+        sql: "SELECT * FROM projects WHERE id = ?",
+        args: [id]
+      });
+      
+      if (result.rows.length === 0) return undefined;
+      
+      const row = result.rows[0];
+      return {
+        id: row.id as string,
+        title: row.title as string,
+        description: row.description as string,
+        area: row.area as number,
+        duration: row.duration as string,
+        units: row.units as string,
+        year: row.year as string,
+        status: row.status as string,
+        images: row.images ? JSON.parse(row.images as string) : [],
+        featured: row.featured === 1,
+        createdAt: this.fromTimestamp(row.created_at as number),
+        updatedAt: this.fromTimestamp(row.updated_at as number)
+      };
+    } catch (error) {
+      console.error("❌ Erro ao buscar project no Turso:", error);
+      return undefined;
+    }
+  }
+
+  async createProject(project: InsertProject): Promise<Project> {
+    await this.initPromise;
+    const id = `project_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const now = this.toTimestamp(new Date());
+    const images = JSON.stringify(project.images || []);
+
+    await this.client.execute({
+      sql: "INSERT INTO projects (id, title, description, area, duration, units, year, status, images, featured, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      args: [id, project.title, project.description, project.area, project.duration, project.units, project.year, project.status, images, project.featured ? 1 : 0, now, now]
+    });
+
+    console.log("✅ Project criado no Turso:", project.title);
+
+    return {
+      id,
+      ...project,
+      featured: project.featured !== false,
+      createdAt: this.fromTimestamp(now),
+      updatedAt: this.fromTimestamp(now)
+    };
+  }
+
+  async updateProject(id: string, project: Partial<InsertProject>): Promise<Project | undefined> {
+    await this.initPromise;
+    const now = this.toTimestamp(new Date());
+    
+    const updates: string[] = [];
+    const args: any[] = [];
+    
+    if (project.title !== undefined) { updates.push("title = ?"); args.push(project.title); }
+    if (project.description !== undefined) { updates.push("description = ?"); args.push(project.description); }
+    if (project.area !== undefined) { updates.push("area = ?"); args.push(project.area); }
+    if (project.duration !== undefined) { updates.push("duration = ?"); args.push(project.duration); }
+    if (project.units !== undefined) { updates.push("units = ?"); args.push(project.units); }
+    if (project.year !== undefined) { updates.push("year = ?"); args.push(project.year); }
+    if (project.status !== undefined) { updates.push("status = ?"); args.push(project.status); }
+    if (project.images !== undefined) { updates.push("images = ?"); args.push(JSON.stringify(project.images)); }
+    if (project.featured !== undefined) { updates.push("featured = ?"); args.push(project.featured ? 1 : 0); }
+    
+    if (updates.length === 0) return this.getProject(id);
+    
+    updates.push("updated_at = ?");
+    args.push(now);
+    args.push(id);
+    
+    await this.client.execute({
+      sql: `UPDATE projects SET ${updates.join(", ")} WHERE id = ?`,
+      args
+    });
+    
+    return this.getProject(id);
+  }
+
+  async deleteProject(id: string): Promise<boolean> {
+    await this.initPromise;
+    try {
+      await this.client.execute({
+        sql: "DELETE FROM projects WHERE id = ?",
+        args: [id]
+      });
+      console.log("✅ Project deletado no Turso:", id);
+      return true;
+    } catch (error) {
+      console.error("❌ Erro ao deletar project no Turso:", error);
+      return false;
+    }
+  }
+
+  // Condominiums - Implementação Turso
+  async getCondominiums(featured?: boolean): Promise<Condominium[]> {
+    await this.initPromise;
+    try {
+      let sql = "SELECT * FROM condominiums";
+      const args: any[] = [];
+      
+      if (featured !== undefined) {
+        sql += " WHERE featured = ?";
+        args.push(featured ? 1 : 0);
+      }
+      
+      sql += " ORDER BY created_at DESC";
+      
+      const result = await this.client.execute({ sql, args });
+      
+      return result.rows.map((row: any) => ({
+        id: row.id,
+        name: row.name,
+        description: row.description,
+        location: row.location,
+        centralityOrDistrict: row.centrality_or_district,
+        totalUnits: row.total_units,
+        completedUnits: row.completed_units,
+        availableUnits: row.available_units,
+        status: row.status || undefined,
+        images: row.images ? JSON.parse(row.images) : [],
+        amenities: row.amenities ? JSON.parse(row.amenities) : [],
+        featured: row.featured === 1,
+        developmentYear: row.development_year,
+        paymentType: row.payment_type || undefined,
+        price: row.price,
+        downPayment: row.down_payment || undefined,
+        paymentPeriod: row.payment_period || undefined,
+        houseCondition: row.house_condition || undefined,
+        createdAt: this.fromTimestamp(row.created_at),
+        updatedAt: this.fromTimestamp(row.updated_at)
+      }));
+    } catch (error) {
+      console.error("❌ Erro ao buscar condominiums no Turso:", error);
+      return [];
+    }
+  }
+
+  async getCondominium(id: string): Promise<Condominium | undefined> {
+    await this.initPromise;
+    try {
+      const result = await this.client.execute({
+        sql: "SELECT * FROM condominiums WHERE id = ?",
+        args: [id]
+      });
+      
+      if (result.rows.length === 0) return undefined;
+      
+      const row = result.rows[0];
+      return {
+        id: row.id as string,
+        name: row.name as string,
+        description: row.description as string,
+        location: row.location as string,
+        centralityOrDistrict: row.centrality_or_district as string,
+        totalUnits: row.total_units as number,
+        completedUnits: row.completed_units as number,
+        availableUnits: row.available_units as number,
+        status: row.status as string || undefined,
+        images: row.images ? JSON.parse(row.images as string) : [],
+        amenities: row.amenities ? JSON.parse(row.amenities as string) : [],
+        featured: row.featured === 1,
+        developmentYear: row.development_year as string,
+        paymentType: row.payment_type as string || undefined,
+        price: row.price as string,
+        downPayment: row.down_payment as string || undefined,
+        paymentPeriod: row.payment_period as string || undefined,
+        houseCondition: row.house_condition as string || undefined,
+        createdAt: this.fromTimestamp(row.created_at as number),
+        updatedAt: this.fromTimestamp(row.updated_at as number)
+      };
+    } catch (error) {
+      console.error("❌ Erro ao buscar condominium no Turso:", error);
+      return undefined;
+    }
+  }
+
+  async createCondominium(condominium: InsertCondominium): Promise<Condominium> {
+    await this.initPromise;
+    const id = `condominium_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const now = this.toTimestamp(new Date());
+    const images = JSON.stringify(condominium.images || []);
+    const amenities = JSON.stringify(condominium.amenities || []);
+
+    await this.client.execute({
+      sql: "INSERT INTO condominiums (id, name, description, location, centrality_or_district, total_units, completed_units, available_units, status, images, amenities, featured, development_year, payment_type, price, down_payment, payment_period, house_condition, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      args: [
+        id, condominium.name, condominium.description, condominium.location, condominium.centralityOrDistrict,
+        condominium.totalUnits, condominium.completedUnits || 0, condominium.availableUnits,
+        condominium.status || null, images, amenities, condominium.featured ? 1 : 0,
+        condominium.developmentYear, condominium.paymentType || null, condominium.price,
+        condominium.downPayment || null, condominium.paymentPeriod || null, condominium.houseCondition || null,
+        now, now
+      ]
+    });
+
+    console.log("✅ Condominium criado no Turso:", condominium.name);
+
+    return {
+      id,
+      ...condominium,
+      completedUnits: condominium.completedUnits || 0,
+      featured: condominium.featured !== false,
+      createdAt: this.fromTimestamp(now),
+      updatedAt: this.fromTimestamp(now)
+    };
+  }
+
+  async updateCondominium(id: string, condominium: Partial<InsertCondominium>): Promise<Condominium | undefined> {
+    await this.initPromise;
+    const now = this.toTimestamp(new Date());
+    
+    const updates: string[] = [];
+    const args: any[] = [];
+    
+    if (condominium.name !== undefined) { updates.push("name = ?"); args.push(condominium.name); }
+    if (condominium.description !== undefined) { updates.push("description = ?"); args.push(condominium.description); }
+    if (condominium.location !== undefined) { updates.push("location = ?"); args.push(condominium.location); }
+    if (condominium.centralityOrDistrict !== undefined) { updates.push("centrality_or_district = ?"); args.push(condominium.centralityOrDistrict); }
+    if (condominium.totalUnits !== undefined) { updates.push("total_units = ?"); args.push(condominium.totalUnits); }
+    if (condominium.completedUnits !== undefined) { updates.push("completed_units = ?"); args.push(condominium.completedUnits); }
+    if (condominium.availableUnits !== undefined) { updates.push("available_units = ?"); args.push(condominium.availableUnits); }
+    if (condominium.status !== undefined) { updates.push("status = ?"); args.push(condominium.status); }
+    if (condominium.images !== undefined) { updates.push("images = ?"); args.push(JSON.stringify(condominium.images)); }
+    if (condominium.amenities !== undefined) { updates.push("amenities = ?"); args.push(JSON.stringify(condominium.amenities)); }
+    if (condominium.featured !== undefined) { updates.push("featured = ?"); args.push(condominium.featured ? 1 : 0); }
+    if (condominium.developmentYear !== undefined) { updates.push("development_year = ?"); args.push(condominium.developmentYear); }
+    if (condominium.paymentType !== undefined) { updates.push("payment_type = ?"); args.push(condominium.paymentType); }
+    if (condominium.price !== undefined) { updates.push("price = ?"); args.push(condominium.price); }
+    if (condominium.downPayment !== undefined) { updates.push("down_payment = ?"); args.push(condominium.downPayment); }
+    if (condominium.paymentPeriod !== undefined) { updates.push("payment_period = ?"); args.push(condominium.paymentPeriod); }
+    if (condominium.houseCondition !== undefined) { updates.push("house_condition = ?"); args.push(condominium.houseCondition); }
+    
+    if (updates.length === 0) return this.getCondominium(id);
+    
+    updates.push("updated_at = ?");
+    args.push(now);
+    args.push(id);
+    
+    await this.client.execute({
+      sql: `UPDATE condominiums SET ${updates.join(", ")} WHERE id = ?`,
+      args
+    });
+    
+    return this.getCondominium(id);
+  }
+
+  async deleteCondominium(id: string): Promise<boolean> {
+    await this.initPromise;
+    try {
+      await this.client.execute({
+        sql: "DELETE FROM condominiums WHERE id = ?",
+        args: [id]
+      });
+      console.log("✅ Condominium deletado no Turso:", id);
+      return true;
+    } catch (error) {
+      console.error("❌ Erro ao deletar condominium no Turso:", error);
+      return false;
+    }
+  }
+
+  // Contacts, Employees, Hero, About - métodos simples continuam herdados do MemoryStorage
+  // pois são menos críticos e podem ser implementados depois se necessário
 }
 
 // Escolher storage baseado em variáveis de ambiente
