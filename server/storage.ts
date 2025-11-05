@@ -866,6 +866,124 @@ class TursoStorage extends MemoryStorage {
       updatedAt: this.fromTimestamp(row.updated_at as number)
     };
   }
+
+  // Cities - Implementação Turso
+  async getCities(activeOnly: boolean = false): Promise<City[]> {
+    await this.initPromise;
+    try {
+      const sql = activeOnly 
+        ? "SELECT * FROM cities WHERE active = 1 ORDER BY display_order ASC, name ASC"
+        : "SELECT * FROM cities ORDER BY display_order ASC, name ASC";
+      const result = await this.client.execute(sql);
+      
+      return result.rows.map((row: any) => ({
+        id: row.id,
+        name: row.name,
+        slug: row.slug,
+        imageUrl: row.image_url,
+        displayOrder: row.display_order,
+        active: row.active === 1,
+        createdAt: this.fromTimestamp(row.created_at),
+        updatedAt: this.fromTimestamp(row.updated_at)
+      }));
+    } catch (error) {
+      console.error("❌ Erro ao buscar cities no Turso:", error);
+      return [];
+    }
+  }
+
+  async getCity(id: string): Promise<City | undefined> {
+    await this.initPromise;
+    try {
+      const result = await this.client.execute({
+        sql: "SELECT * FROM cities WHERE id = ?",
+        args: [id]
+      });
+      
+      if (result.rows.length === 0) return undefined;
+      
+      const row = result.rows[0];
+      return {
+        id: row.id as string,
+        name: row.name as string,
+        slug: row.slug as string,
+        imageUrl: row.image_url as string,
+        displayOrder: row.display_order as number,
+        active: row.active === 1,
+        createdAt: this.fromTimestamp(row.created_at as number),
+        updatedAt: this.fromTimestamp(row.updated_at as number)
+      };
+    } catch (error) {
+      console.error("❌ Erro ao buscar city no Turso:", error);
+      return undefined;
+    }
+  }
+
+  async createCity(city: InsertCity): Promise<City> {
+    await this.initPromise;
+    const id = `city_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const now = this.toTimestamp(new Date());
+
+    await this.client.execute({
+      sql: "INSERT INTO cities (id, name, slug, image_url, display_order, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      args: [id, city.name, city.slug, city.imageUrl, city.displayOrder || 0, city.active ? 1 : 0, now, now]
+    });
+
+    console.log("✅ City criada no Turso:", city.name);
+
+    return {
+      id,
+      name: city.name,
+      slug: city.slug,
+      imageUrl: city.imageUrl,
+      displayOrder: city.displayOrder || 0,
+      active: city.active !== false,
+      createdAt: this.fromTimestamp(now),
+      updatedAt: this.fromTimestamp(now)
+    };
+  }
+
+  async updateCity(id: string, city: Partial<InsertCity>): Promise<City | undefined> {
+    await this.initPromise;
+    const now = this.toTimestamp(new Date());
+    
+    const updates: string[] = [];
+    const args: any[] = [];
+    
+    if (city.name !== undefined) { updates.push("name = ?"); args.push(city.name); }
+    if (city.slug !== undefined) { updates.push("slug = ?"); args.push(city.slug); }
+    if (city.imageUrl !== undefined) { updates.push("image_url = ?"); args.push(city.imageUrl); }
+    if (city.displayOrder !== undefined) { updates.push("display_order = ?"); args.push(city.displayOrder); }
+    if (city.active !== undefined) { updates.push("active = ?"); args.push(city.active ? 1 : 0); }
+    
+    if (updates.length === 0) return this.getCity(id);
+    
+    updates.push("updated_at = ?");
+    args.push(now);
+    args.push(id);
+    
+    await this.client.execute({
+      sql: `UPDATE cities SET ${updates.join(", ")} WHERE id = ?`,
+      args
+    });
+    
+    return this.getCity(id);
+  }
+
+  async deleteCity(id: string): Promise<boolean> {
+    await this.initPromise;
+    try {
+      await this.client.execute({
+        sql: "DELETE FROM cities WHERE id = ?",
+        args: [id]
+      });
+      console.log("✅ City deletada no Turso:", id);
+      return true;
+    } catch (error) {
+      console.error("❌ Erro ao deletar city no Turso:", error);
+      return false;
+    }
+  }
 }
 
 // Escolher storage baseado em variáveis de ambiente
