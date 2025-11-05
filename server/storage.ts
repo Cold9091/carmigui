@@ -761,6 +761,39 @@ class TursoStorage extends MemoryStorage {
     return new Date(timestamp * 1000);
   }
 
+  async getUser(id: string): Promise<User | undefined> {
+    await this.initPromise;
+    try {
+      console.log("🔍 Buscando usuário no Turso por ID:", id);
+      const result = await this.client.execute({
+        sql: "SELECT * FROM users WHERE id = ?",
+        args: [id]
+      });
+      
+      if (result.rows.length === 0) {
+        console.error("❌ Usuário não encontrado no Turso. ID:", id);
+        // Verificar quantos usuários existem
+        const count = await this.client.execute("SELECT COUNT(*) as total FROM users");
+        console.log("📊 Total de usuários no banco:", count.rows[0].total);
+        return undefined;
+      }
+      
+      const row = result.rows[0];
+      console.log("✅ Usuário encontrado no Turso:", row.id, row.email);
+      return {
+        id: row.id as string,
+        email: row.email as string,
+        password: row.password as string,
+        name: row.name as string | null,
+        createdAt: this.fromTimestamp(row.created_at as number),
+        updatedAt: this.fromTimestamp(row.updated_at as number)
+      };
+    } catch (error) {
+      console.error("❌ Erro ao buscar usuário por ID no Turso:", error);
+      return undefined;
+    }
+  }
+
   async getUserByEmail(email: string): Promise<User | undefined> {
     await this.initPromise;
     try {
