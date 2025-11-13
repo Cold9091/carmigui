@@ -76,7 +76,10 @@ export function registerUploadRoutes(app: Express) {
   // Configure multer for file uploads
   const storage_multer = multer.diskStorage({
     destination: async (req, file, cb) => {
-      const uploadDir = path.join(process.cwd(), 'uploads', 'images');
+      // No Vercel (serverless), só é permitido escrever em /tmp
+      const isVercel = !!process.env.VERCEL;
+      const baseDir = isVercel ? path.join('/tmp', 'uploads') : path.join(process.cwd(), 'uploads');
+      const uploadDir = path.join(baseDir, 'images');
       try {
         await fs.mkdir(uploadDir, { recursive: true });
         cb(null, uploadDir);
@@ -117,7 +120,9 @@ export function registerUploadRoutes(app: Express) {
 
       const uploadedFiles = await Promise.all(
         req.files.map(async (file: Express.Multer.File) => {
-          const uploadsDir = path.join(process.cwd(), 'uploads', 'images');
+          const isVercel = !!process.env.VERCEL;
+          const baseDir = isVercel ? path.join('/tmp', 'uploads') : path.join(process.cwd(), 'uploads');
+          const uploadsDir = path.join(baseDir, 'images');
           const originalPath = file.path;
           const fileNameWithoutExt = path.parse(file.filename).name;
           const webpFilename = `${fileNameWithoutExt}.webp`;
@@ -209,7 +214,9 @@ export function registerUploadRoutes(app: Express) {
       }
       
       // Safely construct file path
-      const uploadsDir = path.join(process.cwd(), 'uploads', 'images');
+      const isVercel = !!process.env.VERCEL;
+      const baseDir = isVercel ? path.join('/tmp', 'uploads') : path.join(process.cwd(), 'uploads');
+      const uploadsDir = path.join(baseDir, 'images');
       const filePath = path.join(uploadsDir, filename);
       
       // Ensure the resolved path is still within uploads/images

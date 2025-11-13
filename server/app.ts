@@ -179,6 +179,21 @@ export async function createApp() {
       }
     }
   }));
+  // No Vercel (serverless), arquivos são gravados em /tmp; expor também este diretório se existir
+  try {
+    const tmpUploadsPath = '/tmp/uploads';
+    app.use('/uploads', express.static(tmpUploadsPath, {
+      maxAge: '1y',
+      immutable: true,
+      setHeaders: (res, path) => {
+        if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.webp') || path.endsWith('.svg')) {
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        }
+      }
+    }));
+  } catch (_e) {
+    // Ignorar se /tmp não estiver disponível
+  }
 
   app.use('/attached_assets', express.static('attached_assets', {
     maxAge: '1y',
