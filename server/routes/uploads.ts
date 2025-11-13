@@ -5,6 +5,24 @@ import fs from "fs/promises";
 import sharp from "sharp";
 import { ensureAuthenticated } from "../auth";
 
+// Resolve um diretório de upload gravável (tenta /tmp primeiro e faz fallback para ./uploads)
+async function resolveUploadsDir(): Promise<string> {
+  const candidates = [
+    path.join('/tmp', 'uploads', 'images'), // preferido em ambientes serverless como Vercel
+    path.join(process.cwd(), 'uploads', 'images'), // fallback local
+  ];
+  for (const dir of candidates) {
+    try {
+      await fs.mkdir(dir, { recursive: true });
+      return dir;
+    } catch {
+      // tenta o próximo
+    }
+  }
+  // Se todos falharem, lança um erro explícito
+  throw new Error('Nenhum diretório de upload gravável disponível');
+}
+
 // Security: Validate file magic bytes (file signatures) to detect disguised malicious files
 async function validateImageMagicBytes(filePath: string): Promise<boolean> {
   try {
@@ -76,15 +94,12 @@ export function registerUploadRoutes(app: Express) {
   // Configure multer for file uploads
   const storage_multer = multer.diskStorage({
     destination: async (req, file, cb) => {
-      // No Vercel (serverless), só é permitido escrever em /tmp
-      const isVercel = !!process.env.VERCEL;
-      const baseDir = isVercel ? path.join('/tmp', 'uploads') : path.join(process.cwd(), 'uploads');
-      const uploadDir = path.join(baseDir, 'images');
       try {
-        await fs.mkdir(uploadDir, { recursive: true });
+        const uploadDir = await resolveUploadsDir();
         cb(null, uploadDir);
       } catch (error) {
-        cb(error instanceof Error ? error : new Error('Failed to create upload directory'), uploadDir);
+        const err = error instanceof Error ? error : new Error('Failed to create upload directory');
+        cb(err, path.join(process.cwd(), 'uploads', 'images'));
       }
     },
     filename: (req, file, cb) => {
@@ -120,9 +135,7 @@ export function registerUploadRoutes(app: Express) {
 
       const uploadedFiles = await Promise.all(
         req.files.map(async (file: Express.Multer.File) => {
-          const isVercel = !!process.env.VERCEL;
-          const baseDir = isVercel ? path.join('/tmp', 'uploads') : path.join(process.cwd(), 'uploads');
-          const uploadsDir = path.join(baseDir, 'images');
+          const uploadsDir = await resolveUploadsDir();
           const originalPath = file.path;
           const fileNameWithoutExt = path.parse(file.filename).name;
           const webpFilename = `${fileNameWithoutExt}.webp`;
@@ -214,9 +227,7 @@ export function registerUploadRoutes(app: Express) {
       }
       
       // Safely construct file path
-      const isVercel = !!process.env.VERCEL;
-      const baseDir = isVercel ? path.join('/tmp', 'uploads') : path.join(process.cwd(), 'uploads');
-      const uploadsDir = path.join(baseDir, 'images');
+      const uploadsDir = await resolveUploadsDir();
       const filePath = path.join(uploadsDir, filename);
       
       // Ensure the resolved path is still within uploads/images
