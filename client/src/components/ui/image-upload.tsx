@@ -80,6 +80,7 @@ export function ImageUpload({
       const response = await fetch('/api/upload/images', {
         method: 'POST',
         body: formData,
+        credentials: 'include',
       });
 
       if (!response.ok) {
