@@ -712,8 +712,18 @@ class TursoStorage extends MemoryStorage {
 
   constructor() {
     super();
-    const url = process.env.TURSO_DATABASE_URL!;
-    const authToken = process.env.TURSO_AUTH_TOKEN!;
+    const url = process.env.TURSO_DATABASE_URL;
+    const authToken = process.env.TURSO_AUTH_TOKEN;
+    
+    // Validar variáveis de ambiente
+    if (!url || !authToken) {
+      throw new Error(
+        `❌ Erro: Variáveis de ambiente Turso não configuradas!\n` +
+        `TURSO_DATABASE_URL: ${url ? '✓' : '✗ ausente'}\n` +
+        `TURSO_AUTH_TOKEN: ${authToken ? '✓' : '✗ ausente'}\n` +
+        `Por favor configure essas variáveis no Vercel antes de usar TursoStorage.`
+      );
+    }
     
     this.client = createClient({ url, authToken });
     
@@ -1583,28 +1593,52 @@ class TursoStorage extends MemoryStorage {
 // Escolher storage baseado em variáveis de ambiente
 export const storage = (() => {
   const hasTurso = process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN;
+  const isVercel = !!process.env.VERCEL;
+  const isProduction = process.env.NODE_ENV === 'production';
   
+  // Em produção (Vercel), EXIGIR Turso - não usar fallback
+  if (isVercel || isProduction) {
+    if (!hasTurso) {
+      const errorMsg = 
+        `❌ ERRO CRÍTICO: Você está em produção (Vercel) mas não configurou as variáveis Turso!\n\n` +
+        `Variáveis faltando:\n` +
+        `  - TURSO_DATABASE_URL: ${process.env.TURSO_DATABASE_URL ? '✓' : '✗'}\n` +
+        `  - TURSO_AUTH_TOKEN: ${process.env.TURSO_AUTH_TOKEN ? '✓' : '✗'}\n\n` +
+        `AÇÃO NECESSÁRIA:\n` +
+        `1. Aceda a Vercel Dashboard → seu projeto\n` +
+        `2. Settings → Environment Variables\n` +
+        `3. Adicione:\n` +
+        `   TURSO_DATABASE_URL=libsql://seu-database.turso.io\n` +
+        `   TURSO_AUTH_TOKEN=seu_token_aqui\n` +
+        `4. Faça deploy novamente (Reprocess deployment)`;
+      
+      console.error(errorMsg);
+      throw new Error(errorMsg);
+    }
+    
+    try {
+      console.log("🚀 Produção (Vercel): Inicializando TursoStorage...");
+      return new TursoStorage();
+    } catch (error: any) {
+      console.error("❌ Erro ao inicializar TursoStorage em produção:", error.message);
+      throw error; // Lançar erro para fail fast
+    }
+  }
+  
+  // Em desenvolvimento, tentar Turso se disponível
   if (hasTurso) {
     try {
       console.log("🚀 Inicializando TursoStorage (persistência real)...");
       return new TursoStorage();
     } catch (error: any) {
       console.error("❌ Erro ao inicializar TursoStorage:", error.message);
-      console.log("⚠️  Fallback para MemoryStorage");
-      return new MemoryStorage();
+      console.log("⚠️  Fallback para SimpleSQLiteStorage");
     }
   }
   
-  const isVercel = !!process.env.VERCEL;
-  const isProduction = process.env.NODE_ENV === 'production';
-  
-  if (isVercel || isProduction) {
-    console.log("⚠️  Usando MemoryStorage (dados temporários - configure Turso para persistência)");
-    return new MemoryStorage();
-  }
-  
+  // Em desenvolvimento, fallback para SimpleSQLiteStorage
   try {
-    console.log("💾 Ambiente local - tentando usar SimpleSQLiteStorage");
+    console.log("💾 Ambiente local - usando SimpleSQLiteStorage");
     const { SimpleSQLiteStorage } = require("./simple-sqlite-storage");
     return new SimpleSQLiteStorage();
   } catch (error: any) {
