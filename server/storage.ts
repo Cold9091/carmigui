@@ -996,7 +996,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async deleteCity(id: string): Promise<boolean> {
-    await this.ensureInitialized()alized();
+    await this.ensureInitialized();
     try {
       await this.client.execute({
         sql: "DELETE FROM cities WHERE id = ?",
