@@ -706,7 +706,7 @@ class TursoSessionStore extends session.Store {
 
 // TursoStorage - Implementação com libSQL (Turso Database)
 class TursoStorage extends MemoryStorage {
-  private client: any;
+  private client: any = null;
   private initPromise: Promise<void>;
   public sessionStore: session.Store;
 
@@ -715,22 +715,46 @@ class TursoStorage extends MemoryStorage {
     const url = process.env.TURSO_DATABASE_URL;
     const authToken = process.env.TURSO_AUTH_TOKEN;
     
+    // Inicializar initPromise com Promise resolvida antes de qualquer coisa
+    this.initPromise = Promise.resolve();
+    
     // Validar variáveis de ambiente
     if (!url || !authToken) {
-      throw new Error(
+      const error = new Error(
         `❌ Erro: Variáveis de ambiente Turso não configuradas!\n` +
         `TURSO_DATABASE_URL: ${url ? '✓' : '✗ ausente'}\n` +
         `TURSO_AUTH_TOKEN: ${authToken ? '✓' : '✗ ausente'}\n` +
         `Por favor configure essas variáveis no Vercel antes de usar TursoStorage.`
       );
+      console.error(error.message);
+      throw error;
     }
     
-    this.client = createClient({ url, authToken });
+    try {
+      this.client = createClient({ url, authToken });
+      if (!this.client) {
+        throw new Error("Falha ao criar cliente Turso - retornou null/undefined");
+      }
+      console.log("✅ Cliente Turso criado com sucesso");
+    } catch (error: any) {
+      console.error("❌ Erro ao criar cliente Turso:", error.message || error);
+      this.client = null;
+      throw new Error(
+        `❌ Erro ao conectar ao Turso: ${error?.message || error}\n` +
+        `Verifique se TURSO_DATABASE_URL e TURSO_AUTH_TOKEN são válidos.`
+      );
+    }
     
     // Criar session store persistente com Turso
-    this.sessionStore = new TursoSessionStore(this.client);
-    console.log("✅ TursoSessionStore criado (sessões persistentes)");
+    try {
+      this.sessionStore = new TursoSessionStore(this.client);
+      console.log("✅ TursoSessionStore criado (sessões persistentes)");
+    } catch (error: any) {
+      console.error("❌ Erro ao criar TursoSessionStore:", error.message || error);
+      throw error;
+    }
     
+    // AGORA inicializar as tabelas
     this.initPromise = this.initializeTables();
     console.log("✅ TursoStorage conectado:", url.substring(0, 35) + "...");
   }
@@ -773,13 +797,23 @@ class TursoStorage extends MemoryStorage {
 
   // Garantir que a inicialização foi disparada/aguardada de forma defensiva
   private async ensureInitialized(): Promise<void> {
+    // Verificar se client existe (proteção contra undefined)
+    if (!this.client) {
+      throw new Error(
+        '❌ ERRO CRÍTICO: cliente Turso não inicializado!\n' +
+        'O client está undefined - verifique:\n' +
+        '1. TURSO_DATABASE_URL está correta?\n' +
+        '2. TURSO_AUTH_TOKEN é válido?\n' +
+        '3. O banco de dados do Turso está acessível?'
+      );
+    }
+
     if (this.initPromise) {
       try {
         await this.initPromise;
       } catch (error: any) {
         console.error('❌ Falha ao inicializar Turso (ensureInitialized):', error?.message || error);
-        // Não rethrow: deixamos o fluxo continuar para evitar crash em runtime,
-        // mas logs já indicam que algo correu mal.
+        throw error; // Re-lançar o erro para alertar o chamador
       }
     } else {
       console.warn('⚠️ Aviso: initPromise ausente em TursoStorage; pulando espera por inicialização');
@@ -1437,6 +1471,11 @@ class TursoStorage extends MemoryStorage {
   async getCondominiums(featured?: boolean): Promise<Condominium[]> {
     await this.ensureInitialized();
     try {
+      if (!this.client) {
+        console.warn("⚠️ Cliente Turso indisponível, retornando array vazio");
+        return [];
+      }
+
       let sql = "SELECT * FROM condominiums";
       const args: any[] = [];
       
@@ -1480,6 +1519,11 @@ class TursoStorage extends MemoryStorage {
   async getCondominium(id: string): Promise<Condominium | undefined> {
     await this.ensureInitialized();
     try {
+      if (!this.client) {
+        console.warn("⚠️ Cliente Turso indisponível, retornando undefined");
+        return undefined;
+      }
+
       const result = await this.client.execute({
         sql: "SELECT * FROM condominiums WHERE id = ?",
         args: [id]
@@ -1518,37 +1562,57 @@ class TursoStorage extends MemoryStorage {
 
   async createCondominium(condominium: InsertCondominium): Promise<Condominium> {
     await this.ensureInitialized();
+    
+    // Verificação defensiva adicional
+    if (!this.client) {
+      throw new Error(
+        '❌ ERRO: cliente Turso está undefined ao tentar criar condominium!\n' +
+        'Verifique as variáveis de ambiente TURSO_DATABASE_URL e TURSO_AUTH_TOKEN'
+      );
+    }
+
     const id = `condominium_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const now = this.toTimestamp(new Date());
     const images = JSON.stringify(condominium.images || []);
     const amenities = JSON.stringify(condominium.amenities || []);
 
-    await this.client.execute({
-      sql: "INSERT INTO condominiums (id, name, description, location, centrality_or_district, total_units, completed_units, available_units, status, images, amenities, featured, development_year, payment_type, price, down_payment, payment_period, house_condition, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      args: [
-        id, condominium.name, condominium.description, condominium.location, condominium.centralityOrDistrict,
-        condominium.totalUnits, condominium.completedUnits || 0, condominium.availableUnits,
-        condominium.status || null, images, amenities, condominium.featured ? 1 : 0,
-        condominium.developmentYear, condominium.paymentType || null, condominium.price,
-        condominium.downPayment || null, condominium.paymentPeriod || null, condominium.houseCondition || null,
-        now, now
-      ]
-    });
+    try {
+      await this.client.execute({
+        sql: "INSERT INTO condominiums (id, name, description, location, centrality_or_district, total_units, completed_units, available_units, status, images, amenities, featured, development_year, payment_type, price, down_payment, payment_period, house_condition, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        args: [
+          id, condominium.name, condominium.description, condominium.location, condominium.centralityOrDistrict,
+          condominium.totalUnits, condominium.completedUnits || 0, condominium.availableUnits,
+          condominium.status || null, images, amenities, condominium.featured ? 1 : 0,
+          condominium.developmentYear, condominium.paymentType || null, condominium.price,
+          condominium.downPayment || null, condominium.paymentPeriod || null, condominium.houseCondition || null,
+          now, now
+        ]
+      });
 
-    console.log("✅ Condominium criado no Turso:", condominium.name);
+      console.log("✅ Condominium criado no Turso:", condominium.name);
 
-    return {
-      id,
-      ...condominium,
-      completedUnits: condominium.completedUnits || 0,
-      featured: condominium.featured !== false,
-      createdAt: this.fromTimestamp(now),
-      updatedAt: this.fromTimestamp(now)
-    };
+      return {
+        id,
+        ...condominium,
+        completedUnits: condominium.completedUnits || 0,
+        featured: condominium.featured !== false,
+        createdAt: this.fromTimestamp(now),
+        updatedAt: this.fromTimestamp(now)
+      };
+    } catch (error: any) {
+      console.error("❌ Erro ao criar condominium no Turso:", error?.message || error);
+      throw new Error(`Falha ao criar condominium: ${error?.message || error}`);
+    }
   }
 
   async updateCondominium(id: string, condominium: Partial<InsertCondominium>): Promise<Condominium | undefined> {
     await this.ensureInitialized();
+    
+    if (!this.client) {
+      console.error("❌ Cliente Turso não disponível para atualizar condominium");
+      return undefined;
+    }
+
     const now = this.toTimestamp(new Date());
     
     const updates: string[] = [];
@@ -1578,16 +1642,28 @@ class TursoStorage extends MemoryStorage {
     args.push(now);
     args.push(id);
     
-    await this.client.execute({
-      sql: `UPDATE condominiums SET ${updates.join(", ")} WHERE id = ?`,
-      args
-    });
+    try {
+      await this.client.execute({
+        sql: `UPDATE condominiums SET ${updates.join(", ")} WHERE id = ?`,
+        args
+      });
+      console.log("✅ Condominium atualizado no Turso:", id);
+    } catch (error) {
+      console.error("❌ Erro ao atualizar condominium no Turso:", error);
+      return undefined;
+    }
     
     return this.getCondominium(id);
   }
 
   async deleteCondominium(id: string): Promise<boolean> {
     await this.ensureInitialized();
+    
+    if (!this.client) {
+      console.error("❌ Cliente Turso não disponível para deletar condominium");
+      return false;
+    }
+
     try {
       await this.client.execute({
         sql: "DELETE FROM condominiums WHERE id = ?",
@@ -1611,43 +1687,47 @@ export const storage = (() => {
   const isVercel = !!process.env.VERCEL;
   const isProduction = process.env.NODE_ENV === 'production';
   
-  // Em produção (Vercel), EXIGIR Turso - não usar fallback
-  if (isVercel || isProduction) {
-    if (!hasTurso) {
+  // Tentar usar Turso se disponível
+  if (hasTurso) {
+    try {
+      console.log("🚀 Inicializando TursoStorage (persistência real)...");
+      const tursoStorage = new TursoStorage();
+      console.log("✅ TursoStorage inicializado com sucesso!");
+      return tursoStorage;
+    } catch (error: any) {
+      const errorMsg = `❌ Erro ao inicializar TursoStorage: ${error?.message || error}`;
+      console.error(errorMsg);
+      
+      // Em produção, exigir Turso funcionar
+      if (isVercel || isProduction) {
+        console.error("❌ ERRO CRÍTICO: Você está em produção mas TursoStorage falhou!");
+        console.error("Verifique:");
+        console.error("  1. TURSO_DATABASE_URL está correta?");
+        console.error("  2. TURSO_AUTH_TOKEN é válido?");
+        console.error("  3. O database do Turso existe e está acessível?");
+        // Lançar erro para causar falha rápida
+        throw error;
+      }
+      
+      // Em desenvolvimento, usar fallback
+      console.log("⚠️  Fallback para SimpleSQLiteStorage (desenvolvimento)");
+    }
+  } else {
+    // Em produção SEM Turso = erro
+    if (isVercel || isProduction) {
       const errorMsg = 
-        `❌ ERRO CRÍTICO: Você está em produção (Vercel) mas não configurou as variáveis Turso!\n\n` +
+        `❌ ERRO CRÍTICO: Em produção (Vercel) mas TURSO não configurado!\n\n` +
         `Variáveis faltando:\n` +
         `  - TURSO_DATABASE_URL: ${process.env.TURSO_DATABASE_URL ? '✓' : '✗'}\n` +
         `  - TURSO_AUTH_TOKEN: ${process.env.TURSO_AUTH_TOKEN ? '✓' : '✗'}\n\n` +
         `AÇÃO NECESSÁRIA:\n` +
         `1. Aceda a Vercel Dashboard → seu projeto\n` +
         `2. Settings → Environment Variables\n` +
-        `3. Adicione:\n` +
-        `   TURSO_DATABASE_URL=libsql://seu-database.turso.io\n` +
-        `   TURSO_AUTH_TOKEN=seu_token_aqui\n` +
-        `4. Faça deploy novamente (Reprocess deployment)`;
+        `3. Adicione TURSO_DATABASE_URL e TURSO_AUTH_TOKEN\n` +
+        `4. Faça Reprocess deployment`;
       
       console.error(errorMsg);
       throw new Error(errorMsg);
-    }
-    
-    try {
-      console.log("🚀 Produção (Vercel): Inicializando TursoStorage...");
-      return new TursoStorage();
-    } catch (error: any) {
-      console.error("❌ Erro ao inicializar TursoStorage em produção:", error.message);
-      throw error; // Lançar erro para fail fast
-    }
-  }
-  
-  // Em desenvolvimento, tentar Turso se disponível
-  if (hasTurso) {
-    try {
-      console.log("🚀 Inicializando TursoStorage (persistência real)...");
-      return new TursoStorage();
-    } catch (error: any) {
-      console.error("❌ Erro ao inicializar TursoStorage:", error.message);
-      console.log("⚠️  Fallback para SimpleSQLiteStorage");
     }
   }
   
