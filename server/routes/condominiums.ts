@@ -18,11 +18,11 @@ export function registerCondominiumRoutes(router: Router) {
 
   const handlers = createCRUDHandlers({
     storage: {
-      getAll: storage.getCondominiums,
-      getById: storage.getCondominium,
-      create: storage.createCondominium,
-      update: storage.updateCondominium,
-      delete: storage.deleteCondominium,
+      getAll: storage.getCondominiums.bind(storage),
+      getById: storage.getCondominium.bind(storage),
+      create: storage.createCondominium.bind(storage),
+      update: storage.updateCondominium.bind(storage),
+      delete: storage.deleteCondominium.bind(storage),
     },
     schemas: {
       insert: insertCondominiumSchema,
