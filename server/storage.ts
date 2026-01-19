@@ -771,8 +771,23 @@ class TursoStorage extends MemoryStorage {
     return new Date(timestamp * 1000);
   }
 
+  // Garantir que a inicialização foi disparada/aguardada de forma defensiva
+  private async ensureInitialized(): Promise<void> {
+    if (this.initPromise) {
+      try {
+        await this.initPromise;
+      } catch (error: any) {
+        console.error('❌ Falha ao inicializar Turso (ensureInitialized):', error?.message || error);
+        // Não rethrow: deixamos o fluxo continuar para evitar crash em runtime,
+        // mas logs já indicam que algo correu mal.
+      }
+    } else {
+      console.warn('⚠️ Aviso: initPromise ausente em TursoStorage; pulando espera por inicialização');
+    }
+  }
+
   async getUser(id: string): Promise<User | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       console.log("🔍 Buscando usuário no Turso por ID:", id);
       const result = await this.client.execute({
@@ -805,7 +820,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       const result = await this.client.execute({
         sql: "SELECT * FROM users WHERE email = ?",
@@ -830,7 +845,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async createUser(user: InsertUser): Promise<User> {
-    await this.initPromise;
+    await this.ensureInitialized();
     const id = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const now = this.toTimestamp(new Date());
 
@@ -852,7 +867,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async updateUserPassword(id: string, password: string): Promise<User | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     const now = this.toTimestamp(new Date());
 
     await this.client.execute({
@@ -879,7 +894,7 @@ class TursoStorage extends MemoryStorage {
 
   // Cities - Implementação Turso
   async getCities(activeOnly: boolean = false): Promise<City[]> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       const sql = activeOnly 
         ? "SELECT * FROM cities WHERE active = 1 ORDER BY display_order ASC, name ASC"
@@ -903,7 +918,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async getCity(id: string): Promise<City | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       const result = await this.client.execute({
         sql: "SELECT * FROM cities WHERE id = ?",
@@ -930,7 +945,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async createCity(city: InsertCity): Promise<City> {
-    await this.initPromise;
+    await this.ensureInitialized();
     const id = `city_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const now = this.toTimestamp(new Date());
 
@@ -954,7 +969,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async updateCity(id: string, city: Partial<InsertCity>): Promise<City | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     const now = this.toTimestamp(new Date());
     
     const updates: string[] = [];
@@ -981,7 +996,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async deleteCity(id: string): Promise<boolean> {
-    await this.initPromise;
+    await this.ensureInitialized()alized();
     try {
       await this.client.execute({
         sql: "DELETE FROM cities WHERE id = ?",
@@ -997,7 +1012,7 @@ class TursoStorage extends MemoryStorage {
 
   // Property Categories - Implementação Turso
   async getPropertyCategories(activeOnly: boolean = false): Promise<PropertyCategory[]> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       const sql = activeOnly 
         ? "SELECT * FROM property_categories WHERE active = 1 ORDER BY display_order ASC, name ASC"
@@ -1021,7 +1036,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async getPropertyCategory(id: string): Promise<PropertyCategory | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       const result = await this.client.execute({
         sql: "SELECT * FROM property_categories WHERE id = ?",
@@ -1048,7 +1063,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async createPropertyCategory(category: InsertPropertyCategory): Promise<PropertyCategory> {
-    await this.initPromise;
+    await this.ensureInitialized();
     const id = `category_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const now = this.toTimestamp(new Date());
 
@@ -1072,7 +1087,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async updatePropertyCategory(id: string, category: Partial<InsertPropertyCategory>): Promise<PropertyCategory | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     const now = this.toTimestamp(new Date());
     
     const updates: string[] = [];
@@ -1099,7 +1114,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async deletePropertyCategory(id: string): Promise<boolean> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       await this.client.execute({
         sql: "DELETE FROM property_categories WHERE id = ?",
@@ -1115,7 +1130,7 @@ class TursoStorage extends MemoryStorage {
 
   // Properties - Implementação Turso
   async getProperties(filters?: { cityId?: string; categoryId?: string; featured?: boolean }): Promise<Property[]> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       let sql = "SELECT * FROM properties WHERE 1=1";
       const args: any[] = [];
@@ -1165,7 +1180,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async getProperty(id: string): Promise<Property | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       const result = await this.client.execute({
         sql: "SELECT * FROM properties WHERE id = ?",
@@ -1203,7 +1218,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async createProperty(property: InsertProperty): Promise<Property> {
-    await this.initPromise;
+    await this.ensureInitialized();
     const id = `property_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const now = this.toTimestamp(new Date());
     const images = JSON.stringify(property.images || []);
@@ -1231,7 +1246,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async updateProperty(id: string, property: Partial<InsertProperty>): Promise<Property | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     const now = this.toTimestamp(new Date());
     
     const updates: string[] = [];
@@ -1269,7 +1284,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async deleteProperty(id: string): Promise<boolean> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       await this.client.execute({
         sql: "DELETE FROM properties WHERE id = ?",
@@ -1285,7 +1300,7 @@ class TursoStorage extends MemoryStorage {
 
   // Projects - Implementação Turso
   async getProjects(featured?: boolean): Promise<Project[]> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       let sql = "SELECT * FROM projects";
       const args: any[] = [];
@@ -1320,7 +1335,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async getProject(id: string): Promise<Project | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       const result = await this.client.execute({
         sql: "SELECT * FROM projects WHERE id = ?",
@@ -1351,7 +1366,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async createProject(project: InsertProject): Promise<Project> {
-    await this.initPromise;
+    await this.ensureInitialized();
     const id = `project_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const now = this.toTimestamp(new Date());
     const images = JSON.stringify(project.images || []);
@@ -1373,7 +1388,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async updateProject(id: string, project: Partial<InsertProject>): Promise<Project | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     const now = this.toTimestamp(new Date());
     
     const updates: string[] = [];
@@ -1404,7 +1419,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async deleteProject(id: string): Promise<boolean> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       await this.client.execute({
         sql: "DELETE FROM projects WHERE id = ?",
@@ -1420,7 +1435,7 @@ class TursoStorage extends MemoryStorage {
 
   // Condominiums - Implementação Turso
   async getCondominiums(featured?: boolean): Promise<Condominium[]> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       let sql = "SELECT * FROM condominiums";
       const args: any[] = [];
@@ -1463,7 +1478,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async getCondominium(id: string): Promise<Condominium | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       const result = await this.client.execute({
         sql: "SELECT * FROM condominiums WHERE id = ?",
@@ -1502,7 +1517,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async createCondominium(condominium: InsertCondominium): Promise<Condominium> {
-    await this.initPromise;
+    await this.ensureInitialized();
     const id = `condominium_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const now = this.toTimestamp(new Date());
     const images = JSON.stringify(condominium.images || []);
@@ -1533,7 +1548,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async updateCondominium(id: string, condominium: Partial<InsertCondominium>): Promise<Condominium | undefined> {
-    await this.initPromise;
+    await this.ensureInitialized();
     const now = this.toTimestamp(new Date());
     
     const updates: string[] = [];
@@ -1572,7 +1587,7 @@ class TursoStorage extends MemoryStorage {
   }
 
   async deleteCondominium(id: string): Promise<boolean> {
-    await this.initPromise;
+    await this.ensureInitialized();
     try {
       await this.client.execute({
         sql: "DELETE FROM condominiums WHERE id = ?",
